@@ -1,0 +1,740 @@
+#
+#
+# Project: Phoenix
+# Time-stamp: <2025-03-24 22:12:48 doug>
+#
+# @file FILL-IN
+# @author Douglas Mark Royer
+# @date 24-FEB-20205
+#
+# @Copyright(C) 2025 by Douglas Mark Royer (A.K.A. RiverExplorer)
+#
+# Licensed under the MIT License. See LICENSE file
+# or https://opensource.org/licenses/MIT for details.
+#
+# RiverExplorer is a trademark of Douglas Mark Royer
+#
+
+# ALL TARGETS
+#
+all :
+	$(MAKE) -$(MAKEFLAGS) debug
+	$(MAKE) -$(MAKEFLAGS) release
+	$(MAKE) -$(MAKEFLAGS) tcov
+
+# All DEBUG targets.
+#
+debug:
+	$(MAKE) -$(MAKEFLAGS) LinuxDebug
+	$(MAKE) -$(MAKEFLAGS) W64Debug
+	$(MAKE) -$(MAKEFLAGS) AndroidDebug
+
+# All RELEASE targets
+#
+release:
+	$(MAKE) -$(MAKEFLAGS) LinuxRelease
+	$(MAKE) -$(MAKEFLAGS) W64Release
+	$(MAKE) -$(MAKEFLAGS) AndroidRelease
+
+# All TCOV targets
+#
+tcov:
+	$(MAKE) -$(MAKEFLAGS) LinuxTcov
+	$(MAKE) -$(MAKEFLAGS) W64Tcov
+	$(MAKE) -$(MAKEFLAGS) AndroidTcov
+
+# All LINUX targets
+#
+Linux:
+	$(MAKE) -$(MAKEFLAGS) LinuxDebug
+	$(MAKE) -$(MAKEFLAGS) LinuxRelease
+	$(MAKE) -$(MAKEFLAGS) LinuxTcov
+
+# All W64 targets
+#
+W64:
+	$(MAKE) -$(MAKEFLAGS) W64Debug
+	$(MAKE) -$(MAKEFLAGS) W64Release
+	$(MAKE) -$(MAKEFLAGS) W64Tcov
+
+# All ANDROID targets
+#
+Android:
+	$(MAKE) -$(MAKEFLAGS) AndroidDebug
+	$(MAKE) -$(MAKEFLAGS) AndroidRelease
+	$(MAKE) -$(MAKEFLAGS) AndroidTcov
+
+LinuxDebug : LocalNeeds LinuxDebugIncludes Dirs $(LINUX_TARGET.Debug) $(LINUX_TARGET.Debug.Static)
+
+$(LINUX_TARGET.Debug) : $(XDR_GENERATED.all) $(LINUX_OBJECTS.Debug)
+	$(LINUX_CXX) $(PIC_FLAGS) $(LINUX_LDFLAGS.Debug) -o $(LINUX_TARGET.Debug) $(LINUX_OBJECTS.Debug) $(LIBS) $(LINUX_LIBS)
+	install $(LINUX_TARGET.Debug) $(LINUX_INSTALL_DIR.Debug)/bin
+
+$(LINUX_TARGET.Debug.Static) : $(XDR_GENERATED.all) $(LINUX_OBJECTS.Debug.Static)
+	$(LINUX_CXX) $(LINUX_LDFLAGS.Debug) -o $(LINUX_TARGET.Debug.Static) $(LINUX_OBJECTS.Debug.Static) $(SLIBS) $(LINUX_LIBS)
+	install $(LINUX_TARGET.Debug.Static) $(LINUX_INSTALL_DIR.Debug)/sbin
+
+LinuxRelease : LocalNeeds LinuxReleaseIncludes Dirs $(LINUX_TARGET.Release)
+
+$(LINUX_TARGET.Release) : $(XDR_GENERATED.all) $(LINUX_OBJECTS.Release)
+	$(LINUX_CXX) $(PIC_FLAGS) $(LINUX_LDFLAGS.Release) -o $(LINUX_TARGET.Release) $(LINUX_OBJECTS.Release) $(LIBS) $(LINUX_LIBS)
+	install $(LINUX_TARGET.Release) $(LINUX_INSTALL_DIR.Release)/bin
+
+$(LINUX_TARGET.Release.Static) : $(XDR_GENERATED.all) $(LINUX_OBJECTS.Release.Static)
+	$(LINUX_CXX) $(LINUX_LDFLAGS.Release) -o $(LINUX_TARGET.Release.Static) $(LINUX_OBJECTS.Release.Static) $(SLIBS) $(LINUX_LIBS)
+	install $(LINUX_TARGET.Release.Static) $(LINUX_INSTALL_DIR.Release)/sbin
+
+LinuxTcov : LocalNeeds LinuxTcovIncludes Dirs $(LINUX_TARGET.Tcov) $(LINUX_TARGET.Tcov.Static)
+
+$(LINUX_TARGET.Tcov) : $(XDR_GENERATED.all) $(LINUX_OBJECTS.Tcov)
+	$(LINUX_CXX) $(PIC_FLAGS) $(LINUX_LDFLAGS.Tcov) -o $(LINUX_TARGET.Tcov) $(LINUX_OBJECTS.Tcov) $(LIBS) $(LINUX_LIBS)
+	install $(LINUX_TARGET.Tcov) $(LINUX_INSTALL_DIR.Tcov)/bin
+
+$(LINUX_TARGET.Tcov.Static) : $(XDR_GENERATED.all) $(LINUX_OBJECTS.Tcov.Static)
+	$(LINUX_CXX) $(LINUX_LDFLAGS.Tcov) -o $(LINUX_TARGET.Tcov.Static) $(LINUX_OBJECTS.Tcov.Static) $(SLIBS) $(LINUX_LIBS)
+	install $(LINUX_TARGET.Tcov.Static) $(LINUX_INSTALL_DIR.Tcov)/sbin
+
+W64Debug : LocalNeeds W64DebugIncludes Dirs $(W64_TARGET.Debug)
+
+$(W64_TARGET.Debug) :	$(XDR_GENERATED.all) $(W64_OBJECTS.Debug)
+	$(W64_CXX) -fPIC $(W64_LDFLAGS.Debug) -o $(W64_TARGET.Debug) $(W64_OBJECTS.Debug) $(LIBS) $(W64_LIBS)
+	if [ -r $(W64_TARGET.Debug) ]; then install $(W64_TARGET.Debug) $(W64_INSTALL_DIR.Debug)/bin ; fi;
+
+$(W64_TARGET.Debug.Static) :	$(XDR_GENERATED.all) $(W64_OBJECTS.Debug.Static)
+	$(W64_CXX) $(W64_LDFLAGS.Debug) -o $(W64_TARGET.Debug.Static) $(W64_OBJECTS.Debug.Static) $(SLIBS) $(W64_LIBS)
+	if [ -r $(W64_TARGET.Debug.Static) ]; then install $(W64_TARGET.Debug.Static) $(W64_INSTALL_DIR.Debug)/sbin ; fi;
+
+W64Release : LocalNeeds W64ReleaseIncludes Dirs $(W64_TARGET.Release)
+
+$(W64_TARGET.Release) : $(XDR_GENERATED.all) $(W64_OBJECTS.Release)
+	$(W64_CXX) -fPIC $(W64_LDFLAGS.Release) -o $(W64_TARGET.Release) $(W64_OBJECTS.Release) $(LIBS) $(W64_LIBS)
+	$(W64_STRIP) $(W64_TARGET.Release)
+	if [ -r $(W64_TARGET.Release) ]; then install $(W64_TARGET.Release) $(W64_INSTALL_DIR.Release)/bin ; fi;
+
+$(W64_TARGET.Release.Static) : $(XDR_GENERATED.all) $(W64_OBJECTS.Release.Static)
+	$(W64_CXX) $(W64_LDFLAGS.Release.Static) -o $(W64_TARGET.Release) $(W64_OBJECTS.Release.Static) $(SLIBS) $(W64_LIBS)
+	$(W64_STRIP) $(W64_TARGET.Release.Static)
+	if [ -r $(W64_TARGET.Release.Static) ]; then install $(W64_TARGET.Release.Static) $(W64_INSTALL_DIR.Release)/sbin ; fi;
+
+W64Tcov : LocalNeeds W64TcovIncludes Dirs $(W64_TARGET.Tcov)
+
+$(W64_TARGET.Tcov) :	$(XDR_GENERATED.all) $(W64_OBJECTS.Tcov)
+	$(W64_CXX) -fPIC $(W64_LDFLAGS.Tcov) -o $(W64_TARGET.Tcov) $(W64_OBJECTS.Tcov) $(LIBS) $(W64_LIBS)
+	if [ -r $(W64_TARGET.Tcov).dll ]; then install $(W64_TARGET.Tcov) $(W64_INSTALL_DIR.Tcov)/bin ; fi;
+
+$(W64_TARGET.Tcov.Static) :	$(XDR_GENERATED.all) $(W64_OBJECTS.Tcov.Static)
+	$(W64_CXX) $(W64_LDFLAGS.Tcov) -o $(W64_TARGET.Tcov.Static) $(W64_OBJECTS.Tcov.Static) $(SLIBS) $(W64_LIBS)
+	if [ -r $(W64_TARGET.Tcov.Static).dll ]; then install $(W64_TARGET.Tcov.Static) $(W64_INSTALL_DIR.Tcov)/sbin ; fi;
+
+AndroidDebug : LocalNeeds AndroidDebugIncludes Dirs $(ANDROID_TARGET.Debug)
+
+$(ANDROID_TARGET.Debug) :	$(XDR_GENERATED.all) $(ANDROID_OBJECTS.Debug)
+	$(ANDROID_CXX) -fPIC $(ANDROID_LDFLAGS.Debug) $(LIBS) -o $(ANDROID_TARGET.Debug) $(ANDROID_OBJECTS.Debug) $(ANDROID_LIBS)
+	install $(ANDROID_TARGET.Debug) $(ANDROID_INSTALL_DIR.Debug)/bin
+
+$(ANDROID_TARGET.Debug.Static) :	$(XDR_GENERATED.all) $(ANDROID_OBJECTS.Debug.Static)
+	$(ANDROID_CXX) $(ANDROID_LDFLAGS.Debug) $(SLIBS) -o $(ANDROID_TARGET.Debug.Static) $(ANDROID_OBJECTS.Debug.Static) $(ANDROID_LIBS)
+	install $(ANDROID_TARGET.Debug.Static) $(ANDROID_INSTALL_DIR.Debug)/sbin
+
+AndroidRelease : LocalNeeds AndroidReleaseIncludes Dirs $(ANDROID_TARGET.Release)
+
+$(ANDROID_TARGET.Release) : $(XDR_GENERATED.all) $(ANDROID_OBJECTS.Release)
+	$(ANDROID_CXX) -fPIC $(ANDROID_LDFLAGS.Release) $(LIBS) -o $(ANDROID_TARGET.Release) $(ANDROID_OBJECTS.Release) $(ANDROID_LIBS)
+	$(ANDROID_STRIP) $(ANDROID_TARGET.Release)
+	install $(ANDROID_TARGET.Release) $(ANDROID_INSTALL_DIR.Release)/bin
+
+$(ANDROID_TARGET.Release.Static) : $(XDR_GENERATED.all) $(ANDROID_OBJECTS.Release.Static)
+	$(ANDROID_CXX) $(ANDROID_LDFLAGS.Release) $(SLIBS) -o $(ANDROID_TARGET.Release.Static) $(ANDROID_OBJECTS.Release.Static) $(ANDROID_LIBS)
+	$(ANDROID_STRIP) $(ANDROID_TARGET.Release.Static)
+	install $(ANDROID_TARGET.Release.Static) $(ANDROID_INSTALL_DIR.Release)/sbin
+
+AndroidTcov : LocalNeeds AndroidTcovIncludes Dirs $(ANDROID_TARGET.Tcov)
+
+$(ANDROID_TARGET.Tcov) :	$(XDR_GENERATED.all) $(ANDROID_OBJECTS.Tcov)
+	$(ANDROID_CXX) -fPIC $(ANDROID_LDFLAGS.Tcov) $(LIBS) -o $(ANDROID_TARGET.Tcov) $(ANDROID_OBJECTS.Tcov) $(ANDROID_LIBS)
+	install $(ANDROID_TARGET.Tcov) $(ANDROID_INSTALL_DIR.Tcov)/bin
+
+$(ANDROID_TARGET.Tcov.Static) :	$(XDR_GENERATED.all) $(ANDROID_OBJECTS.Tcov.Static)
+	$(ANDROID_CXX) $(ANDROID_LDFLAGS.Tcov) $(SLIBS) -o $(ANDROID_TARGET.Tcov.Static) $(ANDROID_OBJECTS.Tcov.Static) $(ANDROID_LIBS)
+	install $(ANDROID_TARGET.Tcov.Static) $(ANDROID_INSTALL_DIR.Tcov)/sbin
+
+LinuxDebugIncludes : $(LINUX_INCLUDE_DIR.Debug) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(LINUX_INCLUDE_DIR.Debug)/$(TARGET)
+endif	
+ ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(LINUX_INCLUDE_DIR.Debug)/$(TARGET)
+endif
+
+LinuxTcovIncludes : $(LINUX_INCLUDE_DIR.Tcov) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(LINUX_INCLUDE_DIR.Tcov)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(LINUX_INCLUDE_DIR.Tcov)/$(TARGET)
+endif	
+
+LinuxReleaseIncludes : $(LINUX_INCLUDE_DIR.Release) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(LINUX_INCLUDE_DIR.Release)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(LINUX_INCLUDE_DIR.Release)/$(TARGET)
+endif	
+
+W64DebugIncludes : $(W64_INCLUDE_DIR.Debug) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(W64_INCLUDE_DIR.Debug)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(W64_INCLUDE_DIR.Debug)/$(TARGET)
+endif	
+
+W64TcovIncludes : $(W64_INCLUDE_DIR.Tcov) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(W64_INCLUDE_DIR.Tcov)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(W64_INCLUDE_DIR.Tcov)/$(TARGET)
+endif	
+
+W64ReleaseIncludes : $(W64_INCLUDE_DIR.Release) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(W64_INCLUDE_DIR.Release)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(W64_INCLUDE_DIR.Release)/$(TARGET)
+endif	
+
+AndroidDebugIncludes : $(ANDROID_INCLUDE_DIR.Debug) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(ANDROID_INCLUDE_DIR.Debug)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(ANDROID_INCLUDE_DIR.Debug)/$(TARGET)
+endif	
+
+AndroidTcovIncludes : $(ANDROID_INCLUDE_DIR.Tcov) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(ANDROID_INCLUDE_DIR.Tcov)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(ANDROID_INCLUDE_DIR.Tcov)/$(TARGET)
+endif	
+
+AndroidReleaseIncludes : $(ANDROID_INCLUDE_DIR.Releaes) $(ANDROID_INCLUDE_DIR) $(SOURCES.h) $(SOURCES.hpp)
+ifneq ($(SOURCES.h),)
+	install --mode=444 $(SOURCES.h) $(ANDROID_INCLUDE_DIR.Release)/$(TARGET)
+endif	
+ifneq ($(SOURCES.hpp),)
+	install --mode=444 $(SOURCES.hpp) $(ANDROID_INCLUDE_DIR.Release)/$(TARGET)
+endif	
+
+Dirs :
+		 @mkdir -p $(BUILD_DIR)/Generated
+		 @mkdir -p $(BUILD_DIR)/Linux/Debug/bin
+		 @mkdir -p $(BUILD_DIR)/Linux/Debug/sbin
+		 @mkdir -p $(BUILD_DIR)/Linux/Debug/lib
+		 @mkdir -p $(BUILD_DIR)/Linux/Debug/Pic
+		 @mkdir -p $(BUILD_DIR)/Linux/Debug/Static
+		 @mkdir -p $(BUILD_DIR)/Linux/Tcov/bin
+		 @mkdir -p $(BUILD_DIR)/Linux/Tcov/sbin
+		 @mkdir -p $(BUILD_DIR)/Linux/Tcov/lib
+		 @mkdir -p $(BUILD_DIR)/Linux/Tcov/Pic
+		 @mkdir -p $(BUILD_DIR)/Linux/Tcov/Static
+		 @mkdir -p $(BUILD_DIR)/Linux/Release/bin
+		 @mkdir -p $(BUILD_DIR)/Linux/Release/sbin
+		 @mkdir -p $(BUILD_DIR)/Linux/Release/lib
+		 @mkdir -p $(BUILD_DIR)/Linux/Release/Pic
+		 @mkdir -p $(BUILD_DIR)/Linux/Release/Static
+		 @mkdir -p $(BUILD_DIR)/W64/Debug/bin
+		 @mkdir -p $(BUILD_DIR)/W64/Debug/sbin
+		 @mkdir -p $(BUILD_DIR)/W64/Debug/lib
+		 @mkdir -p $(BUILD_DIR)/W64/Debug/Pic
+		 @mkdir -p $(BUILD_DIR)/W64/Debug/Static
+		 @mkdir -p $(BUILD_DIR)/W64/Tcov/bin
+		 @mkdir -p $(BUILD_DIR)/W64/Tcov/sbin
+		 @mkdir -p $(BUILD_DIR)/W64/Tcov/lib
+		 @mkdir -p $(BUILD_DIR)/W64/Tcov/Pic
+		 @mkdir -p $(BUILD_DIR)/W64/Tcov/Tcov
+		 @mkdir -p $(BUILD_DIR)/W64/Release/bin
+		 @mkdir -p $(BUILD_DIR)/W64/Release/sbin
+		 @mkdir -p $(BUILD_DIR)/W64/Release/lib
+		 @mkdir -p $(BUILD_DIR)/W64/Release/Pic
+		 @mkdir -p $(BUILD_DIR)/W64/Release/Static
+		 @mkdir -p $(BUILD_DIR)/Android/Debug/bin
+		 @mkdir -p $(BUILD_DIR)/Android/Debug/sbin
+		 @mkdir -p $(BUILD_DIR)/Android/Debug/lib
+		 @mkdir -p $(BUILD_DIR)/Android/Debug/Pic
+		 @mkdir -p $(BUILD_DIR)/Android/Debug/Static
+		 @mkdir -p $(BUILD_DIR)/Android/Tcov/bin
+		 @mkdir -p $(BUILD_DIR)/Android/Tcov/sbin
+		 @mkdir -p $(BUILD_DIR)/Android/Tcov/lib
+		 @mkdir -p $(BUILD_DIR)/Android/Tcov/Pic
+		 @mkdir -p $(BUILD_DIR)/Android/Tcov/Static
+		 @mkdir -p $(BUILD_DIR)/Android/Release/bin
+		 @mkdir -p $(BUILD_DIR)/Android/Release/sbin
+		 @mkdir -p $(BUILD_DIR)/Android/Release/lib
+		 @mkdir -p $(BUILD_DIR)/Android/Release/Pic
+		 @mkdir -p $(BUILD_DIR)/Android/Release/Static
+		 @mkdir -p $(LINUX_INSTALL_DIR)/Debug/NamedPipe
+		 @mkdir -p $(LINUX_INSTALL_DIR)/Release/NamedPipe
+		 @mkdir -p $(LINUX_INSTALL_DIR)/TcovNamedPipe
+		 @mkdir -p $(LINUX_INSTALL_DIR.Debug)/bin
+		 @mkdir -p $(LINUX_INSTALL_DIR.Debug)/sbin
+		 @mkdir -p $(LINUX_INSTALL_DIR.Debug)/lib
+		 @mkdir -p $(LINUX_INSTALL_DIR.Debug)/Pic
+		 @mkdir -p $(LINUX_INSTALL_DIR.Debug)/Static
+		 @mkdir -p $(LINUX_INSTALL_DIR.Debug)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(LINUX_INSTALL_DIR.Tcov)/bin
+		 @mkdir -p $(LINUX_INSTALL_DIR.Tcov)/sbin
+		 @mkdir -p $(LINUX_INSTALL_DIR.Tcov)/lib
+		 @mkdir -p $(LINUX_INSTALL_DIR.Tcov)/Pic
+		 @mkdir -p $(LINUX_INSTALL_DIR.Tcov)/Static
+		 @mkdir -p $(LINUX_INSTALL_DIR.Tcov)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(LINUX_INSTALL_DIR.Release)/bin
+		 @mkdir -p $(LINUX_INSTALL_DIR.Release)/sbin
+		 @mkdir -p $(LINUX_INSTALL_DIR.Release)/lib
+		 @mkdir -p $(LINUX_INSTALL_DIR.Release)/Pic
+		 @mkdir -p $(LINUX_INSTALL_DIR.Release)/Static
+		 @mkdir -p $(LINUX_INSTALL_DIR.Release)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(W64_INSTALL_DIR.Debug)/NamedPipe
+		 @mkdir -p $(W64_INSTALL_DIR.Release)/NamedPipe
+		 @mkdir -p $(W64_INSTALL_DIR.Tcov)/NamedPipe
+		 @mkdir -p $(W64_INSTALL_DIR.Debug)/bin
+		 @mkdir -p $(W64_INSTALL_DIR.Debug)/sbin
+		 @mkdir -p $(W64_INSTALL_DIR.Debug)/lib
+		 @mkdir -p $(W64_INSTALL_DIR.Debug)/Pic
+		 @mkdir -p $(W64_INSTALL_DIR.Debug)/Static
+		 @mkdir -p $(W64_INSTALL_DIR.Debug)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(W64_INSTALL_DIR.Tcov)/bin
+		 @mkdir -p $(W64_INSTALL_DIR.Tcov)/sbin
+		 @mkdir -p $(W64_INSTALL_DIR.Tcov)/lib
+		 @mkdir -p $(W64_INSTALL_DIR.Tcov)/Pic
+		 @mkdir -p $(W64_INSTALL_DIR.Tcov)/Static
+		 @mkdir -p $(W64_INSTALL_DIR.Tcov)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(W64_INSTALL_DIR.Release)/bin
+		 @mkdir -p $(W64_INSTALL_DIR.Release)/sbin
+		 @mkdir -p $(W64_INSTALL_DIR.Release)/lib
+		 @mkdir -p $(W64_INSTALL_DIR.Release)/Pic
+		 @mkdir -p $(W64_INSTALL_DIR.Release)/Static
+		 @mkdir -p $(W64_INSTALL_DIR.Release)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Debug)/NamedPipe
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Release)/NamedPipe
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Tcov)/NamedPipe
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Debug)/bin
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Debug)/sbin
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Debug)/lib
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Debug)/Pic
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Debug)/Static
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Debug)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Tcov)/bin
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Tcov)/sbin
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Tcov)/lib
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Tcov)/Pic
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Tcov)/Static
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Tcov)/include/$(VENDER)/$(TARGET)
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Release)/bin
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Release)/sbin
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Release)/lib
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Release)/Pic
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Release)/Static
+		 @mkdir -p $(ANDROID_INSTALL_DIR.Release)/include/$(VENDER)/$(TARGET)
+
+clean::
+	$(RM) -r BuildTemp
+
+#
+# XDR
+#
+#GeneratedFromXDR/%.c : %.x
+#	$(RPCGEN) -c $< | sed 's/~0/(u_int)~0/' | sed 's/bool_t/bool/g' | sed 's/##register int32_t \*buf;//' > $@
+#	@mkdir -p GeneratedFromXDR
+#	cp -u $@ GeneratedFromXDR
+#
+#GeneratedFromXDR/%.h : %.x
+#	$(RPCGEN) -h $< | sed 's/bool_t/bool/g'| sed 's/#include <rpc\/rpc\.h>//' > $@
+#	@mkdir -p GeneratedFromXDR
+#	cp -u $@ GeneratedFromXDR
+#
+#GeneratedFromXDR/%.cpp : %.x
+#	$(RPCGEN) -c $< | sed 's/bool_t/bool/g'| sed 's/~0/(u_int)~0/' | sed 's/register int32_t \*buf;//' > $@
+#	@mkdir -p GeneratedFromXDR
+#	cp -u $@ GeneratedFromXDR
+#
+#GeneratedFromXDR/%.hpp : %.x
+#	$(RPCGEN) -h $< | sed 's/bool_t/bool/g'| sed 's/#include <rpc\/rpc\.h>//'# > $@
+#	@mkdir -p GeneratedFromXDR
+#	cp -u $@ GeneratedFromXDR
+
+GeneratedFromXDR/%.cpp : %.x
+	$(XDRGEN) --xdr $<  > $@
+	@mkdir -p GeneratedFromXDR
+	cp -u $@ GeneratedFromXDR
+
+GeneratedFromXDR/%.hpp : %.x
+	$(RPCGEN) -h $< | sed 's/bool_t/bool/g'| sed 's/#include <rpc\/rpc\.h>//' > $@
+	@mkdir -p GeneratedFromXDR
+	cp -u $@ GeneratedFromXDR
+
+#
+# Linux
+#
+$(BUILD_DIR)/Linux/Release/Static/%.o : %.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Pic/%.o : %.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Static/%.o : %.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Pic/%.o : %.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Static/%.o : %.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Pic/%.o : %.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Static/%.o : %.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Pic/%.o : %.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(LINUX_CC) --fPIC c $(LINUX_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Static/%.o : $(BUILD_DIR)/Linux/Release/%.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Pic/%.o : $(BUILD_DIR)/Linux/Release/%.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Static/%.o : $(BUILD_DIR)/Linux/Debug/%.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Pic/%.o : $(BUILD_DIR)/Linux/Debug/%.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Static/%.o : $(BUILD_DIR)/Tcov/Debug/%.c
+	$(LINUX_CC) -c $(LINUX_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Pic/%.o : $(BUILD_DIR)/Tcov/Debug/%.c
+	$(LINUX_CC) -fPIC -c $(LINUX_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Static/%.o : %.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Pic/%.o : %.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Static/%.o : %.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Pic/%.o : %.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Static/%.o : %.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Pic/%.o : %.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Static/%.o : $(BUILD_DIR)/Linux/Release/%.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Release/Pic/%.o : $(BUILD_DIR)/Linux/Release/%.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Static/%.o : $(BUILD_DIR)/Linux/Debug/%.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Debug/Pic/%.o : $(BUILD_DIR)/Linux/Debug/%.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Static/%.o : $(BUILD_DIR)/Linux/Tcov/%.cpp
+	$(LINUX_CXX) -c $(LINUX_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Linux/Tcov/Pic/%.o : $(BUILD_DIR)/Linux/Tcov/%.cpp
+	$(LINUX_CXX) -fPIC -c $(LINUX_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(LINUX_CPPFLAGS) $(LINUX_CPPFLAGS.Tcov) $< -o $@
+
+$(LINUX_OBJECTS.Relase) : $(SOURCES.h) $(SOURCES.hpp)
+$(LINUX_OBJECTS.Debug) : $(SOURCES.h) $(SOURCES.hpp)
+$(LINUX_OBJECTS.Tcov) : $(SOURCES.h) $(SOURCES.hpp)
+
+#
+# W64
+#
+$(BUILD_DIR)/W64/Release/Static/%.o : %.c
+	$(W64_CC) -c $(W64_CFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Pic/%.o : %.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(W64_CC) -c $(W64_CFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Static/%.o : %.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Pic/%.o : %.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Static/%.o : %.c
+	$(W64_CC) -c $(W64_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Pic/%.o : %.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(W64_CC) -c $(W64_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Static/%.o : %.c
+	$(W64_CC) -c $(W64_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Pic/%.o : %.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(W64_CC) -c $(W64_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Static/%.o : %.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Pic/%.o : %.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Static/%.o : %.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Pic/%.o : %.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Static/%.o : $(BUILD_DIR)/W64/Release/%.c
+	$(W64_CC) -c $(W64_CFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Pic/%.o : $(BUILD_DIR)/W64/Release/%.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Static/%.o : $(BUILD_DIR)/W64/Release/%.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Release/Pic/%.o : $(BUILD_DIR)/W64/Release/%.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Static/%.o : $(BUILD_DIR)/W64/Debug/%.c
+	$(W64_CC) -c $(W64_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Pic/%.o : $(BUILD_DIR)/W64/Debug/%.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Static/%.o : $(BUILD_DIR)/W64/Tcov/%.c
+	$(W64_CC) -c $(W64_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Pic/%.o : $(BUILD_DIR)/W64/Tcov/%.c
+	$(W64_CC) -fPIC -c $(W64_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Static/%.o : $(BUILD_DIR)/W64/Debug/%.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Debug/Pic/%.o : $(BUILD_DIR)/W64/Debug/%.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Static/%.o : $(BUILD_DIR)/W64/Tcov/%.cpp
+	$(W64_CXX) -c $(W64_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/W64/Tcov/Pic/%.o : $(BUILD_DIR)/W64/Tcov/%.cpp
+	$(W64_CXX) -fPIC -c $(W64_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(W64_CPPFLAGS) $(W64_CPPFLAGS.Tcov) $< -o $@
+
+$(W64_OBJECTS.Relase) : $(SOURCES.h) $(SOURCES.hpp)
+$(W64_OBJECTS.Debug) : $(SOURCES.h) $(SOURCES.hpp)
+$(W64_OBJECTS.Tcov) : $(SOURCES.h) $(SOURCES.hpp)
+
+#
+# Android
+#
+$(BUILD_DIR)/Android/Release/Static/%.o : %.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Pic/%.o : %.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Static/%.o : %.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Pic/%.o : %.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Static/%.o : %.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Pic/%.o : %.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Static/%.o : $(BUILD_DIR)/Generated/%.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Pic/%.o : $(BUILD_DIR)/Generated/%.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Static/%.o : $(BUILD_DIR)/Android/Release/%.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Pic/%.o : $(BUILD_DIR)/Android/Release/%.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Static/%.o : $(BUILD_DIR)/Android/Debug/%.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Pic/%.o : $(BUILD_DIR)/Android/Debug/%.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Static/%.o : $(BUILD_DIR)/Android/Tcov/%.c
+	$(ANDROID_CC) -c $(ANDROID_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Pic/%.o : $(BUILD_DIR)/Android/Tcov/%.c
+	$(ANDROID_CC) -fPIC -c $(ANDROID_CFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Static/%.o : %.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Pic/%.o : %.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Static/%.o : %.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Pic/%.o : %.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Static/%.o : %.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Pic/%.o : %.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Static/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Pic/%.o : $(BUILD_DIR)/Generated/%.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Static/%.o : $(BUILD_DIR)/Android/Release/%.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Release/Pic/%.o : $(BUILD_DIR)/Android/Release/%.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Release) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Release) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Static/%.o : $(BUILD_DIR)/Android/Debug/%.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Debug/Pic/%.o : $(BUILD_DIR)/Android/Debug/%.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Debug) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Debug) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Static/%.o : $(BUILD_DIR)/Android/Tcov/%.cpp
+	$(ANDROID_CXX) -c $(ANDROID_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(BUILD_DIR)/Android/Tcov/Pic/%.o : $(BUILD_DIR)/Android/Tcov/%.cpp
+	$(ANDROID_CXX) -fPIC -c $(ANDROID_CXXFLAGS.Tcov) $(COMMON_CPPFLAGS) $(ANDROID_CPPFLAGS) $(ANDROID_CPPFLAGS.Tcov) $< -o $@
+
+$(ANDROID_OBJECTS.Relase) : $(SOURCES.h) $(SOURCES.hpp)
+$(ANDROID_OBJECTS.Debug) : $(SOURCES.h) $(SOURCES.hpp)
+$(ANDROID_OBJECTS.Tcov) : $(SOURCES.h) $(SOURCES.hpp)
+
+# Local makefiles can add dependices to 'all'
+LocalNeeds::
+
+RunTests::

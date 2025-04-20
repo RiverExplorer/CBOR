@@ -1,0 +1,7 @@
+<artwork type="asciiart">
+unsigned_integer = 'uint' width8 '_t'
+
+; Where the the value is a multiple of 8 only.
+;
+width8           = %d
+</artwork>

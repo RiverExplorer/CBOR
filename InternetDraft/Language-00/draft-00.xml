@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-model href="rfc7991bis.rnc"?>
+<!DOCTYPE rfc [
+  <!ENTITY nbsp    "&#160;">
+  <!ENTITY zwsp   "&#8203;">
+  <!ENTITY nbhy   "&#8209;">
+  <!ENTITY wj     "&#8288;">
+]>
+<!-- Copyright 2025 RiverExplorer LLC and Douglas Mark Royer -->
+<rfc
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+	category="info"
+  docName="draft-royer-cbor-language-00"
+  ipr="trust200902"
+  obsoletes=""
+  updates=""
+  submissionType="IETF"
+  xml:lang="en"
+  version="3"
+	tocInclude="true"
+	tocDepth="4"
+	sortRefs="true">
+  <front>
+    <title abbrev="CBOR Language">CBOR Language</title>
+    <seriesInfo name="Internet-Draft" value="draft-royer-cbor-language-00"/>
+   
+    <author fullname="Doug Royer" initials="DM" surname="Royer">
+      <organization>RiverExplorer LLC</organization>
+      <address>
+        <postal>
+          <!-- Reorder these if your country does things differently -->
+          <street>848 N. Rainbow Blvd #1120</street>
+          <city>Las Vegas</city>
+          <region>Nevada</region>
+          <code>89107</code>
+          <country>US</country>
+          <!-- Uses two letter country code -->
+        </postal>        
+        <phone>1+208-806-1358</phone>
+        <email>DouglasRoyer@gmail.com</email>  
+        <!-- Can have more than one <email> element -->
+        <uri>https://DougRoyer.US</uri>
+      </address>
+    </author>
+   
+    <date year="2025"/>
+    <area>General</area>
+    <workgroup>Internet Engineering Task Force</workgroup>
+    <keyword>CBOR</keyword>
+    <keyword>protocol</keyword>
+    <keyword>language</keyword>
+    <xi:include href="Abstract.xml"/>
+  </front>
+  <middle>
+    <xi:include href="RequirementsLanguage.xml"/>
+    <xi:include href="Introduction.xml"/>
+.so BasicTypes.xml
+.so Namespaces.xml
+.so Typedef.xml
+.so Enum.xml
+.so Structures.xml
+.so Unions.xml
+.so Program.xml
+<!--    <xi:include href="Commands.xml"/> -->
+		<xi:include href="IANA.xml"/>
+    <xi:include href="SecurityConsiderations.xml"/>
+    
+    <!-- NOTE: The Acknowledgements and Contributors sections are at the end of this template -->
+  </middle>
+
+  <back>
+    <references>
+      <name>References</name>
+      <references>
+        <name>Normative References</name>
+        
+        <xi:include href="References/reference.RFC.2119.xml"/>
+        <xi:include href="References/reference.RFC.8174.xml"/>
+        <xi:include href="References/reference.RFC.8949.xml"/>
+        <xi:include href="References/reference.POSIX.xml"/>
+      </references>
+ 
+      <references>
+        <name>Informative References</name>
+				<xi:include href="References/reference.cborgen.xml"/>
+				<xi:include href="References/reference.cborgendocs.xml"/>
+					<reference anchor="CBORImplementation" target="https://github.com/RiverExplorer/CBOR">
+					<front>
+						<title>CBORGEN Sample Implementation</title>
+						<author initials="D." surname="Royer" fullname="D. Royer"/>
+						<date year="2025"/>
+						<abstract>
+							<t>
+								A sample CBOR protocol compiler implantation.
+								<xref target="CBORImplementation"/>
+							</t>
+						</abstract>
+					</front>
+					</reference>
+      </references>
+    </references>
+
+		<xi:include href="ALL-ABNF.xml"/>
+		
+    <section anchor="Acknowledgements" numbered="false">
+      <!-- [REPLACE/DELETE] an Acknowledgements section is optional -->
+      <name>Acknowledgments</name>
+      <t></t>
+    </section>
+    
+    <section anchor="Contributors" numbered="false">
+      <!-- [REPLACE/DELETE] a Contributors section is optional -->
+      <name>Contributors</name>
+      <t>Thanks to all of the contributors. [REPLACE]</t>
+      <!-- [CHECK] it is optional to add a <contact> record for some or all contributors -->
+    </section>
+    
+ </back>
+</rfc>

@@ -1,0 +1,11 @@
+<section anchor="Structures">
+	<name>Structues</name>
+	<t>
+		A struct is a way to encapsulate a related
+		set of variables.
+	</t>
+	<t>
+		Struct ABNF:
+	</t>
+.so ABNF/struct.abnf
+</section>

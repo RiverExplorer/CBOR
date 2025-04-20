@@ -1,0 +1,22 @@
+<reference anchor="POSIX" target="https://ieeexplore.ieee.org/servlet/opac?punumber=10555527">
+  <front>
+    <title>1003.1-2024 - IEEE/Open Group Standard for Information Technology--Portable Operating System Interface (POSIX™) Base Specifications</title>
+    <author fullname="IEEE" initials="" surname="IEEE"/>
+    <date month="June" year="2024"/>
+    <abstract>
+			<t>
+				POSIX.1-2024 is simultaneously IEEE Std 1003.1™-2024 and
+				The Open Group Standard Base Specifications, Issue 8. POSIX.1-2024
+				defines a standard operating system interface and environment,
+				including a command interpreter (or “shell”), and common utility
+				programs to support applications portability at the source code level.
+				POSIX.1-2024 is intended to be used by both application developers
+				and system implementors and comprises four major components
+				(each in an associated volume): --General terms, concepts, and
+				interfaces common to all volumes of this standard, including
+				utility conventions and C-language header definitions, are
+				included in the Base Definitions
+			</t>
+    </abstract>
+  </front>
+</reference>

@@ -1,0 +1,17 @@
+<!-- Copyright 2025 RiverExplorer LLC and Douglas Mark Royer -->
+
+<abstract>
+<t>
+	CBOR is a wonderful over the wire format for data.
+	This specification is for a CBOR protocol language.
+	And the code to send and receive this over the wire
+	protocol currently has to be done by hand without
+	tools to coordinate and aid in the development.
+</t>
+<t>
+	This specification defines a protocol definition language.
+	This language and the sample implementation allowes a
+	developer to define the application layer objects
+	that can be translated into and from a CBOR data stream.
+</t>
+</abstract>

@@ -1,0 +1,18 @@
+<reference anchor="cborgendocs" target="https://github.com/RiverExplorer/CBOR">
+  <front>
+    <title>cborgen Protocol Compiler</title>
+    <author fullname="Doug Royer" initials="DM" surname="Royer"/>
+    <date month="April" year="2025"/>
+    <abstract>
+	<t>
+	The cborgen protocol compiler accepts a remote program interface
+	definition written in draft-royer-cbor-language-xx.
+	which is similar to the C++ language.
+	</t>
+	<t>
+	cborgen is available at
+	<eref target="https://github.com/RiverExplorer/CBOR"/>
+	</t>
+    </abstract>
+  </front>
+</reference>

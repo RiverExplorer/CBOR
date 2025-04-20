@@ -1,0 +1,124 @@
+<section anchor="Namespaces">
+	<name>Namespaces</name>
+	<t>
+		With large protocols it can be difficult to
+		make sure that names of items are unique.
+		Namespace allows groups of names to be encapsulated
+		and identified without regard to the names of
+		items in other namespaces or globally.
+	</t>
+	<t>
+		For example, a protocol might have a unique
+		identifier for the sequence of an item and
+		declare a type called UID.
+	</t>
+	<t>
+		Another set of exchanges might be to tranfer
+		sets of data, each with a unique identifier
+		and declare a type called UID.
+	</t>
+	<t>
+		In this simple example, it is concevable that
+		you just make sure that you do not use both
+		in the same set.
+		However with large projects cross identifier
+		errors can happen and can be difficult to
+		track down.
+	</t>
+	<t>
+		Namespace solve this problem by wrapping objects,
+		or sets of object in a 'namespace' type.
+		Here is a simple example:
+	</t>
+	<artwork type="asciiart">
+// Declare a type called UID that is
+// a 64-bit unsigned integer.
+// In this scope is a sequence number.
+//
+typedef unint64_t UID;
+		
+struct Packet
+{
+  UID Sequence;
+  Blob ABlobOdData; // Blob not defined in this example.
+};
+	</artwork>
+	<t>
+		And in another definition file you might have defined this:
+	</t>
+	<artwork type="asciiart">
+// Declare a type called UID that is
+// a 64-bit unsigned integer.
+// In this scope, the UID identifies a set of data (Blob2).
+//
+typedef unint64_t UID;
+		
+struct EnumeratedItems
+{
+  UID ItemIdentifier;
+	Blob2 TheItemData;// Blob2 not defined in this example.
+};
+	</artwork>
+	<t>
+		And when you compile your protocol you get an
+		error that you defined UID twice (or more).
+	</t>
+	<t>
+		The solution could be to rename one of them.
+		Or to use namespaces:
+	</t>
+	<artwork type="asciiart">
+namespace Packets
+{
+  // Declare a type called UID that is
+  // a 64-bit unsigned integer.
+  // In this scope is a sequence number.
+  //
+  typedef unint64_t UID;
+		
+  struct Packet
+  {
+    UID Sequence;
+    Blob ABlobOdData; // Blob not defined in this example.
+  };
+} // End of namespace /Packets'.
+	
+namespace ItemList
+{
+  // Declare a type called UID that is
+  // a 64-bit unsigned integer.
+  // In this scope, the UID identifies a set of data (Blob2).
+  //
+  typedef unint64_t UID;
+		
+  struct EnumeratedItems
+  {
+    UID ItemIdentifie;
+    Blob2 TheItemData;// Blob2 not defined in this example.
+  };
+}
+	</artwork>
+	<t>
+		When in the implementation where you need
+		to access the public identifiers from other namespaces
+		they could be identified by using their full scope.
+		In C++ this could look like:
+	</t>
+	<artwork type="asciiart">
+ItemList::EnumeratedItems Items;
+Packets::Packet           APacket
+
+ItemList::UID             ItemUID;
+Packets::UID              PacketUID;
+	</artwork>
+	<t>
+		And in C# it would look like:
+	</t>
+	<artwork type="asciiart">
+ItemList.EnumeratedItems Items;
+Packets.Packet           APacket;
+
+ItemList.UID             ItemUID;
+Packets.UID              PacketUID;
+	</artwork>
+</section>

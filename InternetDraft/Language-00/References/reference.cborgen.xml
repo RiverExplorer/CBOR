@@ -1,0 +1,13 @@
+<reference anchor="CBORgenOpenSource" target="https://github.com/RiverExplorer/CBOR">
+  <front>
+    <title>cborgen Open Source Tool</title>
+    <author fullname="Doug Royer" initials="DM" surname="Royer"/>
+    <date month="April" year="1983"/>
+    <abstract>
+	<t>
+	cborgen is an interface generator pre-compiler generating code compliant
+with CBOR wire protocol. It uses an interface definition file to create client and server stubs in C.
+	</t>
+    </abstract>
+  </front>
+</reference>

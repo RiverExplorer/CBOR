@@ -1,0 +1,22 @@
+/**
+ * Project: Phoenix
+ * Time-stamp: <2025-03-24 14:02:35 doug>
+ *
+ * @file FILL-IN
+ * @author Douglas Mark Royer
+ * @date 24-FEB-2025
+ * 
+ * @Copyright(C) 2025 by Douglas Mark Royer (A.K.A. RiverExplorer)
+ * 
+ * Licensed under the MIT License. See LICENSE file
+ * or https://opensource.org/licenses/MIT for details.
+ * 
+ * RiverExplorer is a trademark of Douglas Mark Royer
+ *
+ * Phoenix is a MIME Transport Protocol (MTP).
+ * Named Phoenix because it is a risen version version of the
+ * Lemonade project if the late 1990's.
+ *
+ * Unless otherwise specified, all of this code is original
+ * code by the author.
+ */

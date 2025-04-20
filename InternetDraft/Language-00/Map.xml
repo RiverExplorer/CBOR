@@ -1,0 +1,210 @@
+<section anchor="MapAndMultimap">
+	<name>Maps and MultiMaps</name>
+	<t>
+		A map is a key and value pair, all keys in a map are unique.
+		A multimap is a map where duplicate keys may exist.
+	</t>
+	<t>
+		A map is a CBOR major type 5 as defined
+		in <xref target="RFC8949">CBOR</xref>.
+	</t>
+	<t>
+		CBOR mandates that the keys be in bytewise lexicographic order
+		<xref target="RFC8949" section="4.2.1"/>.
+		Some application keys can be objects, and not simple integer
+		or string values, making objects sorting order not easily
+		determinable.
+		Two things needed to be added to an object to make
+		it a sortable key.
+	</t>
+	<t>
+		(1) The object defined using this language
+		must be marked with the '[sortable]' attribute.
+	</t>
+	<t>
+		(2) A method must be defined in the object named 'Compare'
+		that will be implemented by the implementer to
+		determine the sorting order.
+	</t>
+	<t>
+		This Compare method returns -1 when the object
+		is considered less than the Other object.
+		This Compare method returns 0 when the object
+		is considered equal to the Other object.
+		This Compare method returns 1 when the object
+		is considered greater than the Other object.
+	</t>
+	<t>
+		Here is an example of two objects that form
+		one key (Outer):
+	</t>
+	<artwork type="asciiart">
+		<![CDATA[
+[sortable]
+struct InnerObject
+{
+  string   Name;
+						 
+  uint8_t  Age;
+
+  // A [sortable] object must have a Compare() method.
+  //
+  // The implementations and applications that use
+  // this object must agree on how this comparison
+  // is done.
+  //
+  int Compare(InnterObject Other);
+};
+
+[sortable]
+struct OuterObject
+{
+  uint64_t    UniqueID;
+
+  InnerObject NameAge;
+
+  // In this example, this Compare method also
+  // calls the NameAge.Compare() to determine
+  // the sorting order. However in another case
+  // it is possible it can be compared with just the
+  // UniqueID.
+  //
+  // The implementations and applications that use
+  // this object must agree on how this comparison
+  // is done.
+  //
+  int Compare(OuterObject Other);
+};
+
+// And here the complex OuterObject is being used
+// as a map key.
+//
+map<OuterObject,uint8_t> UsesComplexKey;
+		]]>
+	</artwork>
+	<t>
+		Each unique Compare() method defined, must be implemented by
+		the implementer.
+		One for each object or variable marked as '[sortable]'.
+	</t>
+	<t>
+		When an object it marked as sortable, and it contains
+		one or more objects that are marked as sortable, then
+		the outer most object's Compare() method result
+		is the one that will be used to determine the
+		sorting order.
+		Which may or might not call	the other Compare() methods
+		for any included objects.
+		How they are compared is part the the using application
+		design.
+	</t>
+
+	<section anchor="Maps">
+		<name>Map</name>
+		<t>
+			The CBOR language map data type has two
+			arguments, the key type, and the value type.
+			And is defined in ABNF as:
+		</t>
+.so ABNF/map.abnf
+		<t>
+			Here are examples a map in the CBOR language:
+		</t>
+		<artwork type="asciiart">
+			<![CDATA[
+// The key is an 8-bit integer.
+// The value is a 32-bit integer.
+//					
+map<uint8_t,int32_t>     VariableName1;
+
+// The key is an 8-bit integer.
+// The value is a string with at least one character.
+//
+map<uint8_t,string<1,*>> VariableName2;
+
+// Two example objects.
+//
+struct Object1
+{
+  int32_t   Collected[45];
+  float16_t Values[45];
+};
+
+struct Object2
+{
+  Object1   CurrentItems<>;
+  Object1   History<>;
+};
+
+// A more complex map.
+//
+map<Object1,Object2>   SomeVariableName3;
+			]]>
+		</artwork>
+	</section>
+
+	<section anchor="Multimaps">
+		<name>Multimap</name>
+		<t>
+			A multimap allows for duplicate keys.
+		</t>
+		<t>
+			When an application has a multimap that needs to be
+			transmitted via CBOR, it sends a map, except
+			the value becomes an array of objects, all that
+			have the same key.
+			One key sent, all of the objects with that key
+			sent as an array, as the value to that key.
+		</t>
+		<t>
+			Here is the ABNF definition of a multimap in the CBOR language:
+		</t>
+.so ABNF/multimap.abnf
+		<t>
+			A multimap is a map that allows multiple of the same keys.
+			Here is an example of a multimap of a graphic object
+			being duplicated at multiple positions in a 3 dimensional
+			space.
+		</t>
+		<t>
+			The multimap uses the same sorting as described in
+			<xref target="Maps">Maps</xref>
+		</t>
+		<artwork type="asciiart">
+			<![CDATA[
+struct Vector3
+{
+  float32_t X;
+  float32_t Y;
+  float32_t Z;
+};
+
+// An example of a multimap where the key is the identifier of
+// a specific graphic object type, with an ID that is an
+// unsigned 32-bit integer.
+//
+// And the value is its position.
+//
+// Any object may have multiple instances of the same graphic
+// object, all with the same ID, and each with its position
+// at a different location.
+//
+multimap<uint32_t,Vector3> Instances;
+			]]>
+		</artwork>
+		<t>
+			This example would be transmitted as one CBOR map.
+			There would be one map key for each unique uint32_t
+			key.
+			And Each key would have an array of one or more
+			Vector3 objects.
+		</t>
+		<t>
+			The protocol compiler would implement; for each
+			unique multimap, a method to convert and encode a computer
+			language multimap into a CBOR map.
+			And a method to decode and convert the map back
+			into a multimap.
+		</t>
+	</section>
+</section>

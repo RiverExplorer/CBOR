@@ -1,0 +1,728 @@
+<section anchor="Identifiers">
+	<name>Identifiers and Variables</name>
+	<t>
+		Each item encoded and decoded in an application
+		will be paced into a memory location of the application
+		at run time.
+		These places are named with identifiers.
+	</t>
+	<t>
+		And the generic name for this kind of identifier is 'variable'.
+		And a variable may contain any kind of data
+		the applications needs.
+		These memory locations are named by the application
+		developer and are called variables.
+	</t>
+	<t>
+		Another usage of an identifier is to define
+		a new data type to be used by the application.
+	</t>
+	<t>
+		All variables have a data type (integer, float, ...)
+		and are named in this language specification.
+		And there are user defined data types that
+		build onto the built in data types.
+	</t>
+	<section anchor="IdentifierNaming">
+		<name>How to name a variable or identifier</name>
+		<t>
+			An identifier can be public for any code
+			to use.
+			This is in the 'public' scope.
+		</t>
+		<t>
+			Or they can be internal to the
+			objects being described.
+			This is in the 'internal' scope.
+		</t>
+		<t>
+			Or they can only be accessible within
+			a 'namespace'.
+			This is in the 'namespace' scope.
+			See <xref target="Namespaces">Namespaces</xref>.
+		</t>
+
+		<section anchor="PublicScope">
+			<name>Publicly scoped Identifiers</name>
+			<t>
+				Public identifiers names must start with
+				a letter from the UTF-8 set: a-z or A-Z.
+				And followed by zero or more from the set: a-z, A-Z,
+				0-9, and underscore '_'.
+				Shown here as a POSIX regular expression for
+				an identifier in the public scope:
+			</t>
+			<artwork type="asciiart">
+identifier = [a-zA-Z]([a-zA-Z0-9_])*
+			</artwork>
+			<t>
+				In the example <xref target="ex1"/>, Speed, TimeNow,
+				Time9,  Travel_Time, Collection, FirstItem
+				and AValue are public identifiers.
+				As is the method name AMethodThatDoesSomething.
+			</t>
+			<t>
+				int32_t, uint64_t, and float32_t
+				are built in data types.
+			</t>
+			<t>
+				Collection is a public identifier
+				that is defining the name of a new user
+				defined data type.
+			</t>
+			<t>
+				Examples:
+			</t>
+			<figure anchor="ex1">
+				<artwork type="asciiart">
+int32_t Speed;         // Okay public, follows the rules.
+
+uint64_t TimeNow;      // Okay public, follows the rules.
+
+float32_t Time9;       // Okay public, follows the rules.
+
+uint64_t _Travel_Time   // Okay, follows the rules.
+
+struct Collection      // 'Collection' is valid, and public.
+{
+  int8_t    FirstItem; // Okay, value is public.
+
+  float32_t AValue;    // Okay, value is public.
+
+  // A public method that has access to all variables.
+  //
+  void AMethodThatDoesSomething();
+};
+				</artwork>
+			</figure>
+		</section>
+
+		<section anchor="InternalScope">
+			<name>Internal Scoped Identifiers</name>
+			<t>
+				An internally scoped identifier is an identifier that
+				starts with	an underscore '_'.
+			</t>
+			<t>
+				Internally scoped identifiers can only be accessed
+				from within the object they are defined in.
+				They are often helper variables or methods.
+			</t>
+			<t>
+				Internally scoped identifiers when not in
+				a namespace and not in a struct, are only accessible
+				within the generated code.
+			</t>
+			<t>
+				Internally scoped identifiers in a namespace
+				and not in a struct are namespace scoped.
+				And are accessible anywhere in the same namespace.
+			</t>
+			<t>
+				Internally scoped identifiers inside of
+				a struct, are only accessible within the struct.
+			</t>
+			<t>
+				The ABNF for an internal identifier:
+			</t>
+.so ABNF/internal_identifier.abnf
+			<t>
+				Examples:
+			</t>
+			<artwork type="asciiart">
+// Okay Internal, starts with an underscore.
+// _NextSequenceNumber can only be accessed in
+// the generated code.
+//
+uint64_t _NextSequenceNumber;
+
+// A public identifier, that has internal members.
+//
+struct Collection 
+{
+  int8_t    ADevice; // Okay, value is public.
+
+  float32_t AValue;  // Okay, value is public.
+
+  int32_t   _AName;  // Okay, value is only
+                     // available inside this object.
+
+  // A public method that has access to all variables
+  // including internal ones (_AName).
+  // And only available inside the protocol implementation.
+	//
+  void AMethod();
+
+  // An internal method that has access to all variables
+  // including internal ones (_AName).
+  // This method is only available to be called from within
+  // in the Collection object.
+  //
+  void _AnotherMethod();
+};
+			</artwork>
+			<t>
+				See <xref target="Structures"/> for struct details.
+			</t>
+		</section>
+		<section anchor="NamespaceScope">
+			<name>Namespace Scoped Identifiers</name>
+			<t>
+				A namespace scoped identifier is an identifier that
+				starts with	an underscore '_'.
+				And exists inside of a 'namespace' and
+				not within a struct.
+				See <xref target="Namespaces"/> to understand
+				namespaces and <xref target="Structures">Structs</xref>
+				to understand 'struct'.
+			</t>
+			<t>
+				Namespace scoped identifiers can only be accessed
+				from within the same namespace they are defined in.
+				They are often variables and methods that
+				aid in the cross coordination of objects within
+				the namespace.
+			</t>
+			<ul>
+				<li>
+					An identifier defined inside of a struct
+					that starts with an underscore '_' is
+					an identifier that is only known within the struct
+					and is an internally scoped identifier.
+				</li>
+				<li>
+					An identifier that is in a namespace, and not
+					within a struct is a namespace scoped identifier.
+				</li>
+			</ul>
+			<artwork type="asciiart">
+namespace_identifier = '_' identifier
+			</artwork>
+			<t>
+				Examples:
+			</t>
+			<artwork type="asciiart">
+// A public Namespace called DailyData
+//
+namespace DailyData
+{
+
+  // This is a namespace scoped identifier.
+  // It is in a namespace scoped, and not in a struct.
+  //
+  uint64_t _TotalBytesSent; 
+
+  // Okay another namespace scoped identifier.
+  //
+  uint64_t _Travel_Time;
+
+  // This struct is inside of a namespace.
+  // And its identifier starts with an underscore '_'.
+  // So _Summary is a namespace identifiers.
+  // Only code in this same namespace has access
+  // to this object type.
+  //
+  struct _Summary
+  {
+    int8_t    FirstItem; // Okay, value is public.
+
+    float32_t AValue;    // Okay, value is public.
+
+    int32_t   _AName;    // Okay, value is only
+                         // available inside this struct.
+
+    // A public method that has access to all variables
+    // including internal ones (_AName).
+    // And only available inside this struct
+    // and namespace.
+    //
+    void AMethod();
+
+    // An internal method that has access to all variables
+    // including internal ones (_AName).
+    // This method is only available to be called from within
+    // in the _Summary object.
+    //
+    void _AnotherMethod();
+};
+			</artwork>
+			<t>
+				See <xref target="Structures"/> for struct details.
+			</t>
+		</section>
+	</section>
+</section>
+
+<section anchor="VariableAndArrays">
+	<name>Variables and Arrays</name>
+	<t>
+		Variables may be simple, fixed size array, or variable sized array:
+	</t>
+	<section anchor="SimpleVariables">
+		<name>Simple Variables</name>
+		<t>
+			A simple variable is one that is not a fixed
+			or variable sized array. Examples:
+		</t>
+		<t>
+			NOTE:
+			A 'string' is always an array and not a simple variable.
+		</t>
+		<t>
+			Examples:
+		</t>
+		<artwork type="asciiart">
+			<![CDATA[
+uint8_t  SimpleUnsignedInteger;
+
+float32_t  Simple32BitFloat;
+
+map<uint8_t,AnObjectType>; SimpleMap;
+
+multimap<uint8_t,AnObjectType> SimpleMultiMap;
+]]>
+		</artwork>
+	</section>
+		
+	<section anchor="FixedVariables">
+		<name>Fixed Size Array '[]'</name>
+		<t>
+			A fixed size array variable has a size enclosed
+			in square brackets '[]'. Examples:
+		</t>
+		<t>
+			Examples:
+		</t>
+		<artwork type="asciiart">
+			<![CDATA[
+uint8_t  FixedUnsignedInteger[30];
+
+float32_t  Fixed32BitFloat[12];
+
+map<uint8_t,AnObjectType>; FixedMap[34];
+
+multimap<uint8_t,AnObjectType> FixedMultiMap[16];
+
+string LargeString[2048];
+			]]>
+		</artwork>
+	</section>
+		
+	<section anchor="VariableArrays">
+		<name>Variable Size Array '&lt;Max&gt;'</name>
+		<t>
+			A variable array size array has a minimum size.
+			The default minimum size is zero.
+		</t>
+		<t>
+			A variable array has a maximum size.
+			The default maximum size is unlimited.
+		</t>
+		<t>
+			An variable array size is specified in one of 3 ways:
+		</t>
+		<section>
+			<name>Variable Size Array With Minimum and Maximum Size</name>
+			<dl newline="true">
+				<dt>&lt;Min,Max&gt;</dt>
+				<dd>
+					<t>
+						Where:
+					</t>
+					<dl>
+						<dt>Min</dt>
+						<dd>
+							Is the minimum size for the array.
+							The default minimum is zero.
+						</dd>
+						<dt>Max</dt>
+						<dd>
+							Is the maximum size of the array.
+							The default minimum size is unlimited.
+							Unlimited may also be specified as '*'.
+						</dd>
+					</dl>
+					<t>
+						Examples:
+					</t>
+					<artwork type="asciiart">
+						<![CDATA[
+// An array of 5 to 14 int8_t data elements.
+//										 
+int8_t VariableName<5,14>;
+										 
+// An array of 3 to 16 int8_t data elements.
+//										 
+float32_t FloatArray<3,16>;
+
+// An string of 5 to 42 characters.
+//										 
+string StringVariable<5,42>;
+
+// An string of 8 to unlimited characters.
+//										 
+string AString<8,*>;
+						]]>
+					</artwork>
+				</dd>
+			</dl>
+		</section>
+		<section>
+			<name>Variable Size Array With Maximum Size</name>
+			<dl>
+				<dt>&lt;Max&gt;</dt>
+				<dd>
+					<t>
+						A shorthand for &lt;0,Max&gt;.
+						Specifies a zero to Max sized array.
+					</t>
+					<t>
+						Example:
+					</t>
+					<artwork type="asciiart">
+						<![CDATA[
+// An array of size zero to 17 in length.
+//										 
+string VariableName<17>;
+						]]>
+					</artwork>
+				</dd>
+			</dl>
+		</section>
+		<section>
+			<name>Variable Size Array With Default Size</name>
+			<dl newline="true">
+				<dt>&lt;&gt;</dt>
+				<dd>
+					<t>
+						A shorthand for &lt;0,*&gt;.
+					</t>
+					<t>
+						Example:
+					</t>
+					<artwork type="asciiart">
+						<![CDATA[
+uint64_t VariableName<>;
+						]]>
+					</artwork>
+				</dd>
+			</dl>
+		</section>
+		<section>
+			<name>Variable Array Examples</name>
+			<t>
+				Examples:
+			</t>
+			<artwork type="asciiart">
+				<![CDATA[
+// A variable array that holds no more than
+// 30 uint8_t items.
+//								 
+uint8_t  VariableUnsignedInteger1<30>;
+
+// A variable array of unlimited uint8_t items.
+//
+uint8_t  VariableUnsignedInteger2<>;
+
+// A variable array of unlimited uint8_t items.
+//
+uint8_t  VariableUnsignedInteger3<*>;
+
+// A variable array that hold up to 12 float32_t items.
+//
+float32_t  Variable32BitFloat<12>;
+
+// A more complex example.
+//
+// A variable array that holds up to 34 key/value maps.
+//
+// Each map has keys of type of uint8_t and values
+// of each map are of type AnObjectType.
+//
+// Each of the up to 34 maps, must have a unique key to itself
+// but not to the other maps.
+//
+map<uint8_t,AnObjectType> VariableMap<34>;
+
+// A variable array of multimaps.
+//
+// Each multimaps has keys of type uin8_t and
+// each multimap has values of type OtherObjectType.
+//
+// The array holds up to 16 of these multimaps.
+// Each multimap may have duplicate keys.
+//
+multimap<uint8_t,OtherObjectType> VariableMultiMap<16>;
+				]]>
+			</artwork>
+		</section>
+	</section>
+</section>
+
+<section anchor="PredefinedDataTypes">
+	<name>CBOR Language Predefined Data Types</name>
+	<t>
+		Here is a summary of all of the predefined data types:
+	</t>
+	<t>
+		This protocol language closely resembles the CBOR data model.
+		The following data types are defined in the language.
+		Each of these basic data types have a correlating
+		CBOR data type.
+		When possible the data types used in this language
+		are the same as their <xref target="POSIX"/> counterpart.
+	</t>
+	<t>
+		Some computer languages specify the size of integers.
+		With this language, an implementation still specifies
+		the size and the implementation reduces	the lesser over
+		the wire size	when possible.
+		And this implementation will expand them as needed.
+	</t>
+	<t>
+		For example, the application may require a 64-unsigned
+		integer (uint64_t) named CustomerCount.
+		And assume only four (4) customers exists.
+		So the implementation sends a one (1) octet CBOR
+		value over the wire, in hex it would be 0x04.
+	</t>
+	<t>
+		That exemplifies the unique data models of the
+		the application	data size and the CBOR over the wire data size.
+		It is the jobs of a protocol compiler to translate
+		the received 0x01 into an uint64_t as described
+		in this example. And to notice that a 64-bit value,
+		depending on the size of its value, could be
+		sent in as few as one octet to as many as ten.
+	</t>
+.so Integers.xml
+
+	<section anchor="FloatDef">
+		<name>Float</name>
+		<t>
+			ABNF:
+		</t>
+.so ABNF/float.abnf
+		<t>
+			Examples:
+		</t>
+		<artwork type="asciiart">
+			<![CDATA[
+float16_t Size;
+
+float32_t BiggerSize;
+			]]>
+		</artwork>
+		<t>
+			Floating point numbers are similar to unsigned integers
+			except they are prefixed with 'float' and not 'uint'.
+		</t>
+		<dl>
+			<dt>float16_t</dt>
+			<dd>
+				A 16-bit floating point number.
+				And the corresponding CBOR data type is float.
+			</dd>
+			<dt>float32_t</dt>
+			<dd>
+				A 32-bit floating point number.
+				And the corresponding CBOR data type is float.
+			</dd>
+			<dt>float64_t</dt>
+			<dd>
+				A 64-bit floating point number.
+				And the corresponding CBOR data type is float.
+			</dd>
+			<dt>float96_t</dt>
+			<dd>
+				A 96-bit floating point number.
+				On some systems this is a long double.
+				And the corresponding CBOR data type is bigfloat.
+			</dd>
+			<dt>float128_t</dt>
+			<dd>
+				A 128-bit floating point number.
+				On some systems this is a long double.
+				And the corresponding CBOR data type is bigfloat.
+			</dd>
+			<dt>... floatLL_t ...</dt>
+			<dd>
+				Assuming LL is more than 64 and a multiple of 8.
+				An LL-bits floating point number.
+				And the corresponding CBOR data type is bigfloat.
+			</dd>
+		</dl>
+	</section>
+	<section anchor="StringDef">
+		<name>String</name>
+		<dl>
+			<dt>string</dt>
+			<dd>
+				<t>
+					A string. A
+					A variable array of characters.
+				</t>
+				<t>Examples:</t>
+				<artwork type="asciiart">
+					<![CDATA[
+// A string that has no less than 1
+// and no more than 30 characters.
+//
+string AStringVariableName<1,30>;
+
+// A string that has no less than 4
+// and no limit on the total size.
+//
+string OtherString<4,*>;
+
+// A string that has exactly 40 characters.
+//
+string OtherString[40];
+					]]>
+				</artwork>
+			</dd>
+		</dl>
+		<t>
+			ABNF:
+		</t>
+.so ABNF/string.abnf
+		<t>
+			See <xref target="TextStrings"/> for details.
+		</t>
+	</section>
+.so Map.xml
+</section>
+
+<section anchor="Arrays">
+		<name>Arrays</name>
+		<t>
+			Arrays can be fixed length, or variable length.
+			Fixed length arrays have all of their elements
+			transmitted each time, thus each element must contain
+			a valid value.
+		</t>
+		<section anchor="FixedArrays">
+			<name>Fixed Length Arrays</name>
+			<t>
+				Fixed length arrays have their size bounded by square brackets.
+				Here are some examples:
+			</t>
+			<t>
+				Variable Length Array Examples.
+			</t>
+			<artwork type="asciiart">
+				<![CDATA[
+// An array that consists of three 32 bit floating
+// point numbers.
+//
+float32_t Transform3D[3];
+
+// An array that contains 1024 8-bit signed integer values.
+//
+int8_t Samples[1024];
+					]]>
+			</artwork>
+		</section>
+		<section anchor="VariableArraysDef">
+			<name>Variable Length Arrays</name>
+			<t>
+				Variable length arrays can have a variable number
+				of elements.
+				You can specify the minimum number of elements, the
+				default is zero (0).
+				You can specify the maximum number of elements, the
+				default is an unlimited amount of entries.
+				An unlimited maximum value is indicated with the '*' symbol.
+			</t>
+			<t>
+				Fixed length arrays have their size bounded by angle brackets.
+				Here are some examples:
+			</t>
+			<t>
+				Variable Length Array Examples:
+			</t>
+			<artwork type="asciiart">
+				<![CDATA[
+// A variable length array that can hold zero,
+// or up to an unlimited number of 32 bit
+// floating point entries.
+// The minimum value is empty and the maximum value is empty.
+//
+float32_t Samples<>;<
+
+// A variable length array that can hold zero,
+// or up to 100 32-bit unsigned entries.
+//
+uint32_t DistanceMarks<0,100>;
+
+// A variable length array that must contain at least 2
+// 32-bit floating point numbers and no more than
+// 128 entries.
+//
+float32_t Trajectory<2,128>;
+
+// A variable length array that must contain at least 2
+// 32-bit floating point numbers and an unlimited
+// number of entries.
+//
+float32_t Variation<2,*>;
+					]]>
+			</artwork>
+		</section>
+		<section anchor="TextStrings">
+			<name>Text Strings</name>
+			<t>
+				A text string is a form of array.
+				It can be fixed length, or variable length.
+				It is signified with the data type 'string'
+				as shown in these examples:
+			</t>
+			<t>
+				A CBOR language string is the same as a CBOR
+				major type 2 text string.
+				With the ability to specify its size to the application.
+			</t>
+			<t>
+				String Examples:
+			</t>
+			<artwork type="asciiart">
+				<![CDATA[
+// A UTF-8 string that is always 20 octets in length.
+// Any unused characters are at the higher offset end
+// and padded with an 8-bit zero (0x00).
+//
+string Path[20];
+
+// A string that contains zero or more UTF-8 characters.
+//
+string Name<>;
+
+// A string that contains zero or up to 20
+// UTF-8 characters.
+//
+string Address<0,20>;
+
+// A string that contains at least 2 and up to 30
+// UTF-8 characters.
+//
+string City<2,30>;
+
+// A string that contains at least 8 and with
+// no limit on the number of UTF-8 characters.
+//
+string Notes<8,*>;
+					]]>
+			</artwork>
+		</section>
+	</section>
+
+<section>
+	<name>Declaring Variables</name>
+	<t>
+		A variable has a type and a name.
+		And the name can have some attributes.
+		The ABNF for a variable is:
+	</t>
+.so ABNF/VariableDeclaration.abnf
+</section>
+

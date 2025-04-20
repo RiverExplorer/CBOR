@@ -1,0 +1,14 @@
+<artwork type="asciiart">
+comment            = block-comment / ToEndOfLineComment
+
+block-comment      = '/*' NonEndText '*/'
+
+NonEndText         = any UTF-8 characters allowed in the file
+                     except the sequence '*/'.
+
+; The comment text is to the end of the line.
+;										 
+ToEndOfLineComment = '//'
+
+</artwork>
+

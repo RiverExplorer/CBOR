@@ -1,0 +1,10 @@
+<section>
+	<name>Security Considerations</name>
+	<t>
+		Robust digital certificate control.
+		Especially with AUTHCERT_TLS.
+	</t>
+	<t>
+		MUCH MORE TODO ...
+	</t>
+</section>

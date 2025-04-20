@@ -1,0 +1,8 @@
+<artwork type="asciiart">
+float = 'float' width8f '_t'
+
+; Where the value is at least 16 and is a multiple of 8.
+;
+width8f = %d
+</artwork>
+

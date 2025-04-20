@@ -1,0 +1,114 @@
+<section anchor="TypedefDef">
+	<name>User Type Definitions</name>
+	<t>
+		A typedef is both a shorthand way of specifying a data type.
+		And it allows for the identification of the intended
+		usage of otherwise ambiguous data type usage.
+		This can also help find coding errors.
+	</t>
+	<t>
+		The typedef and its concept are the same as they
+		are in C/C++.
+	</t>
+	<t>
+		The ABNF for typedef:
+	</t>
+.so ABNF/typedef.abnf
+	<t>
+		In <xref target="td-1"/> and <xref target="td-2"/> there is an
+		error as both the Sequence and Command are different sizes.
+		If one definition file has:
+	</t>
+	<figure anchor="td-1">
+		<artwork>
+			<![CDATA[
+struct Packet
+{
+  // A map of Sequence to command.
+  //
+  map<uint32_t,uint32_t> History;
+  ...
+};
+			]]>
+		</artwork>
+	</figure>
+	<t>
+		And a second file has a definition for a method to
+		use the packet data:
+	</t>
+	<figure anchor="td-2">
+		<artwork>
+			<![CDATA[
+// On many systems this would compile
+// because the 'add' line would not know
+// that Sequence and command were too small as
+// the compilers automatically upcast to larger sizes.
+// Only later at runtime when Sequence or Command exceeded
+// the size of uint16_t might the errors be caught.
+//
+void ProcessPacket(uint16_t Sequence, uint16_t Command)
+{
+  ...
+  // Error - should be (Seq, Cmd)
+  // However it would compile as the compiler
+  // only sees that they are both unsigned integers.
+  // (NOTE: map does not have a '.add', just an demonstration).
+  //
+  History.add(Cmd, Seq); 
+  ...
+}
+			]]>
+		</artwork>
+	</figure>
+	<t>
+		If typedefs had been used it would catch
+		that error and also make it easier to read:
+	</t>
+	<figure anchor="td-3">
+		<artwork>
+			<![CDATA[
+// Create a data type called 'PacketSequence'
+// 
+typdef uint32_t PacketSequence;
+
+// Create a data type called 'PacketCommand'
+// 
+typedef uint32_t PacketCommand;
+
+// Create a data type called 'SequenceHistory'
+//
+typedef map<PacketSequence,PacketCommand> SequenceHistory;
+
+struct Packet
+{
+  // A map of Sequence to command.
+  //
+  SequenceHistory History;
+  ...
+};
+			]]>
+		</artwork>
+	</figure>
+	<t>
+		And if the second usage had been defined as:
+	</t>
+	<figure anchor="td-4">
+		<artwork>
+			<![CDATA[
+void ProcessPacket(PacketSequence Seq, PacketCommand Cmd)
+{
+  // This would not compile as the types do not match.
+  // (NOTE: '.add' is made up for demonstartion only)
+  //
+  History.add(Cmd, Seq); // Error - should be (Seq, Cmd)
+
+  // This would, and should compile.
+  //
+  History.add(Seq,Cmd);
+  ...
+}
+			]]>
+		</artwork>
+	</figure>
+	
+</section>

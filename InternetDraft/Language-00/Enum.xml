@@ -1,0 +1,59 @@
+<section anchor="Enum">
+	<name>Enum</name>
+	<t>
+		Much like an enum in C/C++/C# the purpose of the enum
+		is to create identifiers and assign numeric values to
+		them in order to simply reading and understanding the code.
+	</t>
+	<t>
+		The enum ABNF:
+	</t>
+	<artwork type="asciiart">
+enum       = 'enum' enum-name '{'
+              enum-item *(',' enum-item)
+             '};'
+
+enum-item  = UserDefinedIdentifier '=' Value
+
+enum-name  = UserDefinedIdentifier
+
+Value      = 0x00-0xffffffff
+	</artwork>
+	<ul>
+		<li>
+			No two enum-item identifiers may be the same in the same enum.
+		</li>
+		<li>
+			No two enum-item identifiers may have the same value in the
+			same enum.
+		</li>
+		<li>
+			All enum-items are at the same scope as the enum-name
+		</li>
+		<li>
+			An enum-name and therefore the enum may be in the public,
+			internal, or namespace scope.
+		</li>
+	</ul>
+	<t>
+		Examples:
+	</t>
+	<artwork>
+enum RoomsInAHome {
+  Kitchen = 1,
+  LivingRoom = 2,
+  BedRoom = 3
+};
+
+enum DaysOfTheWeek {
+  Monday = 1,
+  Tuesday = 2,
+  Wednesday = 3,
+  Thursday = 4,
+  Friday = 5,
+  Saturday = 6
+  Sunday = 7
+};
+
+	</artwork>
+</section>

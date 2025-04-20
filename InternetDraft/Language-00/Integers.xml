@@ -1,0 +1,191 @@
+<section anchor="Integers">
+	<name>Integers</name>
+	<t>
+		Integers can be signed or unsigned.
+		And they can be any size that is a multiple
+		of 8 bits wide.
+	</t>
+	<section anchor="UnsignedIntegers">
+		<name>Unsigned Integer</name>
+		<t>
+			This language specifies unsigned integers that
+			are 8 bits, 16 bits, 32 bits , 64 bits, and bignum.
+		</t>
+		<dl newline="true">
+			<dt>uintW_t</dt>
+			<dd>
+				<t>
+					An unsigned integer, 'W' bits wide.
+					Where 'W' must be a multiple of 8.
+				</t>
+			</dd>
+		</dl>
+		<t>
+			ABNF:
+		</t>
+.so ABNF/unsigned_integer.abnf
+		<t>
+			See <xref target="UnsignedIntegers"/> for details.
+		</t>
+			
+		<t>Examples:</t>
+		<artwork type="asciiart">
+			<![CDATA[
+uint8_t EightBitsWide;
+
+uint16_t SixteenBitsWide;
+]]>
+		</artwork>
+		<dl>
+			<dt>uint8_t</dt>
+			<dd>
+				<t>
+					An unsigned 8 bit integer.
+					And the corresponding CBOR data type is unsigned int.
+				</t>
+			</dd>
+			<dt>uint16_t</dt>
+			<dd>
+				An unsigned 16 bit integer.
+				And the corresponding CBOR data type is unsigned int.
+			</dd>
+			<dt>uint32_t</dt>
+			<dd>
+				An unsigned 32 bit integer.
+				And the corresponding CBOR data type is unsigned int.
+			</dd>
+			<dt>uint64_t</dt>
+			<dd>
+				An unsigned 64 bit integer.
+				And the corresponding CBOR data type is unsigned int.
+			</dd>
+			<dt>uint72_t</dt>
+			<dd>
+				An unsigned 72 bit integer.
+				And the corresponding CBOR data type is bignum.
+			</dd>
+			<dt>uint128_t</dt>
+			<dd>
+				An unsigned 128 bit integer.
+				And the corresponding CBOR data type is bignum.
+			</dd>
+			<dt>... uintW_t ...</dt>
+			<dd>
+				Assuming 'W' is more than 64 and a multiple of 8.
+				An unsigned 'W'-bits integer.
+				And the corresponding CBOR data type is bignum.
+			</dd>
+		</dl>
+		<t>
+			And the implementation transmits the unsigned integer
+			value, not the data type.
+			A uint128_t unsigned integer with a value of one (1)
+			would be transmitted as 0x01, a one octet value.
+		</t>
+		<t>
+			The 72, 128, and 'W' bit length unsigned integer data
+			types are just examples used to illustrate that this protocol
+			definition language can specify what the application needs
+			and an implementation translates that to and from the
+			smallest CBOR data value when used.
+			And note that the 72 and 128 ones are valid in this language
+			along with other nonstandard sizes.
+		</t>
+	</section>
+
+	<section anchor="SignedIntegers">
+		<name>Signed Integer</name>
+		<t>
+			This language specifies signed integers that
+			are 8 bits, 16 bits, 32 bits , 64 bits, and bignum.
+		</t>
+		<dl newline="true">
+			<dt>intW_t</dt>
+			<dd>
+				<t>
+					An signed integer, 'W' bits wide.
+					Where 'W' must be a multiple of 8.
+				</t>
+			</dd>
+		</dl>
+		<t>
+			ABNF:
+		</t>
+.so ABNF/signed_integer.abnf
+		<t>
+			See <xref target="UnsignedIntegers"/> for details.
+		</t>
+			
+		<t>Examples:</t>
+		<artwork type="asciiart">
+			<![CDATA[
+int8_t EightBitsWide;
+
+int16_t SixteenBitsWide;
+]]>
+		</artwork>
+		<dl>
+			<dt>int8_t</dt>
+			<dd>
+				<t>
+					An signed 8 bit integer.
+					And the corresponding CBOR data type is signed int.
+				</t>
+			</dd>
+			<dt>int16_t</dt>
+			<dd>
+				An signed 16 bit integer.
+				And the corresponding CBOR data type is signed int.
+			</dd>
+			<dt>int32_t</dt>
+			<dd>
+				An signed 32 bit integer.
+				And the corresponding CBOR data type is signed int.
+			</dd>
+			<dt>int64_t</dt>
+			<dd>
+				An signed 64 bit integer.
+				And the corresponding CBOR data type is signed int.
+			</dd>
+			<dt>int72_t</dt>
+			<dd>
+				An signed 72 bit integer.
+				And the corresponding CBOR data type is bignum.
+			</dd>
+			<dt>int128_t</dt>
+			<dd>
+				An signed 128 bit integer.
+				And the corresponding CBOR data type is bignum.
+			</dd>
+			<dt>... intLL_t ...</dt>
+			<dd>
+				Assuming LL is more than 64 and a multiple of 8.
+				An unsigned LL-bits integer.
+				And the corresponding CBOR data type is bignum.
+			</dd>
+		</dl>
+		<t>
+			And the implementation transmits the signed integer
+			value, not the data type.
+			A int128_t unsigned integer with a value of one (1)
+			would be transmitted as 0x01, a one octet value.
+		</t>
+		<t>
+			The 72, 128, and 'LL' bit length unsigned integer data
+			types are just examples used to illustrate that this protocol
+			definition language can specify what the application needs
+			and an implementation translates that to and from the
+			smallest CBOR data value when used.
+			And note that the 72 and 128 ones are valid in this language.
+		</t>
+	</section>
+	<section>
+		<name>Big Integers</name>
+		<t>
+			CBOR supports signed and unsigned integers
+			as 'bignum'.
+			An implementation will transport non-standard size signed
+			and unsigned integers as CBOR bignum.
+		</t>
+	</section>
+</section>

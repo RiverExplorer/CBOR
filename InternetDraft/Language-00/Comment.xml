@@ -1,0 +1,14 @@
+<section anchor="Structures">
+	<name>Adding Comments to the Definition</name>
+	<t>
+		There are two ways to add comments to the code.
+	</t>
+	<ul>
+		<li>Block Comment.<li>
+		<li>To End of Line Comment.</li>
+	</ul>
+	<t>
+		comment ABNF:
+	</t>
+.so ABNF/comment.abnf	
+</section>
