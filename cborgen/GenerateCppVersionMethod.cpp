@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:46:56 doug>
+ * Time-stamp: <2025-04-20 20:43:13 doug>
  * 
  * @file GenerateCppVersionMethod.cpp
  * @author Douglas Mark Royer
@@ -47,13 +47,7 @@ namespace RiverExplorer::cborgen
 
 		Stream << I << Type << " ";
 
-		if (IsPointer) {
-			Stream << " * ";
-		} else if (IsReference) {
-			Stream << " & ";
-		} else {
-			Stream << " ";
-		}
+		Stream << " ";
 		Stream << Name << "(";
 
 		bool PrintedOne = false;
@@ -107,13 +101,7 @@ namespace RiverExplorer::cborgen
 
 		Stream << I << Type;
 
-		if (IsPointer) {
-			Stream << " * ";
-		} else if (IsReference) {
-			Stream << " & ";
-		} else {
-			Stream << " ";
-		}
+		Stream << " ";
 		
 		Stream << Parent.Name << "::" << Name << "(";
 		
@@ -137,17 +125,9 @@ namespace RiverExplorer::cborgen
 		if (Type != "void") {
 			Stream << I2 << Type;
 
-			if (IsPointer) {
-				Stream << " * ";
-			} else if (IsReference) {
-				Stream << " & ";
-			} else {
-				Stream << " ";
-			}
+			Stream << " ";
+
 			Stream << " Results";
-			if (IsPointer) {
-				Stream << " = nullptr";
-			}
 			Stream << ";" << endl;
 		}
 			

@@ -1,3 +1,21 @@
+//
+// Project: CBOR
+// Time-stamp: <2025-04-20 20:08:30 doug>
+//
+// @file cbor.gr
+// @author Douglas Mark Royer
+// @date 24-FEB-2025
+// 
+// @Copyright(C) 2025 by Douglas Mark Royer (A.K.A. RiverExplorer)
+// 
+// Licensed under the MIT License. See LICENSE file
+// or https://opensource.org/licenses/MIT for details.
+// 
+// RiverExplorer is a trademark of Douglas Mark Royer
+//
+// Unless otherwise specified, all of this code is original
+// code by the author.
+//
 grammar cbor;
 
 cborSpecification
@@ -39,22 +57,25 @@ namespaceDef
 	: 'namespace' identifier ( ':' identifier )* ';'
 	;
 
-tags : ignoretag
-		 | internaltag
-		 | overridetag
-		 | privatetag
+tags : ignoreTag
+		 | internalTag
+		 | overrideTag
+		 | privateTag
+		 | sortableTag
 		 ;
 
-ignoretag : '[ignore]'
+ignoreTag : '[ignore]'
 					;
 
-internaltag : '[ignore]'
+internalTag : '[internal]'
 					;
 
-overridetag : '[override]'
+overrideTag : '[override]'
 						;
 						
-overridetag : '[private]'
+privateTag : '[private]'
+						;
+sortableTag : '[sortable]'
 						;
 value
     : constant
@@ -65,33 +86,64 @@ value
 
 constant
     : decimal
-		| float
+		| floatValue
     | hexadecimal
     | octal
     ;
 
-typeSpecifier
-	: 'unsigned'? 'int'
-	| 'unsigned'? 'short'
-	| 'unsigned'? 'hyper'
-	| 'unsigned'? 'char'
-	| 'float'
-	| 'long'? 'double'
-	| 'quadruple'
-	| 'bool'
-	| 'bool_t'
-	| 'uint8_t'
-	| 'int8_t'
-	| 'uint16_t'
+float
+  : 'float16_t'
+	| 'float32_t'
+	| 'float64_t'
+	| bigNumFloat
+	;
+
+bigNumFloat : 'float' decimal '_t'
+            ;
+						
+bigNumInt : 'int' decimal '_t'
+            ;
+						
+bigNumUInt : 'uint' decimal '_t'
+            ;
+						
+signedInteger
+  : 'int8_t'
 	| 'int16_t'
-	| 'uint32_t'
 	| 'int32_t'
-	| 'uint64_t'
 	| 'int64_t'
+	| bigNumInt
+	;
+	
+unsignedInteger
+  : 'uint8_t'
+	| 'uint16_t'
+	| 'uint32_t'
+	| 'uint64_t'
+	| bigNumUInt
+	;
+
+map
+  : 'map' '<' typeSpecifier ',' typeSpecifier '>'
+	;
+	
+multimap
+  : 'multimap' '<' typeSpecifier ',' typeSpecifier '>'
+	;
+	
+typeSpecifier
+	: 'bool'
 	| enumTypeSpec
+  | float
+	| identifier
+	| map
+	| multimap
+	| 'opaque'
+	| signedInteger
+	| 'string'
 	| structTypeSpec
 	| unionTypeSpec
-	| identifier
+	| unsignedInteger
 	;
 
 enumTypeSpec
@@ -157,7 +209,8 @@ CommentMultiLine : '/*' .*? '*/' ;
 passThrough : PASS
 	 ;
 
-method: dataType identifier '(' dataType identifier? (',' dataType identifier?)* ')' ';'
+method: dataType identifier '(' dataType identifier?
+				(',' dataType identifier?)* ')' ';'
 	;
 
 procFirstArg
@@ -172,7 +225,8 @@ version : 'version' identifier '{' versionMethod+ '}' '=' value ';'
 	;
 
 versionMethod: dataType identifier
- '(' ((dataType identifier? (',' dataType identifier?)*) | 'void') ')' '=' value ';'
+ '(' ((dataType identifier?
+ (',' dataType identifier?)*) | 'void') ')' '=' value ';'
 	;							 
 
 // lexer rules
@@ -201,7 +255,7 @@ DECIMAL
     : ('-')? ([0-9])+
     ;
 
-float
+floatValue
     : FLOAT width?
     ;
 

@@ -1,8 +1,8 @@
 #
-# Project: Phoenix
-# Time-stamp: <2025-03-24 22:10:15 doug>
+# Project: CBOR
+# Time-stamp: <2025-04-20 20:10:51 doug>
 #
-# @file FILL-IN
+# @file Makefile.top
 # @author Douglas Mark Royer
 # @date 24-FEB-20205
 #
@@ -460,14 +460,15 @@ ANDROID_CPPFLAGS.Tcov += \
 #
 PIC_FLAGS			= -fPIC
 COMMON_COMPILE_FLAGS	= \
-							-pthread \
-							-Wall \
-							-Wextra \
-							-Wshadow \
-							-Wpointer-arith \
-							-Wcast-align \
-							-Wwrite-strings \
-							-Wconversion
+							-pthread
+							
+#							-Wall \
+#							-Wextra \
+#							-Wshadow \
+#							-Wpointer-arith \
+#							-Wcast-align \
+#							-Wwrite-strings \
+#							-Wconversion
 
 LINUX_CFLAGS.Debug			= $(COMMON_COMPILE_FLAGS) -ggdb $(PIC_FLAGS)
 LINUX_CFLAGS.Tcov				= $(COMMON_COMPILE_FLAGS) -ggdb -fprofile-arcs -ftest-coverage

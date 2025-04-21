@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-18 09:31:34 doug>
+ * Time-stamp: <2025-04-20 20:35:34 doug>
  * 
  * @file cborgen.hpp
  * @author Douglas Mark Royer
@@ -140,7 +140,20 @@ namespace RiverExplorer::cborgen
 		InDeclaration,
 		InEnumTypeSpec,
 		InStructTypeSpec,
-		InUnionTypeSpec
+		InUnionTypeSpec,
+		InIgnoreTag,
+		InInternalTag,
+		InOverrideTag,
+		InPrivateTag,
+		InSortableTag,
+		InFloatValue,
+		InBigNumInt,
+		InBigNumUInt,
+		InBigNumFloat,
+		InMap,
+		InMultimap,
+		InUnsignedInteger,
+		InSignedInteger
 	};
 
 	/**
@@ -152,6 +165,12 @@ namespace RiverExplorer::cborgen
 	class Item
 	{
 	public:
+
+		enum Scope_e {
+			InternalScope_t,
+			PrivateScope_t,
+			NamespaceScope_t
+		};
 		
 		virtual void PrintCppHeader(ofstream & Stream) const = 0;
 		virtual void PrintCppHeaderCbor(ofstream & Stream) const = 0;
@@ -161,8 +180,6 @@ namespace RiverExplorer::cborgen
 		virtual void PrintAbnf(ofstream & Stream) const = 0;
 		virtual void PrintServer(ofstream & Stream) const = 0;
 		
-		bool IsPointer = false;
-		bool IsReference = false;
 		bool IsFixedArray = false;
 		bool IsVariableArray = false;
 		std::string SizeOrValue;
@@ -170,6 +187,8 @@ namespace RiverExplorer::cborgen
 		std::string Type;
 		std::string Name;
 
+		Scope_e OurScope;
+		
 		/**
 		 * Print the variable for a CPP Header.
 		 */
@@ -765,11 +784,44 @@ namespace RiverExplorer::cborgen
 		virtual void enterTags(cborParser::TagsContext * Ctx);
 		virtual void exitTags(cborParser::TagsContext * Ctx);
 
-		virtual void enterIgnoretag(cborParser::IgnoretagContext * Ctx);
-		virtual void exitIgnoretag(cborParser::IgnoretagContext * Ctx);
+		virtual void enterIgnoreTag(cborParser::IgnoreTagContext * Ctx);
+		virtual void exitIgnoreTag(cborParser::IgnoreTagContext * Ctx);
 
-		virtual void enterOverridetag(cborParser::OverridetagContext * Ctx);
-		virtual void exitOverridetag(cborParser::OverridetagContext * Ctx);
+		virtual void enterOverrideTag(cborParser::OverrideTagContext * Ctx);
+		virtual void exitOverrideTag(cborParser::OverrideTagContext * Ctx);
+
+		virtual void enterSortableTag(cborParser::SortableTagContext * Ctx);
+		virtual void exitSortableTag(cborParser::SortableTagContext * Ctx);
+
+		virtual void enterPrivateTag(cborParser::PrivateTagContext * Ctx);
+		virtual void exitPrivateTag(cborParser::PrivateTagContext * Ctx);
+
+		virtual void enterInternalTag(cborParser::InternalTagContext * Ctx);
+		virtual void exitInternalTag(cborParser::InternalTagContext * Ctx);
+
+		virtual void enterFloatValue(cborParser::FloatValueContext * Ctx);
+		virtual void exitFloatValue(cborParser::FloatValueContext * Ctx);
+
+		virtual void enterMap(cborParser::MapContext * Ctx);
+		virtual void exitMap(cborParser::MapContext * Ctx);
+
+		virtual void enterMultimap(cborParser::MultimapContext * Ctx);
+		virtual void exitMultimap(cborParser::MultimapContext * Ctx);
+
+		virtual void enterUnsignedInteger(cborParser::UnsignedIntegerContext * Ctx);
+		virtual void exitUnsignedInteger(cborParser::UnsignedIntegerContext * Ctx);
+
+		virtual void enterSignedInteger(cborParser::SignedIntegerContext * Ctx);
+		virtual void exitSignedInteger(cborParser::SignedIntegerContext * Ctx);
+
+		virtual void enterBigNumUInt(cborParser::BigNumUIntContext * Ctx);
+		virtual void exitBigNumUInt(cborParser::BigNumUIntContext * Ctx);
+
+		virtual void enterBigNumInt(cborParser::BigNumIntContext * Ctx);
+		virtual void exitBigNumInt(cborParser::BigNumIntContext * Ctx);
+
+		virtual void enterBigNumFloat(cborParser::BigNumFloatContext * Ctx);
+		virtual void exitBigNumFloat(cborParser::BigNumFloatContext * Ctx);
 
 		virtual void visitTerminal(tree::TerminalNode * Node);
 		virtual void visitErrorNode(tree::ErrorNode * Node);

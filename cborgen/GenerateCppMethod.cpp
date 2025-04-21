@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:48:34 doug>
+ * Time-stamp: <2025-04-20 20:38:27 doug>
  * 
  * @file GenerateCppMethod.cpp
  * @author Douglas Mark Royer
@@ -92,14 +92,7 @@ namespace RiverExplorer::cborgen
 		bool PrintedOne = false;
 
 		Stream << I << Type;
-
-		if (IsPointer) {
-			Stream << " * ";
-		} else if (IsReference) {
-			Stream << " & ";
-		} else {
-			Stream << " ";
-		}
+		Stream << " ";
 
 		Stream << Parent.Name << "::" << Name << "(";
 		

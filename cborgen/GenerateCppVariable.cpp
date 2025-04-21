@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:47:28 doug>
+ * Time-stamp: <2025-04-20 20:42:36 doug>
  * 
  * @file GenerateCppVariable.cpp
  * @author Douglas Mark Royer
@@ -53,16 +53,8 @@ namespace RiverExplorer::cborgen
 			} else {
 				Stream << I << " " << TypeToUse;
 			}
+			Stream << " ";
 
-			if (IsPointer) {
-				Stream << " * ";
-
-			} else if (IsReference) {
-				Stream << " & ";
-
-			} else {
-				Stream << " ";
-			}
 			Stream << Name << "[" << SizeOrValue << "];";
 			Stream << " // With a fixed size of: " << SizeOrValue << "." << endl;
 			
@@ -73,26 +65,10 @@ namespace RiverExplorer::cborgen
 				Stream << I << "std::vector<" << TypeToUse;
 			}
 
-			if (IsPointer) {
-				if (TypeToUse == "std::string") {	
-					Stream << " * ";
-				} else {
-					Stream << "*> ";
-				}
-
-			} else if (IsReference) {
-				if (TypeToUse == "std::string") {	
-					Stream << " & ";
-				} else {
-					Stream << "&> ";
-				}
-
+			if (TypeToUse == "std::string") {
+				Stream << " ";
 			} else {
-				if (TypeToUse == "std::string") {
-					Stream << " ";
-				} else {
-					Stream << "> ";
-				}
+				Stream << "> ";
 			}
 			if (SizeOrValue == "") {
 				Stream << Name << "; //With no size limit." << endl;
@@ -105,13 +81,7 @@ namespace RiverExplorer::cborgen
 			} else {
 				Stream << I << " " << TypeToUse;
 			}
-			if (IsPointer) {
-				Stream << " * ";
-			} else if (IsReference) {
-				Stream << " & ";
-			} else {
-				Stream << " ";
-			}
+			Stream << " ";
 			Stream << Name << ";" << endl;
 		}
 		Stream << endl;

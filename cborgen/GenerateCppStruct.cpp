@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:46:25 doug>
+ * Time-stamp: <2025-04-20 20:41:47 doug>
  * 
  * @file GenerateCppStuct.cpp
  * @author Douglas Mark Royer
@@ -105,23 +105,15 @@ namespace RiverExplorer::cborgen
 			} else {
 				PrintSizeInfo(Member, I2, Stream);
 				if (Member->IsFixedArray || Member->IsVariableArray) {
-					if (Member->IsPointer) {
-						Stream << I2 << "std::vector<" << Member->Type << "*>";
-					} else {
-						Stream << I2 << "std::vector<" << Member->Type << ">";
-					}
+					Stream << I2 << "std::vector<" << Member->Type << ">";
 				} else {
 					Stream << I2 << Member->Type;
 				}
 			}
 			Stream << ' ';
 			
-			if (Member->IsPointer
-					&& (!Member->IsFixedArray && !Member->IsVariableArray)) {
-				Stream << " * " << Member->Name;
-			} else {
-				Stream << Member->Name;
-			}
+			Stream << Member->Name;
+
 			if (Member->IsFixedArray) {
 				NeedSemi = false;
 				Stream << "; // Fixed Size: " << Member->SizeOrValue << endl;
@@ -213,11 +205,6 @@ namespace RiverExplorer::cborgen
 				continue;
 			}
 
-			if (Member->IsPointer) {
-				Stream << I2 << Member->Name << " = nullptr;" << endl;
-				Stream << endl;
-			}
-
 			if (Member->SizeOrValue != "") {
 				PrintSizeInfo(Member, I2, Stream);
 				Stream << I2
@@ -249,15 +236,6 @@ namespace RiverExplorer::cborgen
 				continue;
 			}
 
-			if (Member->IsPointer) {
-				Stream << I2 << "if (" << Member->Name << " != nullptr) {" << endl;
-				IndentLevel++;
-				I3 = Indent();
-				Stream << I3 << "delete " << Member->Name << ";" << endl;
-				Stream << I3 << Member->Name << " = nullptr;" << endl;
-				IndentLevel--;
-				Stream << I2 << "}" << endl << endl;
-			}
 		}
 		Stream << I2 << "return;" << endl;
 		IndentLevel--;
@@ -285,137 +263,86 @@ namespace RiverExplorer::cborgen
 			}
 
 			if (Member->Type == "opaque") {
-				if (Member->IsPointer) {
-					if (Member->SizeOrValue == "") {
-						Stream << endl << I2 << "// No size set for array" << endl;
-						Stream << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
-									 << Member->Name << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					} else {
-						PrintSizeInfo(Member, I2, Stream);
-						Stream << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
-									 << Member->Name << ", "
-									 << Member->SizeOrValue << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					}
+				if (Member->SizeOrValue == "") {
+					Stream << endl << I2 << "// No size set for array" << endl;
+					Stream << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
+								 << Member->Name << ")) {" << endl
+								 << I2 << "\treturn(false);" << endl
+								 << I2 << "}" << endl;
 				} else {
-					if (Member->SizeOrValue == "") {
-						Stream << endl << I2 << "// No size set for array" << endl;
-						Stream << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
-									 << Member->Name << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					} else {
-						PrintSizeInfo(Member, I2, Stream);
-						Stream << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
-									 << Member->Name << ", "
-									 << Member->SizeOrValue << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					}
+					PrintSizeInfo(Member, I2, Stream);
+					Stream << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
+								 << Member->Name << ", "
+								 << Member->SizeOrValue << ")) {" << endl
+								 << I2 << "\treturn(false);" << endl
+								 << I2 << "}" << endl;
 				}
 					
 			} else if (Member->Type == "string") {
-				if (Member->IsPointer) {
-					if (Member->SizeOrValue == "") {
-						Stream << endl << I2 << "// No size set for string." << endl;
-						Stream << I2 << "if (!cbor_StdString(&Cbor, &"
-									 << Member->Name << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					} else {
-						PrintSizeInfo(Member, I2, Stream);
-						Stream << I2 << "if (!cbor_StdString(&Cbor, &"
-									 << Member->Name << ", "
-									 << Member->SizeOrValue << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					}
+				if (Member->SizeOrValue == "") {
+					Stream << endl << I2 << "// No size set for string." << endl;
+					Stream << I2 << "if (!cbor_StdString(&Cbor, &"
+								 << Member->Name << ")) {" << endl
+								 << I2 << "\treturn(false);" << endl
+								 << I2 << "}" << endl;
 				} else {
-					if (Member->SizeOrValue == "") {
-						Stream << endl << I2 << "// No size set for string." << endl;
-						Stream << I2 << "if (!cbor_StdString(&Cbor, &"
-									 << Member->Name << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					} else {
-						PrintSizeInfo(Member, I2, Stream);
-						Stream << I2 << "if (!cbor_StdString(&Cbor, &"
-									 << Member->Name << ", "
-									 << Member->SizeOrValue << ")) {" << endl
-									 << I2 << "\treturn(false);" << endl
-									 << I2 << "}" << endl;
-					}
+					PrintSizeInfo(Member, I2, Stream);
+					Stream << I2 << "if (!cbor_StdString(&Cbor, &"
+								 << Member->Name << ", "
+								 << Member->SizeOrValue << ")) {" << endl
+								 << I2 << "\treturn(false);" << endl
+								 << I2 << "}" << endl;
 				}
 
 			} else if (IsBuiltInCborType(Member->Type)) {
-				if (Member->IsPointer) {
-					Stream << I2 << "if (!cbor_pointer(&Cbor, (char**)&"
-								 << Member->Name << ", sizeof(*" << Member->Name << "),cbor_"
-								 << Member->Type << ")) {" << endl
-								 << I2 << "\treturn(false);" << endl
-								 << I2 << "}" << endl;
-									 
-				} else {
-					if (Member->IsFixedArray || Member->IsVariableArray) {
-						if (Member->SizeOrValue == "") {
-							Stream << I2 << "if (!cbor_VectorOf<" << Member->Type << ">"
-										 << "(&Cbor, &" << Member->Name
-										 << ", cbor_" << Member->Type
-										 << ")) {" << endl
-										 << I2 << "\treturn(false);" << endl
-										 << I2 << "}" << endl;
-						} else {
-							PrintSizeInfo(Member, I2, Stream);
-							Stream << I2 << "if (!cbor_VectorOf<" << Member->Type  << ">"
-										 << "(&Cbor, &" << Member->Name
-										 << ", cbor_" << Member->Type
-										 << ", " << Member->SizeOrValue
-										 << ")) {" << endl
-										 << I2 << "\treturn(false);" << endl
-										 << I2 << "}" << endl;
-						}
+				if (Member->IsFixedArray || Member->IsVariableArray) {
+					if (Member->SizeOrValue == "") {
+						Stream << I2 << "if (!cbor_VectorOf<" << Member->Type << ">"
+									 << "(&Cbor, &" << Member->Name
+									 << ", cbor_" << Member->Type
+									 << ")) {" << endl
+									 << I2 << "\treturn(false);" << endl
+									 << I2 << "}" << endl;
 					} else {
-						Stream << I2 << "if (!cbor_" << Member->Type
-									 << "(&cbor, &" << Member->Name << ")) {" << endl
+						PrintSizeInfo(Member, I2, Stream);
+						Stream << I2 << "if (!cbor_VectorOf<" << Member->Type  << ">"
+									 << "(&Cbor, &" << Member->Name
+									 << ", cbor_" << Member->Type
+									 << ", " << Member->SizeOrValue
+									 << ")) {" << endl
 									 << I2 << "\treturn(false);" << endl
 									 << I2 << "}" << endl;
 					}
+				} else {
+					Stream << I2 << "if (!cbor_" << Member->Type
+								 << "(&cbor, &" << Member->Name << ")) {" << endl
+								 << I2 << "\treturn(false);" << endl
+								 << I2 << "}" << endl;
 				}
 			} else {
-				if (Member->IsPointer) {
-					Stream << I2 << "if (!cbor_pointer(&Cbor, (char**)&" << Member->Name
-								 << ", sizeof(*" << Member->Name << "), cbor_"
-								 << Member->Type << ")) {" << endl
-								 << I2 << "\treturn(false);" << endl
-								 << I2 << "}" << endl;
-				} else {
-					if (Member->IsFixedArray || Member->IsVariableArray) {
-						if (Member->SizeOrValue == "") {
-							Stream << I2 << "if (!cbor_VectorOf<" << Member->Type << ">"
-										 << "(&Cbor, &" << Member->Name
-										 << ", cbor_" << Member->Type
-										 << ")) {" << endl
-										 << I2 << "\treturn(false);" << endl
-										 << I2 << "}" << endl;
-						} else {
-							PrintSizeInfo(Member, I2, Stream);
-							Stream << I2 << "if (!cbor_VectorOf<" << Member->Type << ">"
-										 << "(&Cbor, &" << Member->Name
-										 << ", cbor_" << Member->Type
-										 << ", " << Member->SizeOrValue
-										 << ")) {" << endl
-										 << I2 << "\treturn(false);" << endl
-										 << I2 << "}" << endl;
-						}
+				if (Member->IsFixedArray || Member->IsVariableArray) {
+					if (Member->SizeOrValue == "") {
+						Stream << I2 << "if (!cbor_VectorOf<" << Member->Type << ">"
+									 << "(&Cbor, &" << Member->Name
+									 << ", cbor_" << Member->Type
+									 << ")) {" << endl
+									 << I2 << "\treturn(false);" << endl
+									 << I2 << "}" << endl;
 					} else {
-						Stream << I2
-									 << "if (!" << Member->Type << ".Cbor(Cbor)) {" << endl
+						PrintSizeInfo(Member, I2, Stream);
+						Stream << I2 << "if (!cbor_VectorOf<" << Member->Type << ">"
+									 << "(&Cbor, &" << Member->Name
+									 << ", cbor_" << Member->Type
+									 << ", " << Member->SizeOrValue
+									 << ")) {" << endl
 									 << I2 << "\treturn(false);" << endl
 									 << I2 << "}" << endl;
 					}
+				} else {
+					Stream << I2
+								 << "if (!" << Member->Type << ".Cbor(Cbor)) {" << endl
+								 << I2 << "\treturn(false);" << endl
+								 << I2 << "}" << endl;
 				}
 			}
 		}

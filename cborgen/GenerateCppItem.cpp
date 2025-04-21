@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:39:21 doug>
+ * Time-stamp: <2025-04-20 20:37:55 doug>
  * 
  * @file GenerateCppItem.cpp
  * @author Douglas Mark Royer
@@ -30,23 +30,13 @@ namespace RiverExplorer::cborgen
 
 		if (IsFixedArray || IsVariableArray) {
 			if (Type == "opaque") {
-				if (IsPointer) {
-					Stream << I << "std::vector<uint8_t*> ";
-				} else {
-					Stream << I << "std::vector<uint8_t> ";
-				}
+				Stream << I << "std::vector<uint8_t> ";
 					
 			} else if (Type == "string") {
 				Stream << I << "std::string ";
 
-				if (IsPointer) {
-					Stream << "* ";
-				}
 			} else {
 				Stream << I << "std::vector<" << ToCppType(Type);
-				if (IsPointer) {
-					Stream << "*";
-				}
 				Stream << "> ";
 			}
 			Stream << Name << ";";
@@ -68,22 +58,11 @@ namespace RiverExplorer::cborgen
 
 			if (IsFixedArray || IsVariableArray) {
 				Stream << I << "std::vector<" << CppType;
-				if (IsPointer) {
-					Stream << "*";
-				}
 				Stream << ">";
 			} else {
 				Stream << I << CppType;
 			}
-			if (IsPointer) {
-				Stream << " * ";
-
-			} else	if (IsReference) {
-				Stream << " & ";
-
-			} else {
-				Stream << " ";
-			}
+			Stream << " ";
 			Stream << Name << ";";
 		}
 

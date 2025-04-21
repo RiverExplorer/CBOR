@@ -1,6 +1,6 @@
 /**
- * Project: Phoenix
- * Time-stamp: <2025-04-18 09:36:26 doug>
+ * Project: CBOR
+ * Time-stamp: <2025-04-20 20:36:55 doug>
  * 
  * @file cborgen.cpp
  * @author Douglas Mark Royer
@@ -332,13 +332,7 @@ namespace RiverExplorer::cborgen
 					}
 
 				} else if (CurrentVariable->Type == "long" && Text == "double") {
-					CurrentVariable->Type == "long double";
-
-				} else if (Text == "*") {
-					CurrentVariable->IsPointer = true;
-						
-				} else if (Text == "&") {
-					CurrentVariable->IsReference = true;
+					CurrentVariable->Type = "long double";
 						
 				}	else if (CurrentVariable->Type == "") {
 					if (Text == "unsigned") {
@@ -614,20 +608,6 @@ namespace RiverExplorer::cborgen
 					//
 					NextIsValue = true;
 
-				} else if (Text == "*" ) {
-					if (DoingParams) {
-						CurrentVersionMethod->Parameters.push_back(Text);
-					} else {
-						CurrentVersionMethod->IsPointer = true;
-					}
-				
-				} else if (Text == "&") {
-					if (DoingParams) {
-						CurrentVersionMethod->Parameters.push_back(Text);
-					} else {
-						CurrentVersionMethod->IsReference = true;
-					}
-				
 				} else if (Text == ";") {
 					CurrentVersion->Procedures.push_back(CurrentVersionMethod);
 					CurrentVersionMethod = nullptr;
@@ -747,10 +727,6 @@ namespace RiverExplorer::cborgen
 					CurrentState = Unknown;
 					
 				} else if (CurrentTypeDef->Name == "") {
-					if (Text == "*") {
-						CurrentTypeDef->IsPointer = true;
-						break;
-					}
 					if (CurrentTypeDef->Type == "") {
 						CurrentTypeDef->Type = Text;
 
@@ -863,9 +839,6 @@ namespace RiverExplorer::cborgen
 				} else if (CurrentStructMember->Type == "") {
 					CurrentStructMember->Type = Text;
 					std::cout << "Got Struct " << CurrentStruct->Name << " Member Type: " << Text << std::endl;
-				} else if (Text == "*") {
-					CurrentStructMember->IsPointer = true;
-					std::cout << "Got Struct " << CurrentStruct->Name << " Pointer" << std::endl;
 
 				} else if (Text == "<>") {
 					CurrentStructMember->IsVariableArray = true;
@@ -1029,9 +1002,6 @@ namespace RiverExplorer::cborgen
 				} else if (Text == "]") {
 					/*EMPTY*/
 				
-				} else if (Text == "*") {
-					CurrentUnionCase->IsPointer = true;
-				
 				} else {
 					if (CurrentUnionCase != nullptr) {
 						if (CurrentUnionCase->CaseValue == "") {
@@ -1052,12 +1022,8 @@ namespace RiverExplorer::cborgen
 									CurrentUnionCase->Type = Text;
 							
 								} else {
-									if (Text == "*") {
-										CurrentUnionCase->IsPointer = true;
-									} else {
-										if (CurrentUnionCase->Name == "") {
-											CurrentUnionCase->Name = Text;
-										}
+									if (CurrentUnionCase->Name == "") {
+										CurrentUnionCase->Name = Text;
 									}
 								}
 							}
@@ -1706,33 +1672,188 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	MyCborListener::enterIgnoretag(cborParser::IgnoretagContext * Ctx)
+	MyCborListener::enterIgnoreTag(cborParser::IgnoreTagContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
-		ProcessNode(true, "Ignoretaga Enter : ", Ctx);
+		CurrentState = InIgnoreTag;
+		ProcessNode(true, "IgnoreTag Enter : ", Ctx);
 	}
 	
 	void
-	MyCborListener::exitIgnoretag(cborParser::IgnoretagContext * Ctx)
+	MyCborListener::exitIgnoreTag(cborParser::IgnoreTagContext * Ctx)
 	{
-		//CurrentState = Unknown;
-		ProcessNode(false, "Ignoretag Exit : ", Ctx);
+		CurrentState = Unknown;
+		ProcessNode(false, "IgnoreTag Exit : ", Ctx);
 	}
 
 	void
-	MyCborListener::enterOverridetag(cborParser::OverridetagContext * Ctx)
+	MyCborListener::enterOverrideTag(cborParser::OverrideTagContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
-		ProcessNode(true, "Overridetaga Enter : ", Ctx);
+		CurrentState = InOverrideTag;
+		ProcessNode(true, "OverrideTag Enter : ", Ctx);
 	}
 	
 	void
-	MyCborListener::exitOverridetag(cborParser::OverridetagContext * Ctx)
+	MyCborListener::exitOverrideTag(cborParser::OverrideTagContext * Ctx)
 	{
-		//CurrentState = Unknown;
-		ProcessNode(false, "Overridetag Exit : ", Ctx);
+		CurrentState = Unknown;
+		ProcessNode(false, "OverrideTag Exit : ", Ctx);
+	}
+		
+	void
+	MyCborListener::enterSortableTag(cborParser::SortableTagContext * Ctx)
+	{
+		CurrentState = InSortableTag;
+		ProcessNode(true, "SortableTag Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitSortableTag(cborParser::SortableTagContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "SortableTag Exit : ", Ctx);
 	}
 
+	void
+	MyCborListener::enterInternalTag(cborParser::InternalTagContext * Ctx)
+	{
+		CurrentState = InInternalTag;
+		ProcessNode(true, "InternalTag Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitInternalTag(cborParser::InternalTagContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "InternalTag Exit : ", Ctx);
+	}
+
+	void
+	MyCborListener::enterPrivateTag(cborParser::PrivateTagContext * Ctx)
+	{
+		CurrentState = InPrivateTag;
+		ProcessNode(true, "PrivateTag Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitPrivateTag(cborParser::PrivateTagContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "PrivateTag Exit : ", Ctx);
+	}
+		
+	void
+	MyCborListener::enterFloatValue(cborParser::FloatValueContext * Ctx)
+	{
+		CurrentState = InFloatValue;
+		ProcessNode(true, "FloatValue Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitFloatValue(cborParser::FloatValueContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "FloatValue Exit : ", Ctx);
+	}
+		
+	void
+	MyCborListener::enterMultimap(cborParser::MultimapContext * Ctx)
+	{
+		CurrentState = InMultimap;
+		ProcessNode(true, "Multimap Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitMultimap(cborParser::MultimapContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "Multimap Exit : ", Ctx);
+	}
+
+	void
+	MyCborListener::enterMap(cborParser::MapContext * Ctx)
+	{
+		CurrentState = InMap;
+		ProcessNode(true, "Map Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitMap(cborParser::MapContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "Map Exit : ", Ctx);
+	}
+
+		
+	void
+	MyCborListener::enterUnsignedInteger(cborParser::UnsignedIntegerContext * Ctx)
+	{
+		CurrentState = InUnsignedInteger;
+		ProcessNode(true, "UnsignedInteger Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitUnsignedInteger(cborParser::UnsignedIntegerContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "UnsignedInteger Exit : ", Ctx);
+	}
+
+	void
+	MyCborListener::enterSignedInteger(cborParser::SignedIntegerContext * Ctx)
+	{
+		CurrentState = InSignedInteger;
+		ProcessNode(true, "SignedInteger Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitSignedInteger(cborParser::SignedIntegerContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "SignedInteger Exit : ", Ctx);
+	}
+
+	void
+	MyCborListener::enterBigNumInt(cborParser::BigNumIntContext * Ctx)
+	{
+		CurrentState = InBigNumInt;
+		ProcessNode(true, "BigNumInt Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitBigNumInt(cborParser::BigNumIntContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "BigNumInt Exit : ", Ctx);
+	}
+
+	void
+	MyCborListener::enterBigNumUInt(cborParser::BigNumUIntContext * Ctx)
+	{
+		CurrentState = InBigNumUInt;
+		ProcessNode(true, "BigNumUInt Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitBigNumUInt(cborParser::BigNumUIntContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "BigNumUInt Exit : ", Ctx);
+	}
+
+	void
+	MyCborListener::enterBigNumFloat(cborParser::BigNumFloatContext * Ctx)
+	{
+		CurrentState = InBigNumFloat;
+		ProcessNode(true, "BigNumFloat Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitBigNumFloat(cborParser::BigNumFloatContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "BigNumFloat Exit : ", Ctx);
+	}
+	
 		
 } // End namespace RiverExplorer::cborgen
 
