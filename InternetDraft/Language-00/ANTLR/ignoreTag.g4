@@ -1,0 +1,2 @@
+ignoreTag : '[ignore]'
+					;

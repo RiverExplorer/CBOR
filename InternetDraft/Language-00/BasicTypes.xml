@@ -52,9 +52,14 @@
 				Shown here as a POSIX regular expression for
 				an identifier in the public scope:
 			</t>
-			<artwork type="asciiart">
-identifier = [a-zA-Z]([a-zA-Z0-9_])*
-			</artwork>
+			<figure anchor="identifier.g4">
+				<name>identifier grammar</name>
+				<artwork type="asciiart">
+					<![CDATA[
+.so ANTLR/identifier.g4
+					]]>
+				</artwork>
+			</figure>
 			<t>
 				In the example <xref target="ex1"/>, Speed, TimeNow,
 				Time9,  Travel_Time, Collection, FirstItem
@@ -74,6 +79,7 @@ identifier = [a-zA-Z]([a-zA-Z0-9_])*
 				Examples:
 			</t>
 			<figure anchor="ex1">
+				<name>Sample with Internal Scope</name>
 				<artwork type="asciiart">
 int32_t Speed;         // Okay public, follows the rules.
 
@@ -123,13 +129,22 @@ struct Collection      // 'Collection' is valid, and public.
 				a struct, are only accessible within the struct.
 			</t>
 			<t>
-				The ABNF for an internal identifier:
+				The ANTLR for an internal identifier:
 			</t>
-.so ABNF/internal_identifier.abnf
+			<figure anchor="internal_identifier.g4">
+				<name>internal_identifier grammar</name>
+				<artwork type="asciiart">
+					<![CDATA[
+.so ANTLR/internal_identifier.g4
+					]]>
+				</artwork>
+			</figure>
 			<t>
 				Examples:
 			</t>
-			<artwork type="asciiart">
+			<figure anchor="internal-ex1">
+				<name>Internal Scope Example</name>
+				<artwork type="asciiart">
 // Okay Internal, starts with an underscore.
 // _NextSequenceNumber can only be accessed in
 // the generated code.
@@ -160,7 +175,8 @@ struct Collection
   //
   void _AnotherMethod();
 };
-			</artwork>
+				</artwork>
+			</figure>
 			<t>
 				See <xref target="Structures"/> for struct details.
 			</t>
@@ -195,13 +211,20 @@ struct Collection
 					within a struct is a namespace scoped identifier.
 				</li>
 			</ul>
-			<artwork type="asciiart">
-namespace_identifier = '_' identifier
-			</artwork>
+			<figure anchor="namespace_identifier.g4">
+				<name>namespace grammar</name>
+				<artwork type="asciiart">
+					<![CDATA[
+.so ANTLR/namespace_identifier.g4
+					]]>
+				</artwork>
+			</figure>
 			<t>
 				Examples:
 			</t>
-			<artwork type="asciiart">
+			<figure anchor="namespace-ex1">
+				<name>Namespace Scope Example</name>
+				<artwork type="asciiart">
 // A public Namespace called DailyData
 //
 namespace DailyData
@@ -245,7 +268,8 @@ namespace DailyData
     //
     void _AnotherMethod();
 };
-			</artwork>
+				</artwork>
+			</figure>
 			<t>
 				See <xref target="Structures"/> for struct details.
 			</t>
@@ -256,23 +280,25 @@ namespace DailyData
 <section anchor="VariableAndArrays">
 	<name>Variables and Arrays</name>
 	<t>
-		Variables may be simple, fixed size array, or variable sized array:
+		Variables may be non-array, fixed size array, or variable sized array:
 	</t>
-	<section anchor="SimpleVariables">
-		<name>Simple Variables</name>
+	<section anchor="NonArrayVariables">
+		<name>Non-Array Variables</name>
 		<t>
-			A simple variable is one that is not a fixed
+			A non-array variable is one that is not a fixed
 			or variable sized array. Examples:
 		</t>
 		<t>
 			NOTE:
-			A 'string' is always an array and not a simple variable.
+			A 'string' is always an array and not a non-array variable.
 		</t>
 		<t>
 			Examples:
 		</t>
-		<artwork type="asciiart">
-			<![CDATA[
+		<figure anchor="internal-ex1">
+			<name>Variable No Arrays Example</name>
+			<artwork type="asciiart">
+				<![CDATA[
 uint8_t  SimpleUnsignedInteger;
 
 float32_t  Simple32BitFloat;
@@ -280,8 +306,9 @@ float32_t  Simple32BitFloat;
 map<uint8_t,AnObjectType>; SimpleMap;
 
 multimap<uint8_t,AnObjectType> SimpleMultiMap;
-]]>
-		</artwork>
+				]]>
+			</artwork>
+		</figure>
 	</section>
 		
 	<section anchor="FixedVariables">
@@ -293,8 +320,10 @@ multimap<uint8_t,AnObjectType> SimpleMultiMap;
 		<t>
 			Examples:
 		</t>
-		<artwork type="asciiart">
-			<![CDATA[
+		<figure anchor="fixed-array-ex1">
+			<name>Variable Fixed Size Array Examples</name>
+			<artwork type="asciiart">
+				<![CDATA[
 uint8_t  FixedUnsignedInteger[30];
 
 float32_t  Fixed32BitFloat[12];
@@ -304,8 +333,9 @@ map<uint8_t,AnObjectType>; FixedMap[34];
 multimap<uint8_t,AnObjectType> FixedMultiMap[16];
 
 string LargeString[2048];
-			]]>
-		</artwork>
+				]]>
+			</artwork>
+		</figure>
 	</section>
 		
 	<section anchor="VariableArrays">
@@ -345,8 +375,10 @@ string LargeString[2048];
 					<t>
 						Examples:
 					</t>
-					<artwork type="asciiart">
-						<![CDATA[
+					<figure anchor="variable-array-ex1">
+						<name>Variable Variable Size Array Examples</name>
+						<artwork type="asciiart">
+							<![CDATA[
 // An array of 5 to 14 int8_t data elements.
 //										 
 int8_t VariableName<5,14>;
@@ -362,8 +394,9 @@ string StringVariable<5,42>;
 // An string of 8 to unlimited characters.
 //										 
 string AString<8,*>;
-						]]>
-					</artwork>
+							]]>
+						</artwork>
+					</figure>
 				</dd>
 			</dl>
 		</section>
@@ -379,13 +412,16 @@ string AString<8,*>;
 					<t>
 						Example:
 					</t>
-					<artwork type="asciiart">
-						<![CDATA[
+					<figure anchor="fixed-array-ex2">
+						<name>Variable Size Array Max Size Examples</name>
+						<artwork type="asciiart">
+							<![CDATA[
 // An array of size zero to 17 in length.
 //										 
 string VariableName<17>;
-						]]>
-					</artwork>
+							]]>
+						</artwork>
+					</figure>
 				</dd>
 			</dl>
 		</section>
@@ -400,11 +436,14 @@ string VariableName<17>;
 					<t>
 						Example:
 					</t>
-					<artwork type="asciiart">
-						<![CDATA[
+					<figure anchor="fixed-array-ex4">
+						<name>Variable Array Defaults Examples</name>
+						<artwork type="asciiart">
+							<![CDATA[
 uint64_t VariableName<>;
-						]]>
-					</artwork>
+							]]>
+						</artwork>
+					</figure>
 				</dd>
 			</dl>
 		</section>
@@ -413,8 +452,10 @@ uint64_t VariableName<>;
 			<t>
 				Examples:
 			</t>
-			<artwork type="asciiart">
-				<![CDATA[
+			<figure anchor="fixed-array-ex5">
+				<name>Variable Array Examples</name>
+				<artwork type="asciiart">
+					<![CDATA[
 // A variable array that holds no more than
 // 30 uint8_t items.
 //								 
@@ -453,8 +494,9 @@ map<uint8_t,AnObjectType> VariableMap<34>;
 // Each multimap may have duplicate keys.
 //
 multimap<uint8_t,OtherObjectType> VariableMultiMap<16>;
-				]]>
-			</artwork>
+					]]>
+				</artwork>
+			</figure>
 		</section>
 	</section>
 </section>
@@ -500,19 +542,29 @@ multimap<uint8_t,OtherObjectType> VariableMultiMap<16>;
 	<section anchor="FloatDef">
 		<name>Float</name>
 		<t>
-			ABNF:
+			ANTLR:
 		</t>
-.so ABNF/float.abnf
+		<figure anchor="float.g4">
+			<name>float grammar</name>
+			<artwork type="asciiart">
+				<![CDATA[
+.so ANTLR/float.g4
+				]]>
+			</artwork>
+		</figure>
 		<t>
 			Examples:
 		</t>
-		<artwork type="asciiart">
-			<![CDATA[
+		<figure anchor="float-ex1">
+			<name>Float Examples</name>
+			<artwork type="asciiart">
+				<![CDATA[
 float16_t Size;
 
 float32_t BiggerSize;
-			]]>
-		</artwork>
+				]]>
+			</artwork>
+		</figure>
 		<t>
 			Floating point numbers are similar to unsigned integers
 			except they are prefixed with 'float' and not 'uint'.
@@ -563,8 +615,10 @@ float32_t BiggerSize;
 					A variable array of characters.
 				</t>
 				<t>Examples:</t>
-				<artwork type="asciiart">
-					<![CDATA[
+				<figure anchor="string-array-ex1">
+					<name>String Examples</name>
+					<artwork type="asciiart">
+						<![CDATA[
 // A string that has no less than 1
 // and no more than 30 characters.
 //
@@ -578,17 +632,22 @@ string OtherString<4,*>;
 // A string that has exactly 40 characters.
 //
 string OtherString[40];
-					]]>
-				</artwork>
+						]]>
+					</artwork>
+				</figure>
 			</dd>
 		</dl>
 		<t>
-			ABNF:
+			ANTLR:
 		</t>
-.so ABNF/string.abnf
-		<t>
-			See <xref target="TextStrings"/> for details.
-		</t>
+		<figure anchor="string.g4">
+				<name>string grammar</name>
+			<artwork type="asciiart">
+				<![CDATA[
+.so ANTLR/string.g4
+				]]>
+			</artwork>
+		</figure>
 	</section>
 .so Map.xml
 </section>
@@ -610,8 +669,10 @@ string OtherString[40];
 			<t>
 				Variable Length Array Examples.
 			</t>
-			<artwork type="asciiart">
-				<![CDATA[
+			<figure anchor="arrays-ex1">
+				<name>Arrays Examples</name>
+				<artwork type="asciiart">
+					<![CDATA[
 // An array that consists of three 32 bit floating
 // point numbers.
 //
@@ -621,7 +682,8 @@ float32_t Transform3D[3];
 //
 int8_t Samples[1024];
 					]]>
-			</artwork>
+				</artwork>
+			</figure>
 		</section>
 		<section anchor="VariableArraysDef">
 			<name>Variable Length Arrays</name>
@@ -669,51 +731,6 @@ float32_t Variation<2,*>;
 					]]>
 			</artwork>
 		</section>
-		<section anchor="TextStrings">
-			<name>Text Strings</name>
-			<t>
-				A text string is a form of array.
-				It can be fixed length, or variable length.
-				It is signified with the data type 'string'
-				as shown in these examples:
-			</t>
-			<t>
-				A CBOR language string is the same as a CBOR
-				major type 2 text string.
-				With the ability to specify its size to the application.
-			</t>
-			<t>
-				String Examples:
-			</t>
-			<artwork type="asciiart">
-				<![CDATA[
-// A UTF-8 string that is always 20 octets in length.
-// Any unused characters are at the higher offset end
-// and padded with an 8-bit zero (0x00).
-//
-string Path[20];
-
-// A string that contains zero or more UTF-8 characters.
-//
-string Name<>;
-
-// A string that contains zero or up to 20
-// UTF-8 characters.
-//
-string Address<0,20>;
-
-// A string that contains at least 2 and up to 30
-// UTF-8 characters.
-//
-string City<2,30>;
-
-// A string that contains at least 8 and with
-// no limit on the number of UTF-8 characters.
-//
-string Notes<8,*>;
-					]]>
-			</artwork>
-		</section>
 	</section>
 
 <section>
@@ -721,8 +738,14 @@ string Notes<8,*>;
 	<t>
 		A variable has a type and a name.
 		And the name can have some attributes.
-		The ABNF for a variable is:
+		The ANTLR for a variable declaration is:
 	</t>
-.so ABNF/VariableDeclaration.abnf
+	<figure  anchor="declaration-g4">
+		<name>declaration grammar</name>
+		<artwork type="asciiart">
+			<![CDATA[
+.so ANTLR/declaration.g4
+			]]>
+		</artwork>
+	</figure>
 </section>
-

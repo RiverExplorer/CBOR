@@ -1,0 +1,4 @@
+decimal
+    : DECIMAL width?
+    ;
+		

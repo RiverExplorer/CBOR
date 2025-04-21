@@ -1,0 +1,3 @@
+structTypeSpec
+    : ('struct'|'class') structBody
+    ;

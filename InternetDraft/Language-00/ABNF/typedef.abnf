@@ -1,6 +1,0 @@
-<artwork type="asciiart">
-typedef = 'typedef' type-of UserDefinedIdentifier ';'
-
-type-of = (built-in-data-type / user-defined-data-type)
-</artwork>
-

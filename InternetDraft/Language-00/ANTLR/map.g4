@@ -1,0 +1,4 @@
+map
+  : 'map' '<' typeSpecifier ',' typeSpecifier '>'
+	;
+	

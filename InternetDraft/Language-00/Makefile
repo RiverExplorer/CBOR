@@ -37,7 +37,7 @@ INCLUDE.xml = $(INCLUDE.cpp:.cpp=.xml)
 #INCLUDES1 := $(shell /bin/ls include)
 #INCLUDES	= $(addprefix include/,$(INCLUDES1))
 
-ABNF			:= $(shell /bin/ls ABNF/*.abnf)
+ANTLR			:= $(shell /bin/ls ANTLR/*.g4)
 
 # The XDR.cpp files are preprocessed with
 # "cpp -P -nostdinc -C -undef"
@@ -80,25 +80,22 @@ pdf : $(TARGET.pdf)
 
 html : $(TARGET.html)
 
-$(TARGET.txt) : ALL-ABNF.xml ALL-XDR.xml $(ARTWORK.svg) $(ARTWORK.txt) $(TOPDOC.xml)  $(REFERENCES.xml) $(INCLUDES)
+$(TARGET.txt) : ALL-ANTLR.g4 ALL-XDR.xml $(ARTWORK.svg) $(ARTWORK.txt) $(TOPDOC.xml)  $(REFERENCES.xml) $(INCLUDES)
 	xml2rfc $(XML2RFC_FLAGS) -o $@ $(TOPDOC.xml) $(REMOVE_SVG_WARNING)
 
-$(TARGET.pdf) : ALL-ABNF.xml ALL-XDR.xml $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
+$(TARGET.pdf) : ALL-ANTLR.g4 ALL-XDR.xml $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
 	xml2rfc $(XML2RFC_FLAGS) --pdf -o $@ $(TOPDOC.xml) $(REMOVE_SVG_WARNING)
 
-$(TARGET.html): ALL-ABNF.xml ALL-XDR.xml $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
+$(TARGET.html): ALL-ANTLR.g4 ALL-XDR.xml $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
 	xml2rfc $(XML2RFC_FLAGS) --html -o $@ $(TOPDOC.xml) $(REMOVE_SVG_WARNING)
 
-$(TOPDOC.xml) : draft-00.xml ALL-ABNF.xml ALL-XDR.xml $(SOURCES.xml) $(REFERENCES.xml) $(INCLUDES) $(ARTWORK.txt) $(ARTWORK.svg)
+$(TOPDOC.xml) : draft-00.xml ALL-ANTLR.g4 ALL-XDR.xml $(SOURCES.xml) $(REFERENCES.xml) $(INCLUDES) $(ARTWORK.txt) $(ARTWORK.svg)
 	soelim < draft-00.xml | sed '/^\.lf*/d' > temp.xml
 	xmllint --xinclude --format temp.xml > $@
 
-ALL-ABNF.xml : $(ABNF)
-ifneq ($(ABNF),)
-	echo "<section anchor='all-abnf'>" > $@
-	echo "<name>Complete ABNF</name>" >> $@
-	cat $(ABNF) >> $@
-	echo "</section>" >> $@
+ALL-ANTLR.g4 : $(ANTLR)
+ifneq ($(ANTLR),)
+	cat $(ANTLR) >> $@
 endif
 
 ALL-XDR.xml : $(INCLUDE.xml) $(GENERATED.XDR)
@@ -120,7 +117,7 @@ clean :
 	$(RM) tmp.*
 	$(RM) $(ARTWORK.svg)
 	$(RM) $(TOPDOC.xml)
-	$(RM) ALL-ABNF.xml ALL-XDR.xml
+	$(RM) ALL-ANTLR.g4 ALL-XDR.xml
 	$(RM) $(GENERATED.XDR)
 	$(RM) temp.xml
 

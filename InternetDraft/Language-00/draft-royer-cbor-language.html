@@ -1349,7 +1349,7 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-variables-and-arrays" class="internal xref">Variables and Arrays</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-simple-variables" class="internal xref">Simple Variables</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-non-array-variables" class="internal xref">Non-Array Variables</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
                 <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="auto internal xref">4.2</a>.  <a href="#name-fixed-size-array" class="internal xref">Fixed Size Array '[]'</a></p>
@@ -1418,9 +1418,6 @@ li > p:last-of-type:only-child {
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
                 <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-variable-length-arrays" class="internal xref">Variable Length Arrays</a></p>
 </li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
-                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-text-strings" class="internal xref">Text Strings</a></p>
-</li>
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
@@ -1467,7 +1464,7 @@ li > p:last-of-type:only-child {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.17">
-            <p id="section-toc.1-1.17.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-complete-abnf" class="internal xref">Complete ABNF</a></p>
+            <p id="section-toc.1-1.17.1"><a href="#appendix-A" class="auto internal xref">Appendix A</a>.  <a href="#name-complete-anglr-grammar" class="internal xref">Complete ANGLR grammar</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.18">
             <p id="section-toc.1-1.18.1"><a href="#appendix-B" class="auto internal xref"></a><a href="#name-acknowledgments" class="internal xref">Acknowledgments</a></p>
@@ -1563,8 +1560,13 @@ li > p:last-of-type:only-child {
  Application designers may need to adjust the protocol
  they define to ensure that all data types they use
  in the protocol are supported by all intended computers.
- This goal allows for both flexability, and for future
+ This goal allows for both flexibility, and for future
  system that may have expanded data types.<a href="#section-2-9" class="pilcrow">¶</a></p>
+<p id="section-2-10">
+ The language specification written in the open
+ source ANTLR4:
+ <span><a href="https://github.com/antlr/antlr4">https://github.com/antlr/antlr4</a></span>.
+ And is much like Yacc/Bison and lex/Flex grammar.<a href="#section-2-10" class="pilcrow">¶</a></p>
 </section>
 <div id="Identifiers">
 <section id="section-3">
@@ -1620,13 +1622,22 @@ li > p:last-of-type:only-child {
  0-9, and underscore '_'.
  Shown here as a POSIX regular expression for
  an identifier in the public scope:<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-3.1.1-2">
+<span id="name-identifier-grammar"></span><div id="identifier.g4">
+<figure id="figure-1">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.1.1-2.1">
 <pre>
-identifier = [a-zA-Z]([a-zA-Z0-9_])*
-</pre><a href="#section-3.1.1-2" class="pilcrow">¶</a>
+identifier
+    : IDENTIFIER width?
+    ;
+
+</pre>
+</div>
+<figcaption><a href="#figure-1" class="selfRef">Figure 1</a>:
+<a href="#name-identifier-grammar" class="selfRef">identifier grammar</a>
+            </figcaption></figure>
 </div>
 <p id="section-3.1.1-3">
- In the example <a href="#ex1" class="auto internal xref">Figure 1</a>, Speed, TimeNow,
+ In the example <a href="#ex1" class="auto internal xref">Figure 2</a>, Speed, TimeNow,
  Time9,  Travel_Time, Collection, FirstItem
  and AValue are public identifiers.
  As is the method name AMethodThatDoesSomething.<a href="#section-3.1.1-3" class="pilcrow">¶</a></p>
@@ -1639,8 +1650,8 @@ identifier = [a-zA-Z]([a-zA-Z0-9_])*
  defined data type.<a href="#section-3.1.1-5" class="pilcrow">¶</a></p>
 <p id="section-3.1.1-6">
  Examples:<a href="#section-3.1.1-6" class="pilcrow">¶</a></p>
-<div id="ex1">
-<figure id="figure-1">
+<span id="name-sample-with-internal-scope"></span><div id="ex1">
+<figure id="figure-2">
             <div class="alignLeft art-asciiart art-text artwork" id="section-3.1.1-7.1">
 <pre>
 int32_t Speed;         // Okay public, follows the rules.
@@ -1663,7 +1674,9 @@ struct Collection      // 'Collection' is valid, and public.
 };
 </pre>
 </div>
-<figcaption><a href="#figure-1" class="selfRef">Figure 1</a></figcaption></figure>
+<figcaption><a href="#figure-2" class="selfRef">Figure 2</a>:
+<a href="#name-sample-with-internal-scope" class="selfRef">Sample with Internal Scope</a>
+            </figcaption></figure>
 </div>
 </section>
 </div>
@@ -1691,15 +1704,23 @@ struct Collection      // 'Collection' is valid, and public.
  Internally scoped identifiers inside of
  a struct, are only accessible within the struct.<a href="#section-3.1.2-5" class="pilcrow">¶</a></p>
 <p id="section-3.1.2-6">
- The ABNF for an internal identifier:<a href="#section-3.1.2-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-3.1.2-7">
+ The ANTLR for an internal identifier:<a href="#section-3.1.2-6" class="pilcrow">¶</a></p>
+<span id="name-internal_identifier-grammar"></span><div id="internal_identifier.g4">
+<figure id="figure-3">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.1.2-7.1">
 <pre>
 internal_identifier = '_' identifier
-</pre><a href="#section-3.1.2-7" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a>:
+<a href="#name-internal_identifier-grammar" class="selfRef">internal_identifier grammar</a>
+            </figcaption></figure>
 </div>
 <p id="section-3.1.2-8">
  Examples:<a href="#section-3.1.2-8" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-3.1.2-9">
+<span id="name-internal-scope-example"></span><div id="internal-ex1">
+<figure id="figure-4">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.1.2-9.1">
 <pre>
 // Okay Internal, starts with an underscore.
 // _NextSequenceNumber can only be accessed in
@@ -1731,7 +1752,11 @@ struct Collection
   //
   void _AnotherMethod();
 };
-</pre><a href="#section-3.1.2-9" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<a href="#name-internal-scope-example" class="selfRef">Internal Scope Example</a>
+            </figcaption></figure>
 </div>
 <p id="section-3.1.2-10">
  See <a href="#Structures" class="auto internal xref">Section 11</a> for struct details.<a href="#section-3.1.2-10" class="pilcrow">¶</a></p>
@@ -1768,10 +1793,16 @@ struct Collection
  within a struct is a namespace scoped identifier.<a href="#section-3.1.3-3.2" class="pilcrow">¶</a>
 </li>
           </ul>
-<div class="alignLeft art-asciiart art-text artwork" id="section-3.1.3-4">
+<span id="name-namespace-grammar"></span><div id="namespace_identifier.g4">
+<figure id="figure-5">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.1.3-4.1">
 <pre>
 namespace_identifier = '_' identifier
-</pre><a href="#section-3.1.3-4" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<a href="#name-namespace-grammar" class="selfRef">namespace grammar</a>
+            </figcaption></figure>
 </div>
 <p id="section-3.1.3-5">
  Examples:<a href="#section-3.1.3-5" class="pilcrow">¶</a></p>
@@ -1836,18 +1867,18 @@ namespace DailyData
 <a href="#section-4" class="section-number selfRef">4. </a><a href="#name-variables-and-arrays" class="section-name selfRef">Variables and Arrays</a>
       </h2>
 <p id="section-4-1">
- Variables may be simple, fixed size array, or variable sized array:<a href="#section-4-1" class="pilcrow">¶</a></p>
-<div id="SimpleVariables">
+ Variables may be non-array, fixed size array, or variable sized array:<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="NonArrayVariables">
 <section id="section-4.1">
-        <h3 id="name-simple-variables">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-simple-variables" class="section-name selfRef">Simple Variables</a>
+        <h3 id="name-non-array-variables">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-non-array-variables" class="section-name selfRef">Non-Array Variables</a>
         </h3>
 <p id="section-4.1-1">
- A simple variable is one that is not a fixed
+ A non-array variable is one that is not a fixed
  or variable sized array. Examples:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
 <p id="section-4.1-2">
  NOTE:
- A 'string' is always an array and not a simple variable.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+ A 'string' is always an array and not a non-array variable.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
 <p id="section-4.1-3">
  Examples:<a href="#section-4.1-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-asciiart art-text artwork" id="section-4.1-4">
@@ -2107,15 +2138,24 @@ multimap&lt;uint8_t,OtherObjectType&gt; VariableMultiMap&lt;16&gt;;
           <dd class="break"></dd>
 </dl>
 <p id="section-5.1.1-3">
- ABNF:<a href="#section-5.1.1-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-5.1.1-4">
+ ANTLR:<a href="#section-5.1.1-3" class="pilcrow">¶</a></p>
+<span id="name-unsignedinteger-grammar"></span><div id="uint-antlr">
+<figure id="figure-6">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-5.1.1-4.1">
 <pre>
-unsigned_integer = 'uint' width8 '_t'
+unsignedInteger
+  : 'uint8_t'
+        | 'uint16_t'
+        | 'uint32_t'
+        | 'uint64_t'
+        | bigNumUInt
+        ;
 
-; Where the the value is a multiple of 8 only.
-;
-width8           = %d
-</pre><a href="#section-5.1.1-4" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<a href="#name-unsignedinteger-grammar" class="selfRef">unsignedInteger grammar</a>
+            </figcaption></figure>
 </div>
 <p id="section-5.1.1-5">
  See <a href="#UnsignedIntegers" class="auto internal xref">Section 5.1.1</a> for details.<a href="#section-5.1.1-5" class="pilcrow">¶</a></p>
@@ -2206,11 +2246,24 @@ uint16_t SixteenBitsWide;
           <dd class="break"></dd>
 </dl>
 <p id="section-5.1.2-3">
- ABNF:<a href="#section-5.1.2-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-5.1.2-4">
+ ANTLR:<a href="#section-5.1.2-3" class="pilcrow">¶</a></p>
+<span id="name-signedinteger-grammar"></span><div id="int-antlr">
+<figure id="figure-7">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-5.1.2-4.1">
 <pre>
-signed_integer = 'int' width8 '_t'
-</pre><a href="#section-5.1.2-4" class="pilcrow">¶</a>
+signedInteger
+  : 'int8_t'
+        | 'int16_t'
+        | 'int32_t'
+        | 'int64_t'
+        | bigNumInt
+        ;
+
+</pre>
+</div>
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
+<a href="#name-signedinteger-grammar" class="selfRef">signedInteger grammar</a>
+            </figcaption></figure>
 </div>
 <p id="section-5.1.2-5">
  See <a href="#UnsignedIntegers" class="auto internal xref">Section 5.1.1</a> for details.<a href="#section-5.1.2-5" class="pilcrow">¶</a></p>
@@ -2300,15 +2353,23 @@ int16_t SixteenBitsWide;
 <a href="#section-5.2" class="section-number selfRef">5.2. </a><a href="#name-float" class="section-name selfRef">Float</a>
         </h3>
 <p id="section-5.2-1">
- ABNF:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-5.2-2">
+ ANTLR:<a href="#section-5.2-1" class="pilcrow">¶</a></p>
+<span id="name-float-grammar"></span><div id="float.g4">
+<figure id="figure-8">
+          <div class="alignLeft art-asciiart art-text artwork" id="section-5.2-2.1">
 <pre>
-float = 'float' width8f '_t'
+float
+  : 'float16_t'
+        | 'float32_t'
+        | 'float64_t'
+        | bigNumFloat
+        ;
 
-; Where the value is at least 16 and is a multiple of 8.
-;
-width8f = %d
-</pre><a href="#section-5.2-2" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-float-grammar" class="selfRef">float grammar</a>
+          </figcaption></figure>
 </div>
 <p id="section-5.2-3">
  Examples:<a href="#section-5.2-3" class="pilcrow">¶</a></p>
@@ -2398,14 +2459,18 @@ string OtherString[40];
         <dd class="break"></dd>
 </dl>
 <p id="section-5.3-2">
- ABNF:<a href="#section-5.3-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-5.3-3">
+ ANTLR:<a href="#section-5.3-2" class="pilcrow">¶</a></p>
+<span id="name-string-grammar"></span><div id="string.g4">
+<figure id="figure-9">
+          <div class="alignLeft art-asciiart art-text artwork" id="section-5.3-3.1">
 <pre>
-string = 'string'
-</pre><a href="#section-5.3-3" class="pilcrow">¶</a>
+string : 'string' ;
+</pre>
 </div>
-<p id="section-5.3-4">
- See <a href="#TextStrings" class="auto internal xref">Section 6.3</a> for details.<a href="#section-5.3-4" class="pilcrow">¶</a></p>
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<a href="#name-string-grammar" class="selfRef">string grammar</a>
+          </figcaption></figure>
+</div>
 </section>
 </div>
 <div id="MapAndMultimap">
@@ -2510,11 +2575,20 @@ map&lt;OuterObject,uint8_t&gt; UsesComplexKey;
 <p id="section-5.4.1-1">
  The CBOR language map data type has two
  arguments, the key type, and the value type.
- And is defined in ABNF as:<a href="#section-5.4.1-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-5.4.1-2">
+ And is defined in ANTLR as:<a href="#section-5.4.1-1" class="pilcrow">¶</a></p>
+<span id="name-map-grammar"></span><div id="map-g4">
+<figure id="figure-10">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-5.4.1-2.1">
 <pre>
-map = 'map&lt;' keytype ',' valuetype '&gt;'
-</pre><a href="#section-5.4.1-2" class="pilcrow">¶</a>
+map
+  : 'map' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
+        ;
+
+</pre>
+</div>
+<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<a href="#name-map-grammar" class="selfRef">map grammar</a>
+            </figcaption></figure>
 </div>
 <p id="section-5.4.1-3">
  Here are examples a map in the CBOR language:<a href="#section-5.4.1-3" class="pilcrow">¶</a></p>
@@ -2566,11 +2640,19 @@ map&lt;Object1,Object2&gt;   SomeVariableName3;
  One key sent, all of the objects with that key
  sent as an array, as the value to that key.<a href="#section-5.4.2-2" class="pilcrow">¶</a></p>
 <p id="section-5.4.2-3">
- Here is the ABNF definition of a multimap in the CBOR language:<a href="#section-5.4.2-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-5.4.2-4">
+ Here is the ANTLR definition of a multimap in the CBOR language:<a href="#section-5.4.2-3" class="pilcrow">¶</a></p>
+<span id="name-multimap-grammar"></span><div id="multimap-g4">
+<figure id="figure-11">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-5.4.2-4.1">
 <pre>
-multimap = 'multimap&lt;' keytype ',' valuetype '&gt;'
-</pre><a href="#section-5.4.2-4" class="pilcrow">¶</a>
+multimap
+  : 'multimap' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
+        ;
+</pre>
+</div>
+<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
+<a href="#name-multimap-grammar" class="selfRef">multimap grammar</a>
+            </figcaption></figure>
 </div>
 <p id="section-5.4.2-5">
  A multimap is a map that allows multiple of the same keys.
@@ -2701,52 +2783,6 @@ float32_t Variation&lt;2,*&gt;;
 </div>
 </section>
 </div>
-<div id="TextStrings">
-<section id="section-6.3">
-        <h3 id="name-text-strings">
-<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-text-strings" class="section-name selfRef">Text Strings</a>
-        </h3>
-<p id="section-6.3-1">
- A text string is a form of array.
- It can be fixed length, or variable length.
- It is signified with the data type 'string'
- as shown in these examples:<a href="#section-6.3-1" class="pilcrow">¶</a></p>
-<p id="section-6.3-2">
- A CBOR language string is the same as a CBOR
- major type 2 text string.
- With the ability to specify its size to the application.<a href="#section-6.3-2" class="pilcrow">¶</a></p>
-<p id="section-6.3-3">
- String Examples:<a href="#section-6.3-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-6.3-4">
-<pre>
-// A UTF-8 string that is always 20 octets in length.
-// Any unused characters are at the higher offset end
-// and padded with an 8-bit zero (0x00).
-//
-string Path[20];
-
-// A string that contains zero or more UTF-8 characters.
-//
-string Name&lt;&gt;;
-
-// A string that contains zero or up to 20
-// UTF-8 characters.
-//
-string Address&lt;0,20&gt;;
-
-// A string that contains at least 2 and up to 30
-// UTF-8 characters.
-//
-string City&lt;2,30&gt;;
-
-// A string that contains at least 8 and with
-// no limit on the number of UTF-8 characters.
-//
-string Notes&lt;8,*&gt;;
-</pre><a href="#section-6.3-4" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
 </section>
 </div>
 <section id="section-7">
@@ -2756,31 +2792,25 @@ string Notes&lt;8,*&gt;;
 <p id="section-7-1">
  A variable has a type and a name.
  And the name can have some attributes.
- The ABNF for a variable is:<a href="#section-7-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-7-2">
+ The ANTLR for a variable declaration is:<a href="#section-7-1" class="pilcrow">¶</a></p>
+<span id="name-declaration-grammar"></span><div id="declaration-g4">
+<figure id="figure-12">
+        <div class="alignLeft art-asciiart art-text artwork" id="section-7-2.1">
 <pre>
-VariableDeclaration = ObjectType UserDefinedIdentifier
-                      *(FixedArray / VariableArray)
+declaration : typeSpecifier identifier
+        | typeSpecifier identifier '[' value ']'
+        | typeSpecifier identifier '&lt;' value? '&gt;'
+        | 'opaque' identifier '[' value ']'
+        | 'opaque' identifier '&lt;' value? '&gt;'
+        | 'string' identifier '&lt;' value? '&gt;'
+        | 'void'
+        ;
 
-ObjectType = signed_integer
-           / unsigned_integer
-           / float
-           / string
-           / map
-           / multimap
-           / UserDefinedType
-
-signed_integer = int8_t / int16_t / int32_t / int64_t / bignum
-
-signed_integer = uint8_t / uint16_t / uint32_t / uint64_t / bignum
-
-float          = float16_t / float32_t / float64_t / bignum
-
-UserDefinedIdentifier = identifier
-                      / internal_identifier
-                      / namespace_identifier
-
-</pre><a href="#section-7-2" class="pilcrow">¶</a>
+</pre>
+</div>
+<figcaption><a href="#figure-12" class="selfRef">Figure 12</a>:
+<a href="#name-declaration-grammar" class="selfRef">declaration grammar</a>
+        </figcaption></figure>
 </div>
 </section>
 <div id="Namespaces">
@@ -2925,20 +2955,27 @@ Packets.UID              PacketUID;
  The typedef and its concept are the same as they
  are in C/C++.<a href="#section-9-2" class="pilcrow">¶</a></p>
 <p id="section-9-3">
- The ABNF for typedef:<a href="#section-9-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-9-4">
+ The ANTLR for typedef:<a href="#section-9-3" class="pilcrow">¶</a></p>
+<div id="typedef-g4">
+<figure id="figure-13">
+        <div class="alignLeft art-asciiart art-text artwork" id="section-9-4.1">
 <pre>
-typedef = 'typedef' type-of UserDefinedIdentifier ';'
-
-type-of = (built-in-data-type / user-defined-data-type)
-</pre><a href="#section-9-4" class="pilcrow">¶</a>
+typeDef
+    : 'typedef' declaration ';'
+    | 'enum' identifier enumBody ';'
+    | ('struct'|'class') identifier structBody ';'
+    | 'union' identifier unionBody ';'
+    ;
+</pre>
+</div>
+<figcaption><a href="#figure-13" class="selfRef">Figure 13</a></figcaption></figure>
 </div>
 <p id="section-9-5">
- In <a href="#td-1" class="auto internal xref">Figure 2</a> and <a href="#td-2" class="auto internal xref">Figure 3</a> there is an
+ In <a href="#td-1" class="auto internal xref">Figure 14</a> and <a href="#td-2" class="auto internal xref">Figure 15</a> there is an
  error as both the Sequence and Command are different sizes.
  If one definition file has:<a href="#section-9-5" class="pilcrow">¶</a></p>
 <div id="td-1">
-<figure id="figure-2">
+<figure id="figure-14">
         <div class="alignLeft art-text artwork" id="section-9-6.1">
 <pre>
 struct Packet
@@ -2950,13 +2987,13 @@ struct Packet
 };
 </pre>
 </div>
-<figcaption><a href="#figure-2" class="selfRef">Figure 2</a></figcaption></figure>
+<figcaption><a href="#figure-14" class="selfRef">Figure 14</a></figcaption></figure>
 </div>
 <p id="section-9-7">
  And a second file has a definition for a method to
  use the packet data:<a href="#section-9-7" class="pilcrow">¶</a></p>
 <div id="td-2">
-<figure id="figure-3">
+<figure id="figure-15">
         <div class="alignLeft art-text artwork" id="section-9-8.1">
 <pre>
 // On many systems this would compile
@@ -2979,13 +3016,13 @@ void ProcessPacket(uint16_t Sequence, uint16_t Command)
 }
 </pre>
 </div>
-<figcaption><a href="#figure-3" class="selfRef">Figure 3</a></figcaption></figure>
+<figcaption><a href="#figure-15" class="selfRef">Figure 15</a></figcaption></figure>
 </div>
 <p id="section-9-9">
  If typedefs had been used it would catch
  that error and also make it easier to read:<a href="#section-9-9" class="pilcrow">¶</a></p>
 <div id="td-3">
-<figure id="figure-4">
+<figure id="figure-16">
         <div class="alignLeft art-text artwork" id="section-9-10.1">
 <pre>
 // Create a data type called 'PacketSequence'
@@ -3009,12 +3046,12 @@ struct Packet
 };
 </pre>
 </div>
-<figcaption><a href="#figure-4" class="selfRef">Figure 4</a></figcaption></figure>
+<figcaption><a href="#figure-16" class="selfRef">Figure 16</a></figcaption></figure>
 </div>
 <p id="section-9-11">
  And if the second usage had been defined as:<a href="#section-9-11" class="pilcrow">¶</a></p>
 <div id="td-4">
-<figure id="figure-5">
+<figure id="figure-17">
         <div class="alignLeft art-text artwork" id="section-9-12.1">
 <pre>
 void ProcessPacket(PacketSequence Seq, PacketCommand Cmd)
@@ -3031,7 +3068,7 @@ void ProcessPacket(PacketSequence Seq, PacketCommand Cmd)
 }
 </pre>
 </div>
-<figcaption><a href="#figure-5" class="selfRef">Figure 5</a></figcaption></figure>
+<figcaption><a href="#figure-17" class="selfRef">Figure 17</a></figcaption></figure>
 </div>
 </section>
 </div>
@@ -3045,7 +3082,7 @@ void ProcessPacket(PacketSequence Seq, PacketCommand Cmd)
  is to create identifiers and assign numeric values to
  them in order to simply reading and understanding the code.<a href="#section-10-1" class="pilcrow">¶</a></p>
 <p id="section-10-2">
- The enum ABNF:<a href="#section-10-2" class="pilcrow">¶</a></p>
+ The enum ANTLR:<a href="#section-10-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-asciiart art-text artwork" id="section-10-3">
 <pre>
 enum       = 'enum' enum-name '{'
@@ -3108,18 +3145,17 @@ enum DaysOfTheWeek {
  A struct is a way to encapsulate a related
  set of variables.<a href="#section-11-1" class="pilcrow">¶</a></p>
 <p id="section-11-2">
- Struct ABNF:<a href="#section-11-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-11-3">
+ Struct ANTLR:<a href="#section-11-2" class="pilcrow">¶</a></p>
+<div id="struct-g4">
+<figure id="figure-18">
+        <div class="alignLeft art-asciiart art-text artwork" id="section-11-3.1">
 <pre>
-struct      = 'struct struct-body
-
-struct-body = '{' struct-line *struct-line '}'
-
-struct-line =  *declaration ';'
-            \  *comment
-            \  *method
-            \  *passThrough
-</pre><a href="#section-11-3" class="pilcrow">¶</a>
+structTypeSpec
+    : ('struct'|'class') structBody
+    ;
+</pre>
+</div>
+<figcaption><a href="#figure-18" class="selfRef">Figure 18</a></figcaption></figure>
 </div>
 </section>
 </div>
@@ -3227,112 +3263,233 @@ this is a test
 </dl>
 </section>
 </section>
-<div id="all-abnf">
+<div id="all-antlr-g4">
 <section id="appendix-A">
-      <h2 id="name-complete-abnf">
-<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-complete-abnf" class="section-name selfRef">Complete ABNF</a>
+      <h2 id="name-complete-anglr-grammar">
+<a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-complete-anglr-grammar" class="section-name selfRef">Complete ANGLR grammar</a>
       </h2>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-1">
+<span id="name-complate-anglr-grammar"></span><div id="all-g4">
+<figure id="figure-19">
+        <div class="alignLeft art-asciiart art-text artwork" id="appendix-A-1.1">
 <pre>
-comment            = block-comment / ToEndOfLineComment
+grammar cbor;
 
-block-comment      = '/*' NonEndText '*/'
-
-NonEndText         = any UTF-8 characters allowed in the file
-                     except the sequence '*/'.
-
-; The comment text is to the end of the line.
-;
-ToEndOfLineComment = '//'
-
-</pre><a href="#appendix-A-1" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-2">
-<pre>
-float = 'float' width8f '_t'
-
-; Where the value is at least 16 and is a multiple of 8.
-;
-width8f = %d
-</pre><a href="#appendix-A-2" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-3">
-<pre>
+caseSpec
+    : (('case' value':') | comment+ | passThrough+)
+        (('case' value':') | comment+ | passThrough+)*
+        declaration ';'
+    ;
+                cborSpecification
+    : specs+
+    ;
+                comment : CommentOneLine
+        | CommentMultiLine ;
+        CommentMultiLine : '/*' .*? '*/' ;
+CommentOneLine : '//' ~[\r\n]+ ;
+constantDef
+    : 'const' typeSpecifier identifier '=' constant ';'
+    ;
+                constant
+    : decimal
+                | float
+    | hexadecimal
+    | octal
+    ;
+                dataType : typeSpecifier
+        | typeSpecifier '[' value ']'
+        | typeSpecifier '&lt;' value? '&gt;'
+        | 'opaque' '[' value ']'
+        | 'opaque' '&lt;' value? '&gt;'
+        | 'string' '&lt;' value? '&gt;'
+        | 'void'
+        ;
+decimal
+    : DECIMAL width?
+    ;
+                DECIMAL
+    : ('-')? ([0-9])+
+    ;
+declaration : typeSpecifier identifier
+        | typeSpecifier identifier '[' value ']'
+        | typeSpecifier identifier '&lt;' value? '&gt;'
+        | 'opaque' identifier '[' value ']'
+        | 'opaque' identifier '&lt;' value? '&gt;'
+        | 'string' identifier '&lt;' value? '&gt;'
+        | 'void'
+        ;
+        definition
+    : typeDef
+    | constantDef
+    ;
+                enumBody
+    : '{' (identifier '=' value) (',' identifier '=' value)* '}'
+    ;
+enumTypeSpec
+    : 'enum' enumBody
+    ;
+                float
+  : 'float16_t'
+        | 'float32_t'
+        | 'float64_t'
+        | bigNumFloat
+        ;
+        FLOAT
+    : ('-')? ([0-9])+('.' [0-9+]*)? (('e'|'E')('-')?[0-9]+)?
+    ;
+                floatValue
+    : FLOAT
+    ;
+hexadecimal
+    : HEXADECIMAL width?
+    ;
+                HEXADECIMAL
+    : '0x' ([a-fA-F0-9])+
+    ;
+                identifier
+    : IDENTIFIER width?
+    ;
+                IDENTIFIER
+        : [a-zA-Z] ([a-zA-Z0-9_])*
+        ;
+        ignoreTag : '[ignore]'
+                                        ;
 internal_identifier = '_' identifier
-</pre><a href="#appendix-A-3" class="pilcrow">¶</a>
+internalTag : '[internal]'
+                                        ;
+map
+  : 'map' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
+        ;
+        method: dataType identifier '(' dataType identifier?
+                                (',' dataType identifier?)* ')' ';'
+        ;
+        multimap
+  : 'multimap' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
+        ;
+namespaceDef
+        : 'namespace' identifier ( ':' identifier )* ';'
+        ;
+        namespace_identifier = '_' identifier
+namespaceTag : '[namespace]'
+             ;octal : OCTAL width?
+                        ;
+                        OCTAL
+    : '0' [1-7] ([0-7])*
+    ;
+        overrideTag : '[override]'
+                                                ;
+PASS
+        : '%' ~[\n\r]+
+        | '%' [\n\r]+
+        ;
+        passThrough : PASS
+         ;
+         privatetag : '[private]'
+           ;
+procFirstArg
+        : 'void'
+        | dataType identifier?
+        ;
+        program : 'program' identifier '{' version+ '}' '=' value ';'
+        ;
+publicTag : '[public]'
+                                        ;
+// A value enclosed in double quotes (")
+QIDENTIFIERDOUBLE
+        : '"' [a-zA-Z] ([a-zA-Z0-9_])* '"'
+        ;
+        QIDENTIFIERSINGLE
+        : '\'' [a-zA-Z] ([a-zA-Z0-9_])* '\''
+        ;specs
+        : structTypeSpec
+        | unionTypeSpec
+        | enumTypeSpec
+        | constantDef
+        | namespaceDef
+        | comment
+        | passThrough
+        | program
+        | declaration ';'
+        | typeDef
+        ;
+        signedInteger
+  : 'int8_t'
+        | 'int16_t'
+        | 'int32_t'
+        | 'int64_t'
+        | bigNumInt
+        ;
+        string : 'string' ;
+structBody
+    : '{'
+        ((declaration ';') | comment+ | method+ | passThrough+)
+        ((declaration ';') | comment+ | method+ | passThrough+)*
+        '}'
+    ;
+                structTypeSpec
+    : ('struct'|'class') structBody
+    ;
+tags : ignoretag
+                 | internaltag
+                 | overridetag
+                 | privatetag
+                 ;
+typeDef
+    : 'typedef' declaration ';'
+    | 'enum' identifier enumBody ';'
+    | ('struct'|'class') identifier structBody ';'
+    | 'union' identifier unionBody ';'
+    ;
+typeSpecifier
+        : 'bool'
+        | enumTypeSpec
+  | float
+        | identifier
+        | map
+        | multimap
+        | 'opaque'
+        | signedInteger
+        | 'string'
+        | structTypeSpec
+        | unionTypeSpec
+        | unsignedInteger
+        ;
+unionBody
+    : 'switch' '(' declaration ')' '{'
+        caseSpec
+        caseSpec*
+        ('default' ':' declaration ';')?
+        '}'
+    ;
+unionTypeSpec
+    : 'union' unionBody
+    ;unsignedInteger
+  : 'uint8_t'
+        | 'uint16_t'
+        | 'uint32_t'
+        | 'uint64_t'
+        | bigNumUInt
+        ;
+        value
+    : constant
+    | identifier
+    | QIDENTIFIERSINGLE
+    | QIDENTIFIERDOUBLE
+    ;
+version : 'version' identifier '{' versionMethod+ '}' '=' value ';'
+        ;
+        versionMethod: dataType identifier
+ '(' ((dataType identifier?
+ (',' dataType identifier?)*) | 'void') ')' '=' value ';'
+        ;
+        width
+        : (':' DECIMAL)
+        ;
+
+</pre>
 </div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-4">
-<pre>
-map = 'map&lt;' keytype ',' valuetype '&gt;'
-</pre><a href="#appendix-A-4" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-5">
-<pre>
-multimap = 'multimap&lt;' keytype ',' valuetype '&gt;'
-</pre><a href="#appendix-A-5" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-6">
-<pre>
-signed_integer = 'int' width8 '_t'
-</pre><a href="#appendix-A-6" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-7">
-<pre>
-string = 'string'
-</pre><a href="#appendix-A-7" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-8">
-<pre>
-struct      = 'struct struct-body
-
-struct-body = '{' struct-line *struct-line '}'
-
-struct-line =  *declaration ';'
-            \  *comment
-            \  *method
-            \  *passThrough
-</pre><a href="#appendix-A-8" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-9">
-<pre>
-typedef = 'typedef' type-of UserDefinedIdentifier ';'
-
-type-of = (built-in-data-type / user-defined-data-type)
-</pre><a href="#appendix-A-9" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-10">
-<pre>
-unsigned_integer = 'uint' width8 '_t'
-
-; Where the the value is a multiple of 8 only.
-;
-width8           = %d
-</pre><a href="#appendix-A-10" class="pilcrow">¶</a>
-</div>
-<div class="alignLeft art-asciiart art-text artwork" id="appendix-A-11">
-<pre>
-VariableDeclaration = ObjectType UserDefinedIdentifier
-                      *(FixedArray / VariableArray)
-
-ObjectType = signed_integer
-           / unsigned_integer
-           / float
-           / string
-           / map
-           / multimap
-           / UserDefinedType
-
-signed_integer = int8_t / int16_t / int32_t / int64_t / bignum
-
-signed_integer = uint8_t / uint16_t / uint32_t / uint64_t / bignum
-
-float          = float16_t / float32_t / float64_t / bignum
-
-UserDefinedIdentifier = identifier
-                      / internal_identifier
-                      / namespace_identifier
-
-</pre><a href="#appendix-A-11" class="pilcrow">¶</a>
+<figcaption><a href="#figure-19" class="selfRef">Figure 19</a>:
+<a href="#name-complate-anglr-grammar" class="selfRef">Complate ANGLR grammar</a>
+        </figcaption></figure>
 </div>
 </section>
 </div>

@@ -1,0 +1,3 @@
+floatValue
+    : FLOAT
+    ;

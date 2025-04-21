@@ -5,7 +5,13 @@
 		set of variables.
 	</t>
 	<t>
-		Struct ABNF:
+		Struct ANTLR:
 	</t>
-.so ABNF/struct.abnf
+	<figure  anchor="struct-g4">
+		<artwork type="asciiart">
+			<![CDATA[
+.so ANTLR/structTypeDef.g4
+			]]>
+		</artwork>
+	</figure>
 </section>

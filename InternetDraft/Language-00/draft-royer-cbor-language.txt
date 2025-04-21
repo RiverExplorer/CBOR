@@ -69,10 +69,10 @@ Table of Contents
    3.  Identifiers and Variables . . . . . . . . . . . . . . . . . .   4
      3.1.  How to name a variable or identifier  . . . . . . . . . .   4
        3.1.1.  Publicly scoped Identifiers . . . . . . . . . . . . .   5
-       3.1.2.  Internal Scoped Identifiers . . . . . . . . . . . . .   5
+       3.1.2.  Internal Scoped Identifiers . . . . . . . . . . . . .   6
        3.1.3.  Namespace Scoped Identifiers  . . . . . . . . . . . .   7
    4.  Variables and Arrays  . . . . . . . . . . . . . . . . . . . .  10
-     4.1.  Simple Variables  . . . . . . . . . . . . . . . . . . . .  10
+     4.1.  Non-Array Variables . . . . . . . . . . . . . . . . . . .  10
      4.2.  Fixed Size Array '[]' . . . . . . . . . . . . . . . . . .  10
      4.3.  Variable Size Array '<Max>' . . . . . . . . . . . . . . .  10
        4.3.1.  Variable Size Array With Minimum and Maximum Size . .  11
@@ -83,29 +83,29 @@ Table of Contents
      5.1.  Integers  . . . . . . . . . . . . . . . . . . . . . . . .  13
        5.1.1.  Unsigned Integer  . . . . . . . . . . . . . . . . . .  13
        5.1.2.  Signed Integer  . . . . . . . . . . . . . . . . . . .  14
-       5.1.3.  Big Integers  . . . . . . . . . . . . . . . . . . . .  15
+       5.1.3.  Big Integers  . . . . . . . . . . . . . . . . . . . .  16
      5.2.  Float . . . . . . . . . . . . . . . . . . . . . . . . . .  16
-     5.3.  String  . . . . . . . . . . . . . . . . . . . . . . . . .  16
+     5.3.  String  . . . . . . . . . . . . . . . . . . . . . . . . .  17
      5.4.  Maps and MultiMaps  . . . . . . . . . . . . . . . . . . .  17
-       5.4.1.  Map . . . . . . . . . . . . . . . . . . . . . . . . .  19
-       5.4.2.  Multimap  . . . . . . . . . . . . . . . . . . . . . .  19
-   6.  Arrays  . . . . . . . . . . . . . . . . . . . . . . . . . . .  21
-     6.1.  Fixed Length Arrays . . . . . . . . . . . . . . . . . . .  21
-     6.2.  Variable Length Arrays  . . . . . . . . . . . . . . . . .  21
-     6.3.  Text Strings  . . . . . . . . . . . . . . . . . . . . . .  22
+       5.4.1.  Map . . . . . . . . . . . . . . . . . . . . . . . . .  20
+       5.4.2.  Multimap  . . . . . . . . . . . . . . . . . . . . . .  21
+   6.  Arrays  . . . . . . . . . . . . . . . . . . . . . . . . . . .  22
+     6.1.  Fixed Length Arrays . . . . . . . . . . . . . . . . . . .  22
+     6.2.  Variable Length Arrays  . . . . . . . . . . . . . . . . .  22
    7.  Declaring Variables . . . . . . . . . . . . . . . . . . . . .  23
-   8.  Namespaces  . . . . . . . . . . . . . . . . . . . . . . . . .  24
-   9.  User Type Definitions . . . . . . . . . . . . . . . . . . . .  27
-   10. Enum  . . . . . . . . . . . . . . . . . . . . . . . . . . . .  29
-   11. Structues . . . . . . . . . . . . . . . . . . . . . . . . . .  30
-   12. Union . . . . . . . . . . . . . . . . . . . . . . . . . . . .  30
-   13. Program . . . . . . . . . . . . . . . . . . . . . . . . . . .  30
-     13.1.  Versioning the Protocol  . . . . . . . . . . . . . . . .  30
+   8.  Namespaces  . . . . . . . . . . . . . . . . . . . . . . . . .  23
+   9.  User Type Definitions . . . . . . . . . . . . . . . . . . . .  26
+   10. Enum  . . . . . . . . . . . . . . . . . . . . . . . . . . . .  28
+   11. Structues . . . . . . . . . . . . . . . . . . . . . . . . . .  29
+   12. Union . . . . . . . . . . . . . . . . . . . . . . . . . . . .  29
+   13. Program . . . . . . . . . . . . . . . . . . . . . . . . . . .  29
+     13.1.  Versioning the Protocol  . . . . . . . . . . . . . . . .  29
    14. IANA Considerations . . . . . . . . . . . . . . . . . . . . .  30
    15. Security Considerations . . . . . . . . . . . . . . . . . . .  30
    16. References  . . . . . . . . . . . . . . . . . . . . . . . . .  30
      16.1.  Normative References . . . . . . . . . . . . . . . . . .  30
-     16.2.  Informative References . . . . . . . . . . . . . . . . .  31
+     16.2.  Informative References . . . . . . . . . . . . . . . . .  30
+   Appendix A.  Complete ANGLR grammar . . . . . . . . . . . . . . .  31
 
 
 
@@ -114,10 +114,9 @@ Royer                    Expires 22 October 2025                [Page 2]
 Internet-Draft                CBOR Language                   April 2025
 
 
-   Appendix A.  Complete ABNF  . . . . . . . . . . . . . . . . . . .  31
-   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  33
-   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  33
-   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  33
+   Acknowledgments . . . . . . . . . . . . . . . . . . . . . . . . .  35
+   Contributors  . . . . . . . . . . . . . . . . . . . . . . . . . .  35
+   Author's Address  . . . . . . . . . . . . . . . . . . . . . . . .  35
 
 1.  Requirements Language
 
@@ -165,6 +164,7 @@ Internet-Draft                CBOR Language                   April 2025
 
 
 
+
 Royer                    Expires 22 October 2025                [Page 3]
 
 Internet-Draft                CBOR Language                   April 2025
@@ -187,8 +187,12 @@ Internet-Draft                CBOR Language                   April 2025
    same on all systems.  Application designers may need to adjust the
    protocol they define to ensure that all data types they use in the
    protocol are supported by all intended computers.  This goal allows
-   for both flexability, and for future system that may have expanded
+   for both flexibility, and for future system that may have expanded
    data types.
+
+   The language specification written in the open source ANTLR4:
+   https://github.com/antlr/antlr4.  And is much like Yacc/Bison and
+   lex/Flex grammar.
 
 3.  Identifiers and Variables
 
@@ -213,11 +217,7 @@ Internet-Draft                CBOR Language                   April 2025
    An identifier can be public for any code to use.  This is in the
    'public' scope.
 
-   Or they can be internal to the objects being described.  This is in
-   the 'internal' scope.
 
-   Or they can only be accessible within a 'namespace'.  This is in the
-   'namespace' scope.  See Namespaces (Section 8).
 
 
 
@@ -226,6 +226,12 @@ Royer                    Expires 22 October 2025                [Page 4]
 Internet-Draft                CBOR Language                   April 2025
 
 
+   Or they can be internal to the objects being described.  This is in
+   the 'internal' scope.
+
+   Or they can only be accessible within a 'namespace'.  This is in the
+   'namespace' scope.  See Namespaces (Section 8).
+
 3.1.1.  Publicly scoped Identifiers
 
    Public identifiers names must start with a letter from the UTF-8 set:
@@ -233,9 +239,14 @@ Internet-Draft                CBOR Language                   April 2025
    0-9, and underscore '_'.  Shown here as a POSIX regular expression
    for an identifier in the public scope:
 
-   identifier = [a-zA-Z]([a-zA-Z0-9_])*
+   identifier
+       : IDENTIFIER width?
+       ;
 
-   In the example Figure 1, Speed, TimeNow, Time9, Travel_Time,
+
+                        Figure 1: identifier grammar
+
+   In the example Figure 2, Speed, TimeNow, Time9, Travel_Time,
    Collection, FirstItem and AValue are public identifiers.  As is the
    method name AMethodThatDoesSomething.
 
@@ -245,6 +256,31 @@ Internet-Draft                CBOR Language                   April 2025
    user defined data type.
 
    Examples:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Royer                    Expires 22 October 2025                [Page 5]
+
+Internet-Draft                CBOR Language                   April 2025
+
 
    int32_t Speed;         // Okay public, follows the rules.
 
@@ -265,22 +301,12 @@ Internet-Draft                CBOR Language                   April 2025
      void AMethodThatDoesSomething();
    };
 
-                                  Figure 1
+                    Figure 2: Sample with Internal Scope
 
 3.1.2.  Internal Scoped Identifiers
 
    An internally scoped identifier is an identifier that starts with an
    underscore '_'.
-
-
-
-
-
-
-Royer                    Expires 22 October 2025                [Page 5]
-
-Internet-Draft                CBOR Language                   April 2025
-
 
    Internally scoped identifiers can only be accessed from within the
    object they are defined in.  They are often helper variables or
@@ -295,39 +321,13 @@ Internet-Draft                CBOR Language                   April 2025
    Internally scoped identifiers inside of a struct, are only accessible
    within the struct.
 
-   The ABNF for an internal identifier:
+   The ANTLR for an internal identifier:
 
    internal_identifier = '_' identifier
 
+                   Figure 3: internal_identifier grammar
+
    Examples:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -369,6 +369,8 @@ Internet-Draft                CBOR Language                   April 2025
      void _AnotherMethod();
    };
 
+                      Figure 4: Internal Scope Example
+
    See Section 11 for struct details.
 
 3.1.3.  Namespace Scoped Identifiers
@@ -383,9 +385,7 @@ Internet-Draft                CBOR Language                   April 2025
    methods that aid in the cross coordination of objects within the
    namespace.
 
-   *  An identifier defined inside of a struct that starts with an
-      underscore '_' is an identifier that is only known within the
-      struct and is an internally scoped identifier.
+
 
 
 
@@ -394,18 +394,18 @@ Royer                    Expires 22 October 2025                [Page 7]
 Internet-Draft                CBOR Language                   April 2025
 
 
+   *  An identifier defined inside of a struct that starts with an
+      underscore '_' is an identifier that is only known within the
+      struct and is an internally scoped identifier.
+
    *  An identifier that is in a namespace, and not within a struct is a
       namespace scoped identifier.
 
    namespace_identifier = '_' identifier
 
+                        Figure 5: namespace grammar
+
    Examples:
-
-
-
-
-
-
 
 
 
@@ -508,14 +508,15 @@ Internet-Draft                CBOR Language                   April 2025
 
 4.  Variables and Arrays
 
-   Variables may be simple, fixed size array, or variable sized array:
+   Variables may be non-array, fixed size array, or variable sized
+   array:
 
-4.1.  Simple Variables
+4.1.  Non-Array Variables
 
-   A simple variable is one that is not a fixed or variable sized array.
-   Examples:
+   A non-array variable is one that is not a fixed or variable sized
+   array.  Examples:
 
-   NOTE: A 'string' is always an array and not a simple variable.
+   NOTE: A 'string' is always an array and not a non-array variable.
 
    Examples:
 
@@ -553,7 +554,6 @@ Internet-Draft                CBOR Language                   April 2025
    unlimited.
 
    An variable array size is specified in one of 3 ways:
-
 
 
 
@@ -711,17 +711,17 @@ Internet-Draft                CBOR Language                   April 2025
       An unsigned integer, 'W' bits wide.  Where 'W' must be a multiple
       of 8.
 
-   ABNF:
+   ANTLR:
 
-   unsigned_integer = 'uint' width8 '_t'
+   unsignedInteger
+     : 'uint8_t'
+           | 'uint16_t'
+           | 'uint32_t'
+           | 'uint64_t'
+           | bigNumUInt
+           ;
 
-   ; Where the the value is a multiple of 8 only.
-   ;
-   width8           = %d
 
-   See Section 5.1.1 for details.
-
-   Examples:
 
 
 
@@ -729,6 +729,12 @@ Royer                    Expires 22 October 2025               [Page 13]
 
 Internet-Draft                CBOR Language                   April 2025
 
+
+                     Figure 6: unsignedInteger grammar
+
+   See Section 5.1.1 for details.
+
+   Examples:
 
    uint8_t EightBitsWide;
 
@@ -772,12 +778,6 @@ Internet-Draft                CBOR Language                   April 2025
    This language specifies signed integers that are 8 bits, 16 bits, 32
    bits , 64 bits, and bignum.
 
-   intW_t
-      An signed integer, 'W' bits wide.  Where 'W' must be a multiple of
-      8.
-
-   ABNF:
-
 
 
 
@@ -786,7 +786,22 @@ Royer                    Expires 22 October 2025               [Page 14]
 Internet-Draft                CBOR Language                   April 2025
 
 
-   signed_integer = 'int' width8 '_t'
+   intW_t
+      An signed integer, 'W' bits wide.  Where 'W' must be a multiple of
+      8.
+
+   ANTLR:
+
+   signedInteger
+     : 'int8_t'
+           | 'int16_t'
+           | 'int32_t'
+           | 'int64_t'
+           | bigNumInt
+           ;
+
+
+                      Figure 7: signedInteger grammar
 
    See Section 5.1.1 for details.
 
@@ -818,6 +833,15 @@ Internet-Draft                CBOR Language                   April 2025
       unsigned LL-bits integer.  And the corresponding CBOR data type is
       bignum.
 
+
+
+
+
+Royer                    Expires 22 October 2025               [Page 15]
+
+Internet-Draft                CBOR Language                   April 2025
+
+
    And the implementation transmits the signed integer value, not the
    data type.  A int128_t unsigned integer with a value of one (1) would
    be transmitted as 0x01, a one octet value.
@@ -834,23 +858,19 @@ Internet-Draft                CBOR Language                   April 2025
    implementation will transport non-standard size signed and unsigned
    integers as CBOR bignum.
 
-
-
-
-Royer                    Expires 22 October 2025               [Page 15]
-
-Internet-Draft                CBOR Language                   April 2025
-
-
 5.2.  Float
 
-   ABNF:
+   ANTLR:
 
-   float = 'float' width8f '_t'
+   float
+     : 'float16_t'
+           | 'float32_t'
+           | 'float64_t'
+           | bigNumFloat
+           ;
 
-   ; Where the value is at least 16 and is a multiple of 8.
-   ;
-   width8f = %d
+
+                          Figure 8: float grammar
 
    Examples:
 
@@ -870,6 +890,14 @@ Internet-Draft                CBOR Language                   April 2025
    float64_t  A 64-bit floating point number.  And the corresponding
       CBOR data type is float.
 
+
+
+
+Royer                    Expires 22 October 2025               [Page 16]
+
+Internet-Draft                CBOR Language                   April 2025
+
+
    float96_t  A 96-bit floating point number.  On some systems this is a
       long double.  And the corresponding CBOR data type is bigfloat.
 
@@ -886,18 +914,6 @@ Internet-Draft                CBOR Language                   April 2025
 
       Examples:
 
-
-
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 16]
-
-Internet-Draft                CBOR Language                   April 2025
-
-
       // A string that has no less than 1
       // and no more than 30 characters.
       //
@@ -912,11 +928,11 @@ Internet-Draft                CBOR Language                   April 2025
       //
       string OtherString[40];
 
-   ABNF:
+   ANTLR:
 
-   string = 'string'
+   string : 'string' ;
 
-   See Section 6.3 for details.
+                          Figure 9: string grammar
 
 5.4.  Maps and MultiMaps
 
@@ -930,6 +946,13 @@ Internet-Draft                CBOR Language                   April 2025
    and not simple integer or string values, making objects sorting order
    not easily determinable.  Two things needed to be added to an object
    to make it a sortable key.
+
+
+
+Royer                    Expires 22 October 2025               [Page 17]
+
+Internet-Draft                CBOR Language                   April 2025
+
 
    (1) The object defined using this language must be marked with the
    '[sortable]' attribute.
@@ -949,7 +972,40 @@ Internet-Draft                CBOR Language                   April 2025
 
 
 
-Royer                    Expires 22 October 2025               [Page 17]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Royer                    Expires 22 October 2025               [Page 18]
 
 Internet-Draft                CBOR Language                   April 2025
 
@@ -1005,7 +1061,7 @@ Internet-Draft                CBOR Language                   April 2025
 
 
 
-Royer                    Expires 22 October 2025               [Page 18]
+Royer                    Expires 22 October 2025               [Page 19]
 
 Internet-Draft                CBOR Language                   April 2025
 
@@ -1020,9 +1076,14 @@ Internet-Draft                CBOR Language                   April 2025
 5.4.1.  Map
 
    The CBOR language map data type has two arguments, the key type, and
-   the value type.  And is defined in ABNF as:
+   the value type.  And is defined in ANTLR as:
 
-   map = 'map<' keytype ',' valuetype '>'
+   map
+     : 'map' '<' typeSpecifier ',' typeSpecifier '>'
+           ;
+
+
+                           Figure 10: map grammar
 
    Here are examples a map in the CBOR language:
 
@@ -1054,26 +1115,29 @@ Internet-Draft                CBOR Language                   April 2025
    //
    map<Object1,Object2>   SomeVariableName3;
 
-5.4.2.  Multimap
-
-   A multimap allows for duplicate keys.
 
 
-
-
-Royer                    Expires 22 October 2025               [Page 19]
+Royer                    Expires 22 October 2025               [Page 20]
 
 Internet-Draft                CBOR Language                   April 2025
 
+
+5.4.2.  Multimap
+
+   A multimap allows for duplicate keys.
 
    When an application has a multimap that needs to be transmitted via
    CBOR, it sends a map, except the value becomes an array of objects,
    all that have the same key.  One key sent, all of the objects with
    that key sent as an array, as the value to that key.
 
-   Here is the ABNF definition of a multimap in the CBOR language:
+   Here is the ANTLR definition of a multimap in the CBOR language:
 
-   multimap = 'multimap<' keytype ',' valuetype '>'
+   multimap
+     : 'multimap' '<' typeSpecifier ',' typeSpecifier '>'
+           ;
+
+                        Figure 11: multimap grammar
 
    A multimap is a map that allows multiple of the same keys.  Here is
    an example of a multimap of a graphic object being duplicated at
@@ -1105,22 +1169,19 @@ Internet-Draft                CBOR Language                   April 2025
    one map key for each unique uint32_t key.  And Each key would have an
    array of one or more Vector3 objects.
 
+
+
+
+
+Royer                    Expires 22 October 2025               [Page 21]
+
+Internet-Draft                CBOR Language                   April 2025
+
+
    The protocol compiler would implement; for each unique multimap, a
    method to convert and encode a computer language multimap into a CBOR
    map.  And a method to decode and convert the map back into a
    multimap.
-
-
-
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 20]
-
-Internet-Draft                CBOR Language                   April 2025
-
 
 6.  Arrays
 
@@ -1168,12 +1229,7 @@ Internet-Draft                CBOR Language                   April 2025
 
 
 
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 21]
+Royer                    Expires 22 October 2025               [Page 22]
 
 Internet-Draft                CBOR Language                   April 2025
 
@@ -1202,85 +1258,29 @@ Internet-Draft                CBOR Language                   April 2025
    //
    float32_t Variation<2,*>;
 
-6.3.  Text Strings
-
-   A text string is a form of array.  It can be fixed length, or
-   variable length.  It is signified with the data type 'string' as
-   shown in these examples:
-
-   A CBOR language string is the same as a CBOR major type 2 text
-   string.  With the ability to specify its size to the application.
-
-   String Examples:
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 22]
-
-Internet-Draft                CBOR Language                   April 2025
-
-
-   // A UTF-8 string that is always 20 octets in length.
-   // Any unused characters are at the higher offset end
-   // and padded with an 8-bit zero (0x00).
-   //
-   string Path[20];
-
-   // A string that contains zero or more UTF-8 characters.
-   //
-   string Name<>;
-
-   // A string that contains zero or up to 20
-   // UTF-8 characters.
-   //
-   string Address<0,20>;
-
-   // A string that contains at least 2 and up to 30
-   // UTF-8 characters.
-   //
-   string City<2,30>;
-
-   // A string that contains at least 8 and with
-   // no limit on the number of UTF-8 characters.
-   //
-   string Notes<8,*>;
-
 7.  Declaring Variables
 
    A variable has a type and a name.  And the name can have some
-   attributes.  The ABNF for a variable is:
+   attributes.  The ANTLR for a variable declaration is:
+
+   declaration : typeSpecifier identifier
+           | typeSpecifier identifier '[' value ']'
+           | typeSpecifier identifier '<' value? '>'
+           | 'opaque' identifier '[' value ']'
+           | 'opaque' identifier '<' value? '>'
+           | 'string' identifier '<' value? '>'
+           | 'void'
+           ;
 
 
+                       Figure 12: declaration grammar
 
+8.  Namespaces
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   With large protocols it can be difficult to make sure that names of
+   items are unique.  Namespace allows groups of names to be
+   encapsulated and identified without regard to the names of items in
+   other namespaces or globally.
 
 
 
@@ -1289,34 +1289,6 @@ Royer                    Expires 22 October 2025               [Page 23]
 
 Internet-Draft                CBOR Language                   April 2025
 
-
-   VariableDeclaration = ObjectType UserDefinedIdentifier
-                         *(FixedArray / VariableArray)
-
-   ObjectType = signed_integer
-              / unsigned_integer
-              / float
-              / string
-              / map
-              / multimap
-              / UserDefinedType
-
-   signed_integer = int8_t / int16_t / int32_t / int64_t / bignum
-
-   signed_integer = uint8_t / uint16_t / uint32_t / uint64_t / bignum
-
-   float          = float16_t / float32_t / float64_t / bignum
-
-   UserDefinedIdentifier = identifier
-                         / internal_identifier
-                         / namespace_identifier
-
-8.  Namespaces
-
-   With large protocols it can be difficult to make sure that names of
-   items are unique.  Namespace allows groups of names to be
-   encapsulated and identified without regard to the names of items in
-   other namespaces or globally.
 
    For example, a protocol might have a unique identifier for the
    sequence of an item and declare a type called UID.
@@ -1331,20 +1303,6 @@ Internet-Draft                CBOR Language                   April 2025
 
    Namespace solve this problem by wrapping objects, or sets of object
    in a 'namespace' type.  Here is a simple example:
-
-
-
-
-
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 24]
-
-Internet-Draft                CBOR Language                   April 2025
-
 
    // Declare a type called UID that is
    // a 64-bit unsigned integer.
@@ -1383,21 +1341,7 @@ Internet-Draft                CBOR Language                   April 2025
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 25]
+Royer                    Expires 22 October 2025               [Page 24]
 
 Internet-Draft                CBOR Language                   April 2025
 
@@ -1453,7 +1397,7 @@ Internet-Draft                CBOR Language                   April 2025
 
 
 
-Royer                    Expires 22 October 2025               [Page 26]
+Royer                    Expires 22 October 2025               [Page 25]
 
 Internet-Draft                CBOR Language                   April 2025
 
@@ -1466,13 +1410,18 @@ Internet-Draft                CBOR Language                   April 2025
 
    The typedef and its concept are the same as they are in C/C++.
 
-   The ABNF for typedef:
+   The ANTLR for typedef:
 
-   typedef = 'typedef' type-of UserDefinedIdentifier ';'
+   typeDef
+       : 'typedef' declaration ';'
+       | 'enum' identifier enumBody ';'
+       | ('struct'|'class') identifier structBody ';'
+       | 'union' identifier unionBody ';'
+       ;
 
-   type-of = (built-in-data-type / user-defined-data-type)
+                                 Figure 13
 
-   In Figure 2 and Figure 3 there is an error as both the Sequence and
+   In Figure 14 and Figure 15 there is an error as both the Sequence and
    Command are different sizes.  If one definition file has:
 
    struct Packet
@@ -1483,10 +1432,31 @@ Internet-Draft                CBOR Language                   April 2025
      ...
    };
 
-                                  Figure 2
+                                 Figure 14
 
    And a second file has a definition for a method to use the packet
    data:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Royer                    Expires 22 October 2025               [Page 26]
+
+Internet-Draft                CBOR Language                   April 2025
+
 
    // On many systems this would compile
    // because the 'add' line would not know
@@ -1507,14 +1477,7 @@ Internet-Draft                CBOR Language                   April 2025
      ...
    }
 
-
-
-Royer                    Expires 22 October 2025               [Page 27]
-
-Internet-Draft                CBOR Language                   April 2025
-
-
-                                  Figure 3
+                                 Figure 15
 
    If typedefs had been used it would catch that error and also make it
    easier to read:
@@ -1539,9 +1502,17 @@ Internet-Draft                CBOR Language                   April 2025
      ...
    };
 
-                                  Figure 4
+                                 Figure 16
 
    And if the second usage had been defined as:
+
+
+
+
+Royer                    Expires 22 October 2025               [Page 27]
+
+Internet-Draft                CBOR Language                   April 2025
+
 
    void ProcessPacket(PacketSequence Seq, PacketCommand Cmd)
    {
@@ -1556,19 +1527,7 @@ Internet-Draft                CBOR Language                   April 2025
      ...
    }
 
-                                  Figure 5
-
-
-
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 28]
-
-Internet-Draft                CBOR Language                   April 2025
-
+                                 Figure 17
 
 10.  Enum
 
@@ -1576,7 +1535,7 @@ Internet-Draft                CBOR Language                   April 2025
    identifiers and assign numeric values to them in order to simply
    reading and understanding the code.
 
-   The enum ABNF:
+   The enum ANTLR:
 
    enum       = 'enum' enum-name '{'
                  enum-item *(',' enum-item)
@@ -1600,6 +1559,17 @@ Internet-Draft                CBOR Language                   April 2025
 
    Examples:
 
+
+
+
+
+
+
+Royer                    Expires 22 October 2025               [Page 28]
+
+Internet-Draft                CBOR Language                   April 2025
+
+
    enum RoomsInAHome {
      Kitchen = 1,
      LivingRoom = 2,
@@ -1617,29 +1587,17 @@ Internet-Draft                CBOR Language                   April 2025
    };
 
 
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 29]
-
-Internet-Draft                CBOR Language                   April 2025
-
-
 11.  Structues
 
    A struct is a way to encapsulate a related set of variables.
 
-   Struct ABNF:
+   Struct ANTLR:
 
-   struct      = 'struct struct-body
+   structTypeSpec
+       : ('struct'|'class') structBody
+       ;
 
-   struct-body = '{' struct-line *struct-line '}'
-
-   struct-line =  *declaration ';'
-               \  *comment
-               \  *method
-               \  *passThrough
+                                 Figure 18
 
 12.  Union
 
@@ -1657,6 +1615,17 @@ Internet-Draft                CBOR Language                   April 2025
 
    todo
 
+
+
+
+
+
+
+Royer                    Expires 22 October 2025               [Page 29]
+
+Internet-Draft                CBOR Language                   April 2025
+
+
 14.  IANA Considerations
 
    NOTE: This will be filled in with instructions and procedures to
@@ -1671,16 +1640,6 @@ Internet-Draft                CBOR Language                   April 2025
 16.  References
 
 16.1.  Normative References
-
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 30]
-
-Internet-Draft                CBOR Language                   April 2025
-
 
    [POSIX]    IEEE, "1003.1-2024 - IEEE/Open Group Standard for
               Information Technology--Portable Operating System
@@ -1716,20 +1675,61 @@ Internet-Draft                CBOR Language                   April 2025
               Royer, D., "CBORGEN Sample Implementation", 2025,
               <https://github.com/RiverExplorer/CBOR>.
 
-Appendix A.  Complete ABNF
-
-   comment            = block-comment / ToEndOfLineComment
-
-   block-comment      = '/*' NonEndText '*/'
-
-   NonEndText         = any UTF-8 characters allowed in the file
-                        except the sequence '*/'.
-
-   ; The comment text is to the end of the line.
-   ;
-   ToEndOfLineComment = '//'
 
 
+Royer                    Expires 22 October 2025               [Page 30]
+
+Internet-Draft                CBOR Language                   April 2025
+
+
+Appendix A.  Complete ANGLR grammar
+
+   grammar cbor;
+
+   caseSpec
+       : (('case' value':') | comment+ | passThrough+)
+           (('case' value':') | comment+ | passThrough+)*
+           declaration ';'
+       ;
+                   cborSpecification
+       : specs+
+       ;
+                   comment : CommentOneLine
+           | CommentMultiLine ;
+           CommentMultiLine : '/*' .*? '*/' ;
+   CommentOneLine : '//' ~[\r\n]+ ;
+   constantDef
+       : 'const' typeSpecifier identifier '=' constant ';'
+       ;
+                   constant
+       : decimal
+                   | float
+       | hexadecimal
+       | octal
+       ;
+                   dataType : typeSpecifier
+           | typeSpecifier '[' value ']'
+           | typeSpecifier '<' value? '>'
+           | 'opaque' '[' value ']'
+           | 'opaque' '<' value? '>'
+           | 'string' '<' value? '>'
+           | 'void'
+           ;
+   decimal
+       : DECIMAL width?
+       ;
+                   DECIMAL
+       : ('-')? ([0-9])+
+       ;
+   declaration : typeSpecifier identifier
+           | typeSpecifier identifier '[' value ']'
+           | typeSpecifier identifier '<' value? '>'
+           | 'opaque' identifier '[' value ']'
+           | 'opaque' identifier '<' value? '>'
+           | 'string' identifier '<' value? '>'
+           | 'void'
+           ;
+           definition
 
 
 
@@ -1738,54 +1738,54 @@ Royer                    Expires 22 October 2025               [Page 31]
 Internet-Draft                CBOR Language                   April 2025
 
 
-   float = 'float' width8f '_t'
-
-   ; Where the value is at least 16 and is a multiple of 8.
-   ;
-   width8f = %d
-
+       : typeDef
+       | constantDef
+       ;
+                   enumBody
+       : '{' (identifier '=' value) (',' identifier '=' value)* '}'
+       ;
+   enumTypeSpec
+       : 'enum' enumBody
+       ;
+                   float
+     : 'float16_t'
+           | 'float32_t'
+           | 'float64_t'
+           | bigNumFloat
+           ;
+           FLOAT
+       : ('-')? ([0-9])+('.' [0-9+]*)? (('e'|'E')('-')?[0-9]+)?
+       ;
+                   floatValue
+       : FLOAT
+       ;
+   hexadecimal
+       : HEXADECIMAL width?
+       ;
+                   HEXADECIMAL
+       : '0x' ([a-fA-F0-9])+
+       ;
+                   identifier
+       : IDENTIFIER width?
+       ;
+                   IDENTIFIER
+           : [a-zA-Z] ([a-zA-Z0-9_])*
+           ;
+           ignoreTag : '[ignore]'
+                                           ;
    internal_identifier = '_' identifier
-
-   map = 'map<' keytype ',' valuetype '>'
-
-   multimap = 'multimap<' keytype ',' valuetype '>'
-
-   signed_integer = 'int' width8 '_t'
-
-   string = 'string'
-
-   struct      = 'struct struct-body
-
-   struct-body = '{' struct-line *struct-line '}'
-
-   struct-line =  *declaration ';'
-               \  *comment
-               \  *method
-               \  *passThrough
-
-   typedef = 'typedef' type-of UserDefinedIdentifier ';'
-
-   type-of = (built-in-data-type / user-defined-data-type)
-
-   unsigned_integer = 'uint' width8 '_t'
-
-   ; Where the the value is a multiple of 8 only.
-   ;
-   width8           = %d
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   internalTag : '[internal]'
+                                           ;
+   map
+     : 'map' '<' typeSpecifier ',' typeSpecifier '>'
+           ;
+           method: dataType identifier '(' dataType identifier?
+                                   (',' dataType identifier?)* ')' ';'
+           ;
+           multimap
+     : 'multimap' '<' typeSpecifier ',' typeSpecifier '>'
+           ;
+   namespaceDef
 
 
 
@@ -1794,26 +1794,143 @@ Royer                    Expires 22 October 2025               [Page 32]
 Internet-Draft                CBOR Language                   April 2025
 
 
-   VariableDeclaration = ObjectType UserDefinedIdentifier
-                         *(FixedArray / VariableArray)
+           : 'namespace' identifier ( ':' identifier )* ';'
+           ;
+           namespace_identifier = '_' identifier
+   namespaceTag : '[namespace]'
+                ;octal : OCTAL width?
+                           ;
+                           OCTAL
+       : '0' [1-7] ([0-7])*
+       ;
+           overrideTag : '[override]'
+                                                   ;
+   PASS
+           : '%' ~[\n\r]+
+           | '%' [\n\r]+
+           ;
+           passThrough : PASS
+            ;
+            privatetag : '[private]'
+              ;
+   procFirstArg
+           : 'void'
+           | dataType identifier?
+           ;
+           program : 'program' identifier '{' version+ '}' '=' value ';'
+           ;
+   publicTag : '[public]'
+                                           ;
+   // A value enclosed in double quotes (")
+   QIDENTIFIERDOUBLE
+           : '"' [a-zA-Z] ([a-zA-Z0-9_])* '"'
+           ;
+           QIDENTIFIERSINGLE
+           : '\'' [a-zA-Z] ([a-zA-Z0-9_])* '\''
+           ;specs
+           : structTypeSpec
+           | unionTypeSpec
+           | enumTypeSpec
+           | constantDef
+           | namespaceDef
+           | comment
+           | passThrough
+           | program
+           | declaration ';'
+           | typeDef
+           ;
+           signedInteger
+     : 'int8_t'
+           | 'int16_t'
 
-   ObjectType = signed_integer
-              / unsigned_integer
-              / float
-              / string
-              / map
-              / multimap
-              / UserDefinedType
 
-   signed_integer = int8_t / int16_t / int32_t / int64_t / bignum
 
-   signed_integer = uint8_t / uint16_t / uint32_t / uint64_t / bignum
+Royer                    Expires 22 October 2025               [Page 33]
+
+Internet-Draft                CBOR Language                   April 2025
 
-   float          = float16_t / float32_t / float64_t / bignum
 
-   UserDefinedIdentifier = identifier
-                         / internal_identifier
-                         / namespace_identifier
+           | 'int32_t'
+           | 'int64_t'
+           | bigNumInt
+           ;
+           string : 'string' ;
+   structBody
+       : '{'
+           ((declaration ';') | comment+ | method+ | passThrough+)
+           ((declaration ';') | comment+ | method+ | passThrough+)*
+           '}'
+       ;
+                   structTypeSpec
+       : ('struct'|'class') structBody
+       ;
+   tags : ignoretag
+                    | internaltag
+                    | overridetag
+                    | privatetag
+                    ;
+   typeDef
+       : 'typedef' declaration ';'
+       | 'enum' identifier enumBody ';'
+       | ('struct'|'class') identifier structBody ';'
+       | 'union' identifier unionBody ';'
+       ;
+   typeSpecifier
+           : 'bool'
+           | enumTypeSpec
+     | float
+           | identifier
+           | map
+           | multimap
+           | 'opaque'
+           | signedInteger
+           | 'string'
+           | structTypeSpec
+           | unionTypeSpec
+           | unsignedInteger
+           ;
+   unionBody
+       : 'switch' '(' declaration ')' '{'
+           caseSpec
+           caseSpec*
+           ('default' ':' declaration ';')?
+           '}'
+       ;
+   unionTypeSpec
+       : 'union' unionBody
+
+
+
+Royer                    Expires 22 October 2025               [Page 34]
+
+Internet-Draft                CBOR Language                   April 2025
+
+
+       ;unsignedInteger
+     : 'uint8_t'
+           | 'uint16_t'
+           | 'uint32_t'
+           | 'uint64_t'
+           | bigNumUInt
+           ;
+           value
+       : constant
+       | identifier
+       | QIDENTIFIERSINGLE
+       | QIDENTIFIERDOUBLE
+       ;
+   version : 'version' identifier '{' versionMethod+ '}' '=' value ';'
+           ;
+           versionMethod: dataType identifier
+    '(' ((dataType identifier?
+    (',' dataType identifier?)*) | 'void') ')' '=' value ';'
+           ;
+           width
+           : (':' DECIMAL)
+           ;
+
+
+                     Figure 19: Complate ANGLR grammar
 
 Acknowledgments
 
@@ -1840,9 +1957,4 @@ Author's Address
 
 
 
-
-
-
-
-
-Royer                    Expires 22 October 2025               [Page 33]
+Royer                    Expires 22 October 2025               [Page 35]

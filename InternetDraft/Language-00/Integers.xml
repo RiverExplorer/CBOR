@@ -21,9 +21,16 @@
 			</dd>
 		</dl>
 		<t>
-			ABNF:
+			ANTLR:
 		</t>
-.so ABNF/unsigned_integer.abnf
+		<figure anchor="uint-antlr">
+			<name>unsignedInteger grammar</name>
+			<artwork type="asciiart">
+				<![CDATA[
+.so ANTLR/unsignedInteger.g4
+				]]>
+			</artwork>
+		</figure>
 		<t>
 			See <xref target="UnsignedIntegers"/> for details.
 		</t>
@@ -109,9 +116,16 @@ uint16_t SixteenBitsWide;
 			</dd>
 		</dl>
 		<t>
-			ABNF:
+			ANTLR:
 		</t>
-.so ABNF/signed_integer.abnf
+		<figure anchor="int-antlr">
+			<name>signedInteger grammar</name>
+			<artwork type="asciiart">
+				<![CDATA[
+.so ANTLR/signedInteger.g4
+				]]>
+			</artwork>
+		</figure>
 		<t>
 			See <xref target="UnsignedIntegers"/> for details.
 		</t>

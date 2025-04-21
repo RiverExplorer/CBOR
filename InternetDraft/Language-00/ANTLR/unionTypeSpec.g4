@@ -1,0 +1,3 @@
+unionTypeSpec
+    : 'union' unionBody
+    ;

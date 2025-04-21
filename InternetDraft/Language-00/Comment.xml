@@ -8,7 +8,14 @@
 		<li>To End of Line Comment.</li>
 	</ul>
 	<t>
-		comment ABNF:
+		comment ANTLR:
 	</t>
-.so ABNF/comment.abnf	
+	<figure anchor="comment-g4">
+		<name>map grammar</name>
+		<artwork type="asciiart">
+			<![CDATA[
+.so ANTLR/comment.g4
+			]]>
+		</artwork>
+	</figure>
 </section>

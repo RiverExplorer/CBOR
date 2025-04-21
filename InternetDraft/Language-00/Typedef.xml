@@ -11,9 +11,15 @@
 		are in C/C++.
 	</t>
 	<t>
-		The ABNF for typedef:
+		The ANTLR for typedef:
 	</t>
-.so ABNF/typedef.abnf
+	<figure  anchor="typedef-g4">
+		<artwork type="asciiart">
+			<![CDATA[
+.so ANTLR/typeDef.g4
+			]]>
+		</artwork>
+	</figure>
 	<t>
 		In <xref target="td-1"/> and <xref target="td-2"/> there is an
 		error as both the Sequence and Command are different sizes.

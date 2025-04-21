@@ -1,3 +1,1 @@
-<artwork type="asciiart">
 internal_identifier = '_' identifier
-</artwork>

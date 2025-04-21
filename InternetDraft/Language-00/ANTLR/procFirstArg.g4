@@ -1,0 +1,5 @@
+procFirstArg
+	: 'void'
+	| dataType identifier?
+	;
+	

@@ -6,7 +6,7 @@
 		them in order to simply reading and understanding the code.
 	</t>
 	<t>
-		The enum ABNF:
+		The enum ANTLR:
 	</t>
 	<artwork type="asciiart">
 enum       = 'enum' enum-name '{'

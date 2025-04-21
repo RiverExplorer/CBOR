@@ -1,0 +1,1 @@
+CommentOneLine : '//' ~[\r\n]+ ;

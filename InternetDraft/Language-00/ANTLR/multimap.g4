@@ -1,0 +1,3 @@
+multimap
+  : 'multimap' '<' typeSpecifier ',' typeSpecifier '>'
+	;

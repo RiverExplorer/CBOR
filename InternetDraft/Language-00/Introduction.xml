@@ -80,7 +80,13 @@
 		Application designers may need to adjust the protocol
 		they define to ensure that all data types they use
 		in the protocol are supported by all intended computers.
-		This goal allows for both flexability, and for future
+		This goal allows for both flexibility, and for future
 		system that may have expanded data types.
+	</t>
+	<t>
+		The language specification written in the open
+		source ANTLR4:
+		<eref target="https://github.com/antlr/antlr4"/>.
+		And is much like Yacc/Bison and lex/Flex grammar.
 	</t>
 </section>

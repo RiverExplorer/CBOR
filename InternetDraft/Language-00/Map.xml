@@ -104,9 +104,16 @@ map<OuterObject,uint8_t> UsesComplexKey;
 		<t>
 			The CBOR language map data type has two
 			arguments, the key type, and the value type.
-			And is defined in ABNF as:
+			And is defined in ANTLR as:
 		</t>
-.so ABNF/map.abnf
+	<figure  anchor="map-g4">
+		<name>map grammar</name>
+		<artwork type="asciiart">
+			<![CDATA[
+.so ANTLR/map.g4
+			]]>
+		</artwork>
+	</figure>
 		<t>
 			Here are examples a map in the CBOR language:
 		</t>
@@ -157,9 +164,16 @@ map<Object1,Object2>   SomeVariableName3;
 			sent as an array, as the value to that key.
 		</t>
 		<t>
-			Here is the ABNF definition of a multimap in the CBOR language:
+			Here is the ANTLR definition of a multimap in the CBOR language:
 		</t>
-.so ABNF/multimap.abnf
+		<figure  anchor="multimap-g4">
+			<name>multimap grammar</name>
+			<artwork type="asciiart">
+				<![CDATA[
+.so ANTLR/multimap.g4
+				]]>
+			</artwork>
+		</figure>
 		<t>
 			A multimap is a map that allows multiple of the same keys.
 			Here is an example of a multimap of a graphic object

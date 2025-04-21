@@ -1,0 +1,4 @@
+width
+	: (':' DECIMAL)
+	;
+	

@@ -1,0 +1,2 @@
+namespaceTag : '[namespace]'
+             ;
