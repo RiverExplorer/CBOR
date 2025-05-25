@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:47:45 doug>
+q * Time-stamp: <2025-05-25 16:50:56 doug>
  * 
  * @file GenerateCppUnion.cpp
  * @author Douglas Mark Royer
@@ -23,79 +23,94 @@ namespace RiverExplorer::cborgen
 
 	Union::Union()
 	{
-		Default = nullptr;
-
 		return;
 	}
 
 	Union::~Union()
 	{
-		if (Default != nullptr) {
-			delete Default;
-			Default = nullptr;
+
+		return;
+	}
+	
+	void
+	UnionCase::CopyFrom(Variable *& Var)
+	{
+		if (Var != nullptr) {
+			IsFixedArray = Var->IsFixedArray;
+			IsVariableArray = Var->IsVariableArray;
+			SizeOrValue = Var->SizeOrValue;
+			Type = Var->Type;
+			DataType = Var->DataType;
+			Name = Var->Name;
+			OurScope = Var->OurScope;
 		}
 
 		return;
 	}
 	
 	void
-	Union::PrintCppHeader(ofstream & Stream) const
+	Union::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		PrintCppNamespaceBegin(Stream);
 		Stream << endl;
 		
 		string I = Indent();
 
-		Stream << I << "/**" << endl;
-		Stream << I << " * @class " << Name
+		Stream << I << "/**" << endl
+					 << I << " * @class " << Name
 					 << " \"" << Name << ".hpp\" <";
 
 		if (Namespace != "") {
 			Stream << NamespaceToIncludePath() << "/";
 		}
 		Stream << Name << ".hpp>"
-					 << endl;
-		Stream << I << " * Generated from: union " << Name << endl;
-		Stream << I << " */" << endl;
-		
-		Stream << I << "class " << Name << endl;
-		Stream << I << "{" << endl;
-		Stream << I << "public:" << endl;
+					 << endl
+					 << I << " * Generated from: union " << Name << endl
+					 << I << " */" << endl
+					 << I << "class " << Name << endl
+					 << I << "{" << endl
+					 << I << "public:" << endl;
+
 		IndentLevel++;
-
 		string I2 = Indent();
-		Stream << I2 << Name << "();" << endl;
-		Stream << endl;
-		Stream << I2 << "virtual ~" << Name << "();" << endl;
-		Stream << endl;
-		Stream << I2 << "/**" << endl;
-		Stream << I2 << " * Serialize or deserialize a " << Name << " object." << endl;
-		Stream << I2 << " * " << endl;
-		Stream << I2 << " * @param Cbor An CBOR object, initalzied with" << endl;
-		Stream << I2 << " * CBOR_ENCODE, CBOR_DECODE or CBOR_FREE." << endl;
-		Stream << I2 << " * " << endl;
-		Stream << I2 << " * @return true on no errors." << endl;
-		Stream << I2 << " */" << endl;
-		Stream << I2 << "bool Cbor(CBOR & Cbor);" << endl;
-		Stream << endl;
+			
+		Stream << I2 << "/**" << endl
+					 << I2 << " * " << Name << " - Default Constructor." << endl
+					 << I2 << " */" << endl
+					 << I2 << Name << "();" << endl
+					 << endl
+					 << I2 << "/**" << endl
+					 << I2 << " * " << Name << " - Destructor." << endl
+					 << I2 << " */" << endl
+					 << I2 << "virtual ~" << Name << "();" << endl
+					 << endl;
 
-		Stream << I2 << "/**" << endl;
-		Stream << I2 << " * " << SwitchVariable
-					 << " tells you the which union content to use." << endl;
-		Stream << I2 << " */" << endl;
-		Stream << I2 << SwitchType << " " << SwitchVariable << ";" << endl;
-		
+		Stream << I2 << "/**" << endl
+					 << I2 << " * @return The current content type." << endl
+					 << I2 << " */" << endl
+					 << I2 << SwitchType << " Type() const {" << endl
+					 << I2 << "\treturn(_" << SwitchVariable << ");" << endl
+					 << I2 << "}" << endl
+					 << endl;
+
 		vector<Item*>::const_iterator CIt;
 		UnionCase * Case;
+		
+		Stream << I << "private:" << endl
+					 << endl;
+		
+		Stream << I2 << "/**" << endl
+					 << I2 << " * " << SwitchVariable
+					 << " tells you which union case content to use." << endl
+					 << I2 << " */" << endl
+					 << I2 << SwitchType << " _" << SwitchVariable << ";" << endl;
+		
+		Stream << endl
+					 << I2 << "union  {" << endl;
 
 		IndentLevel++;
 		string I3 = Indent();
 
-		Stream << endl;
-		Stream << I2 << "union {" << endl;
-		IndentLevel++;
-		string I4 = Indent();
-		
 		for (CIt = Cases.begin(); CIt != Cases.end(); CIt++) {
 
 			if (*CIt != nullptr) {
@@ -103,97 +118,161 @@ namespace RiverExplorer::cborgen
 
 				if (Case != nullptr) {
 					if (Case->Type == "void") {
-						Stream << endl << I3
-								 << "// " << Case->CaseValue << " has void data." << endl;
+						Stream << I3 << endl
+									 << I3 << "/**" << endl
+									 << I3 << " * " << Case->CaseValue << " has void data." << endl
+									 << I3 << " */" << endl;
+
 					} else {
-						Stream << endl;
+						Stream << endl
+									 << I3 << "/**" << endl
+									 << I3 << " * Use when " << SwitchVariable
+									 << " (a " << SwitchType << " type)"
+									 << " == "
+									 << Case->CaseValue
+									 << "." << endl
+									 << I3 << " */"
+									 << endl;
+
+						// Declare namespace gloabal operators.
+						//
 						Case->PrintCppDeclareVariable(Stream);
-						if (Case->CaseValue == "default") {
-							Stream << endl << I3
-										 << "// This is the DEFAULT variable, use this when"
-										 << endl << I3
-										 << "// " << SwitchVariable
-										 << " (" << SwitchType << ")"
-										 << " does not equal any other value."
-										 << endl << I3
-										 << "// listed here."
-										 << endl;
-							Stream << endl;
-						} else {
-							Stream << endl << I3 << "// Use when " << SwitchVariable
-										 << " (" << SwitchType << ")"
-										 << " == "
-										 << Case->CaseValue
-										 << "."
-										 << endl;
-						}
-						Stream << endl;
 					}
-				} else {
-					(*CIt)->PrintCppHeader(Stream);
 				}
+				Stream << endl;
 			}
 		}
-		if (Default != nullptr) {
-			Default->PrintCppDeclareVariable(Stream);
-			Stream << endl;
-		}
+
 		IndentLevel--;
-		Stream << I2 << "};" << endl;
+		Stream << endl << I2 << "} _Value;" << endl
+					 << endl;
 
-		Stream << endl;
-		Stream << "}; // End class " << Name << endl;
+		Stream << I << "public:" << endl
+					 << endl
+					 << I2 << "/**" << endl
+					 << I2 << " * CBOR Serialize a " << Name << " object." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param Out An initialized std::ostream." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param Obj A " << Name  << " object reference." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @return Out." << endl
+					 << I2 << " */" << endl
+					 << I2 << "friend std::ostream & " << CppNamespace << "::operator<<(std::ostream & Out, const " << Name << " & " << " Obj);"  << endl
+					 << endl;
+					 
+		Stream << I2 << "/**" << endl
+					 << I2 << " * Deerialize a CBOR strem into a " << Name << " object." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param In An initialized std::istream." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param Obj A " << Name  << " object reference." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @return In." << endl
+					 << I2 << " */" << endl
+					 << I2 << "friend std::istream & " << CppNamespace << "::operator<<(std::istream & Out, " << Name << " & " << " Obj);"  << endl
+					 << endl;
+
+		// Generate helper functions.
+		//
+		for (CIt = Cases.begin(); CIt != Cases.end(); CIt++) {
+			if (*CIt != nullptr) {
+				Case = dynamic_cast<UnionCase*>(*CIt);
+
+				if (Case != nullptr) {
+					if (Case->Type == "void") {
+						Stream << I2 << "/**" << endl
+									 << I2 << " * " << Case->CaseValue << " has void data." << endl
+									 << I2 << " * and has no Get() or Set() method." << endl
+									 << I2 << " */" << endl;
+						
+					} else {
+						if (Case->CaseValue == "default") {
+							Stream << I2 << "/**" << endl
+										 << I2 << " * Set value, and Type()." << endl
+										 << I2 << " * Sets the 'default' case value." << endl
+										 << I2 << " *" << endl
+										 << I2 << " * @param Value Set to this value." << endl
+										 << I2 << " */" << endl
+										 << I2 << "void Set_Default("
+										 << Case->Type << " & Value);" << endl
+										 << endl;
+
+							Stream << I2 << "/**" << endl
+										 << I2 << " * Get the value of the default type." << endl
+										 << I2 << " *" << endl
+										 << I2 << " * @return Value for the default." << endl
+										 << I2 << " *" << endl
+										 << I2 << " */" << endl
+										 << I2 << Case->Type << " & Get_Default() const;" << endl
+										 << endl;
+
+						} else {
+							Stream << I2 << "/**" << endl
+										 << I2 << " * Set value, and Type() to " << Case->CaseValue
+										 << "." << endl
+										 << I2 << " *" << endl
+										 << I2 << " * @param Value Set to this value." << endl
+										 << I2 << " */" << endl
+										 << I2 << "void Set_" << Case->CaseValue << "("
+										 << Case->Type << " & Value);" << endl
+										 << endl;
+
+							Stream << I2 << "/**" << endl
+										 << I2 << " * Get when Type() == " << Case->CaseValue
+										 << "." << endl
+										 << I2 << " *" << endl
+										 << I2 << " * @return Value for " << Case->CaseValue << "." << endl
+										 << I2 << " *" << endl
+										 << I2 << " * @note When Type() != " << Case->CaseValue << ", then the results are undefined." << endl
+										 << I2 << " */" << endl
+										 << I2 << Case->Type << " & Get_" << Case->CaseValue << "() const;" << endl
+										 << endl;
+						}
+					}
+				}
+				Stream << endl;
+			}
+		}
+
+		Stream << endl
+					 << I << "}; // End class " << Name << endl;
 
 		PrintCppNamespaceEnd(Stream);
-		return;
-	}
-	
-	void
-	Union::PrintCppHeaderCbor(ofstream & Stream) const
-	{
-		PrintCppNamespaceBegin(Stream);
-		Stream << "bool cbor_" << Name
-					 << "(CBOR * cbors, " << Name << " * obj);" << endl;
-		PrintCppNamespaceEnd(Stream);
-		Stream << "extern \"C\" bool cbor_" << Name
-					 << "(CBOR * cbors, " << Name << " * obj) {" << endl
-					 << "\treturn(" << CppNamespace << "::"
-					 << Name << "(cbors, obj));" << endl
-					 << "}" << endl;
 		
 		return;
 	}
 	
 	void
-	Union::PrintCppCBOR(ofstream & /*Stream*/) const
+	Union::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	Union::PrintCppStubs(ofstream & /*Stream*/) const
+	Union::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	Union::PrintXSD(ofstream & /*Stream*/) const
+	Union::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Union::PrintAbnf(ofstream & /*Stream*/) const
+	Union::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Union::PrintServer(ofstream & /*Stream*/) const
+	Union::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
@@ -206,49 +285,42 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	UnionCase::PrintCppHeader(ofstream & /*Stream*/) const
+	UnionCase::PrintCppHeader(ostream & /*Stream*/, bool /*WithExtern*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	UnionCase::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/*EMPTY*/
-		return;
-	}
-	
-	void
-	UnionCase::PrintCppCBOR(ofstream & /*Stream*/) const
+	UnionCase::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	UnionCase::PrintCppStubs(ofstream & /*Stream*/) const
+	UnionCase::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	UnionCase::PrintXSD(ofstream & /*Stream*/) const
+	UnionCase::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	UnionCase::PrintAbnf(ofstream & /*Stream*/) const
+	UnionCase::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	UnionCase::PrintServer(ofstream & /*Stream*/) const
+	UnionCase::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-20 20:38:27 doug>
+ * Time-stamp: <2025-05-24 19:17:38 doug>
  * 
  * @file GenerateCppMethod.cpp
  * @author Douglas Mark Royer
@@ -33,7 +33,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Method::PrintCppHeader(ofstream & Stream) const
+	Method::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		std::vector<string>::const_iterator SIt;
 
@@ -66,14 +66,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Method::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-		return;
-	}
-	
-	void
-	Method::PrintCppCBOR(ofstream & /*Stream*/) const
+	Method::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -81,7 +74,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Method::PrintCppStubs(ofstream & Stream) const
+	Method::PrintCppStubs(ostream & Stream) const
 	{
 		std::vector<string>::const_iterator SIt;
 
@@ -110,14 +103,15 @@ namespace RiverExplorer::cborgen
 				}
 			}
 		}
-		Stream << ")" << endl;
-		Stream << I << "{" << endl;
+		Stream << ")" << endl
+					 << I << "{" << endl;
 		if (Type != "void") {
 			Stream << I2 << "'" << Type << "' Results;" << endl;
 		}
-		Stream << endl;
-		Stream << I2 << "/**@todo write this code */" << endl;
-		Stream << endl;
+
+		Stream << endl
+					 << I2 << "/**@todo write this code */" << endl
+					 << endl;
 		if (Type != "void") {
 			Stream << I2 << "return(Results);" << endl;
 		} else {
@@ -127,21 +121,21 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Method::PrintXSD(ofstream & /*Stream*/) const
+	Method::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Method::PrintAbnf(ofstream & /*Stream*/) const
+	Method::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Method::PrintServer(ofstream & /*Stream*/) const
+	Method::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

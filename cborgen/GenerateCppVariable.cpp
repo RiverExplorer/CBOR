@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-20 20:42:36 doug>
+ * Time-stamp: <2025-05-24 19:20:09 doug>
  * 
  * @file GenerateCppVariable.cpp
  * @author Douglas Mark Royer
@@ -14,6 +14,7 @@
  * RiverExplorer is a trademark of Douglas Mark Royer
  */
 #include "cborgen.hpp"
+#include "Generate.hpp"
 #include <regex>
 #include <cctype>
 
@@ -25,21 +26,17 @@ namespace RiverExplorer::cborgen
 	Variable::~Variable()
 	{
 		/*EMPTY*/
-
 		return;
 	}
 
+	// Generate CPP calls this, with extern off.
+	//
 	void
-	Variable::PrintCppHeader(ofstream & Stream, bool PrintExtern) const
+	Variable::PrintCppHeader(ostream & Stream, bool WithExtern) const
 	{
-		string I;
+		string I = Indent();
 		
-		if (PrintExtern) {
-			PrintCppNamespaceBegin(Stream);
-			I = Indent();
-		} else {
-			I = " ";
-		}
+		PrintCppNamespaceBegin(Stream);
 
 		string TypeToUse = Type;
 
@@ -48,15 +45,78 @@ namespace RiverExplorer::cborgen
 		}
 		
 		if (IsFixedArray) {
-			if (PrintExtern)  {
+			if (WithExtern)  {
 				Stream << I << "extern " << TypeToUse;
 			} else {
-				Stream << I << " " << TypeToUse;
+				Stream << I << TypeToUse;
 			}
 			Stream << " ";
 
-			Stream << Name << "[" << SizeOrValue << "];";
-			Stream << " // With a fixed size of: " << SizeOrValue << "." << endl;
+			Stream << Name << "[" << SizeOrValue << "];"
+						 << " // With a fixed size of: " << SizeOrValue << "." << endl;
+
+		} else if (IsVariableArray) {
+			if (WithExtern)  {
+				Stream << I << "extern ";
+			} else {
+				Stream << I;
+			}
+			if (TypeToUse == "std::string") {
+				Stream << TypeToUse;
+			} else {
+				Stream << "std::vector<" << TypeToUse;
+			}
+
+			if (TypeToUse == "std::string") {
+				Stream << " ";
+			} else {
+				Stream << "> ";
+			}
+			if (SizeOrValue == "") {
+				Stream << Name << "; // With no size limit." << endl;
+			} else {
+				Stream << Name << "; // With a max size of: " << SizeOrValue << "." << endl;
+			}
+		} else {
+			if (WithExtern)  {
+				Stream << I << "extern " << TypeToUse;
+			} else {
+				Stream << I << TypeToUse;
+			}
+			Stream << " " << Name << ";" << endl;
+		}
+		Stream << endl;
+
+		PrintCppNamespaceEnd(Stream);
+
+		return;
+	}
+	
+	void
+	Variable::PrintCppCBOR(ostream & Stream) const
+	{
+		PrintCppHeader(Stream, false);
+
+		return;
+	}
+
+	void
+	Variable::PrintCppStubs(ostream & Stream) const
+	{
+		string I;
+
+		string TypeToUse = Type;
+
+		PrintCppNamespaceBegin(Stream);
+		if (Type == "string") {
+			TypeToUse = "std::string";
+		}
+		
+		if (IsFixedArray) {
+			Stream << I << " " << TypeToUse << " ";
+
+			Stream << Name << "[" << SizeOrValue << "];"
+						 << " // With a fixed size of: " << SizeOrValue << "." << endl;
 			
 		} else if (IsVariableArray) {
 			if (TypeToUse == "std::string") {
@@ -71,37 +131,22 @@ namespace RiverExplorer::cborgen
 				Stream << "> ";
 			}
 			if (SizeOrValue == "") {
-				Stream << Name << "; //With no size limit." << endl;
+				Stream << Name << "; // With no size limit." << endl;
 			} else {
-				Stream << Name << "; //With a max size of: " << SizeOrValue << "." << endl;
+				Stream << Name << "; // With a max size of: " << SizeOrValue << "." << endl;
 			}
 		} else {
-			if (PrintExtern)  {
-				Stream << I << "extern " << TypeToUse;
-			} else {
-				Stream << I << " " << TypeToUse;
-			}
-			Stream << " ";
-			Stream << Name << ";" << endl;
+			Stream << I << " " << TypeToUse << " " << Name << ";" << endl;
 		}
 		Stream << endl;
 
-		if (PrintExtern) {
-			PrintCppNamespaceEnd(Stream);
-		}
+		PrintCppNamespaceEnd(Stream);
 
-		return;
-	}
-	
-	void
-	Variable::PrintCppHeader(ofstream & Stream) const
-	{
-		PrintCppHeader(Stream, true);
 		return;
 	}
 
 	void
-	Variable::PrintCppHeaderCbor(ofstream & /*Stream*/) const
+	Variable::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -109,31 +154,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Variable::PrintCppCBOR(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-
-		return;
-	}
-
-	void
-	Variable::PrintCppStubs(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-
-		return;
-	}
-
-	void
-	Variable::PrintXSD(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-
-		return;
-	}
-	
-	void
-	Variable::PrintAbnf(ofstream & Stream) const
+	Variable::PrintAbnf(ostream & Stream) const
 	{
 		std::string Pad = std::string(Name.length()  + 3, ' ');
 
@@ -156,7 +177,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Variable::PrintServer(ofstream & /*Stream*/) const
+	Variable::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 

@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-20 20:35:34 doug>
+ * Time-stamp: <2025-05-25 12:42:17 doug>
  * 
  * @file cborgen.hpp
  * @author Douglas Mark Royer
@@ -105,21 +105,24 @@ namespace RiverExplorer::cborgen
 	 * @return The indent string.
 	 */
 	extern std::string Indent(int Level);
-	
+
+	/**
+	 * Add to UserDefinedTypes, duplicate values are ignored.
+	 *
+	 * @param AUserType A type defined by the .cbor files.
+	 *
+	 * @param HFile The header file needed to use AUserType.
+	 */
+	void AddToUserDefinedTypes(std::string AUserType, std::string HFile);
+
 	enum State	{
 		Unknown,
 		InVar,
-		InVarPtr,
 		InVarFixed,
-		InVarFixedPtr,
 		InVarVariable,
-		InVarVariablePtr,
 		InOpaqueFixed,
-		InOpaqueFixedPtr,
 		InOpaqueVariable,
-		InOpaqueVariablePtr,
 		InString,
-		InStringPtr,
 		InNamespaceDef,
 		InStruct,
 		InStructBody,
@@ -156,6 +159,48 @@ namespace RiverExplorer::cborgen
 		InSignedInteger
 	};
 
+	enum BasicType_e	{
+		UnknownType_t,
+		AmVoid_t,
+		AmInt8_t,
+		AmInt16_t,
+		AmInt32_t,
+		AmInt64_t,
+		AmIntBigNum_t,
+		
+		AmUInt8_t,
+		AmUInt16_t,
+		AmUInt32_t,
+		AmUInt64_t,
+		AmUIntBigNum_t,
+
+		AmFloat8_t,
+		AmFloat16_t,
+		AmFloat32_t,
+		AmFloat64_t,
+		AmFloatBigNum_t,
+
+		AmString_t,
+		AmBool_t,
+		AmBit_t,
+		AmBits_t,
+		AmBitMask_t,
+		AmEnum_t,
+		AmIdentifier_t,
+		AmMap_t,
+		AmMultimap_t,
+		AmStruct_t,
+		AmUnion_t,
+		AmOpaque_t,
+
+		AmUserDefined_t
+	};
+
+
+	// Is this what I want?
+	//
+	extern std::vector<std::string> KnownNamespaces;
+	
 	/**
 	 * @class Item
 	 * This exists as a base class for evertying, so
@@ -166,25 +211,46 @@ namespace RiverExplorer::cborgen
 	{
 	public:
 
+		/**
+		 * Item - Default Constructor.
+		 */
+		Item();
+		
+		/**
+		 * Item - Destructor.
+		 */
+		virtual ~Item();
+		
 		enum Scope_e {
+			UnknownScope_t,
 			InternalScope_t,
 			PrivateScope_t,
 			NamespaceScope_t
 		};
+
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const = 0;
 		
-		virtual void PrintCppHeader(ofstream & Stream) const = 0;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const = 0;
-		virtual void PrintCppCBOR(ofstream & Steam) const = 0;
-		virtual void PrintCppStubs(ofstream & Stream) const = 0;
-		virtual void PrintXSD(ofstream & Stream) const = 0;
-		virtual void PrintAbnf(ofstream & Stream) const = 0;
-		virtual void PrintServer(ofstream & Stream) const = 0;
+		virtual void PrintCppCBOR(ostream & Steam) const = 0;
+		virtual void PrintCppStubs(ostream & Stream) const = 0;
+		virtual void PrintXSD(ostream & Stream) const = 0;
+		virtual void PrintAbnf(ostream & Stream) const = 0;
+		virtual void PrintServer(ostream & Stream) const = 0;
 		
 		bool IsFixedArray = false;
 		bool IsVariableArray = false;
 		std::string SizeOrValue;
 
 		std::string Type;
+		BasicType_e DataType;
+		
 		std::string Name;
 
 		Scope_e OurScope;
@@ -192,7 +258,7 @@ namespace RiverExplorer::cborgen
 		/**
 		 * Print the variable for a CPP Header.
 		 */
-		void PrintCppDeclareVariable(ofstream & Stream) const;
+		void PrintCppDeclareVariable(ostream & Stream) const;
 	};
 
 	extern std::vector<Item*> OrderedItems;
@@ -210,13 +276,21 @@ namespace RiverExplorer::cborgen
 
 		virtual ~Constant();
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 	extern Constant * CurrentConstant;
 
@@ -230,13 +304,21 @@ namespace RiverExplorer::cborgen
 
 		virtual ~EnumValue();
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -251,13 +333,21 @@ namespace RiverExplorer::cborgen
 
 		std::vector<Item*> Enums;
 		
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -270,14 +360,21 @@ namespace RiverExplorer::cborgen
 
 		virtual ~Variable();
 		
-		void PrintCppHeader(ofstream & Stream, bool PrintExtern) const;
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -292,13 +389,21 @@ namespace RiverExplorer::cborgen
 
 		Variable * Declaration;
 		
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -311,13 +416,21 @@ namespace RiverExplorer::cborgen
 
 		virtual ~StructMember();
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 	extern StructMember * CurrentStructMember;
 
@@ -333,13 +446,21 @@ namespace RiverExplorer::cborgen
 		
 		std::vector<Item*> Members;
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 	extern Struct * CurrentStruct;
 
@@ -350,19 +471,28 @@ namespace RiverExplorer::cborgen
 		: public Item
 	{
 	public:
-
 		virtual ~UnionCase();
+
+		void CopyFrom(Variable *& Var);
 		
 		std::string CaseValue;
 		bool IsDefault;
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -380,15 +510,22 @@ namespace RiverExplorer::cborgen
 		std::string SwitchType;
 		std::string SwitchVariable;
 		std::vector<Item*> Cases;
-		UnionCase * Default;
 		
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 	extern Union * CurrentUnion;
 
@@ -406,13 +543,21 @@ namespace RiverExplorer::cborgen
 		std::vector<Item*> Params;
 		int64_t ProcNumber;
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -432,13 +577,21 @@ namespace RiverExplorer::cborgen
 		std::map<std::string, Struct*> Structs;
 		std::map<std::string, Union*> Unions;
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -454,13 +607,21 @@ namespace RiverExplorer::cborgen
 		
 		std::vector<Item*> Procedures;
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 
 		Program & Parent;
 	};
@@ -475,13 +636,21 @@ namespace RiverExplorer::cborgen
 		
 		virtual ~Comment();
 		
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -494,13 +663,21 @@ namespace RiverExplorer::cborgen
 		
 		virtual ~PassThrough();
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 	};
 
 	/**
@@ -528,13 +705,21 @@ namespace RiverExplorer::cborgen
 		 */
 		std::string VersionValue;
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 
 		Struct & Parent;
 	};
@@ -564,13 +749,21 @@ namespace RiverExplorer::cborgen
 		 */
 		std::string MethodValue;
 
-		virtual void PrintCppHeader(ofstream & Stream) const;
-		virtual void PrintCppHeaderCbor(ofstream & Stream) const;
-		virtual void PrintCppCBOR(ofstream & Stream) const;
-		virtual void PrintCppStubs(ofstream & Stream) const;
-		virtual void PrintXSD(ofstream & Stream) const;
-		virtual void PrintAbnf(ofstream & Stream) const;
-		virtual void PrintServer(ofstream & Stream) const;
+		/**
+		 * Print this item for use in a C++ header file.
+		 *
+		 * @param Stream Where to send the data to.
+		 *
+		 * @param WithExtern When false, do not print 'extern'.
+		 */
+		virtual void PrintCppHeader(ostream & Stream,
+																bool WithExtern = true) const;
+		
+		virtual void PrintCppCBOR(ostream & Stream) const;
+		virtual void PrintCppStubs(ostream & Stream) const;
+		virtual void PrintXSD(ostream & Stream) const;
+		virtual void PrintAbnf(ostream & Stream) const;
+		virtual void PrintServer(ostream & Stream) const;
 
 		Version & Parent;
 	};
@@ -678,12 +871,17 @@ namespace RiverExplorer::cborgen
 		
 		void ProcessNode(bool Enter,
 										 std::string From,
+										 cborParser::IdentifierContext* Ctx);
+		
+		void ProcessNode(bool Enter,
+										 std::string From,
 										 tree::TerminalNode* Ctx);
 		
 		void ProcessNode(bool Enter,
 										 std::string From,
 										 ParserRuleContext* Ctx);
 		
+
 		//////////////////////////////////////////////////////////////////////
 		virtual void enterValue(cborParser::ValueContext *Ctx);
 		virtual void exitValue(cborParser::ValueContext *Ctx);
@@ -799,6 +997,21 @@ namespace RiverExplorer::cborgen
 		virtual void enterInternalTag(cborParser::InternalTagContext * Ctx);
 		virtual void exitInternalTag(cborParser::InternalTagContext * Ctx);
 
+		virtual void enterPublicTag(cborParser::PublicTagContext * Ctx);
+		virtual void exitPublicTag(cborParser::PublicTagContext * Ctx);
+
+		virtual void enterString(cborParser::StringContext * Ctx);
+		virtual void exitString(cborParser::StringContext * Ctx);
+
+		virtual void enterNamespaceTag(cborParser::NamespaceTagContext * Ctx);
+		virtual void exitNamespaceTag(cborParser::NamespaceTagContext * Ctx);
+
+		virtual void enterInternal_identifier(cborParser::Internal_identifierContext * Ctx);
+		virtual void exitInternal_identifier(cborParser::Internal_identifierContext * Ctx);
+
+		virtual void enterNamespace_identifier(cborParser::Namespace_identifierContext * Ctx);
+		virtual void exitNamespace_identifier(cborParser::Namespace_identifierContext * Ctx);
+
 		virtual void enterFloatValue(cborParser::FloatValueContext * Ctx);
 		virtual void exitFloatValue(cborParser::FloatValueContext * Ctx);
 
@@ -822,6 +1035,15 @@ namespace RiverExplorer::cborgen
 
 		virtual void enterBigNumFloat(cborParser::BigNumFloatContext * Ctx);
 		virtual void exitBigNumFloat(cborParser::BigNumFloatContext * Ctx);
+
+		virtual void enterBitmaskBody(cborParser::BitmaskBodyContext * Ctx);
+		virtual void exitBitmaskBody(cborParser::BitmaskBodyContext * Ctx);
+
+		virtual void enterBitmaskTypeSpec(cborParser::BitmaskTypeSpecContext * Ctx);
+		virtual void exitBitmaskTypeSpec(cborParser::BitmaskTypeSpecContext * Ctx);
+
+		virtual void enterBitsTypeSpec(cborParser::BitsTypeSpecContext * Ctx);
+		virtual void exitBitsTypeSpec(cborParser::BitsTypeSpecContext * Ctx);
 
 		virtual void visitTerminal(tree::TerminalNode * Node);
 		virtual void visitErrorNode(tree::ErrorNode * Node);

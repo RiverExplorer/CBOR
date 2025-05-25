@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-20 20:37:55 doug>
+ * Time-stamp: <2025-05-24 19:17:27 doug>
  * 
  * @file GenerateCppItem.cpp
  * @author Douglas Mark Royer
@@ -23,47 +23,80 @@ using namespace std;
 
 namespace RiverExplorer::cborgen
 {
+
+	Item::Item()
+	{
+		IsFixedArray = false;
+		IsVariableArray = false;
+		SizeOrValue = "";
+		Type = "";
+		DataType = UnknownType_t;
+		OurScope = UnknownScope_t;
+
+		return;
+	}
+	
+	Item::~Item()
+	{
+		IsFixedArray = false;
+		IsVariableArray = false;
+		SizeOrValue = "";
+		Type = "";
+		DataType = UnknownType_t;
+		OurScope = UnknownScope_t;
+
+		return;
+	}
+	
 	void
-	Item::PrintCppDeclareVariable(ofstream & Stream) const
+	Item::PrintCppDeclareVariable(ostream & Stream) const
 	{
 		string I = Indent();
 
-		if (IsFixedArray || IsVariableArray) {
-			if (Type == "opaque") {
-				Stream << I << "std::vector<uint8_t> ";
-					
-			} else if (Type == "string") {
-				Stream << I << "std::string ";
+		if (Type == "opaque") {
+			if (IsVariableArray) {
+				Stream << I << "std::vector<uint8_t> " << Name << ";";
+
+				if (SizeOrValue == "") {
+					Stream << "/* No predefined size. */";
+				} else {
+					Stream << "/* Up to " << SizeOrValue << " character. */";
+				}
+
+			} else if (IsFixedArray) {
+				Stream << I << "uint8_t " << Name << "[" << SizeOrValue << "];"
+							 << "/* Fixed Size of " << SizeOrValue << " */";
 
 			} else {
-				Stream << I << "std::vector<" << ToCppType(Type);
-				Stream << "> ";
+				Stream << I << "uint8_t " << Name << ";";
 			}
-			Stream << Name << ";";
 
-			if (SizeOrValue != "") {
-				Stream << I;
-				if (IsFixedArray) {
-					Stream << endl << I << "// With a fixed size of: " << SizeOrValue;
-				} else if (IsVariableArray) {
-					Stream << endl << I << "// With a max size of: " << SizeOrValue;
-				}
+		} else if (Type == "string") {
+			Stream << I << "std::string " << Name << ";";
+			if (SizeOrValue == "") {
+				Stream << "/* No predefined length. */";
 			} else {
-				if (IsVariableArray) {
-					Stream << endl << I << "// With no size limit.";
-				}
+				Stream << "/* Up to " << SizeOrValue << " character. */";
 			}
+
 		} else {
-			std::string CppType = ToCppType(Type);
+			// Is not opaque or string.
+			//
+			if (IsVariableArray) {
+				Stream << I << "std::vector<" << Type << "> " << Name << ";";
+				if (SizeOrValue == "") {
+					Stream << "/* No predefined length. */";
+				} else {
+					Stream << "/* Up to " << SizeOrValue << " items. */";
+				}
 
-			if (IsFixedArray || IsVariableArray) {
-				Stream << I << "std::vector<" << CppType;
-				Stream << ">";
+			} else if (IsFixedArray) {
+				Stream << I << Type << "> " << Name << "[" << SizeOrValue << "];"
+							 << "/* Fixed Size of " << SizeOrValue << " */";
+				
 			} else {
-				Stream << I << CppType;
+				Stream << I << Type << " " << Name << ";";
 			}
-			Stream << " ";
-			Stream << Name << ";";
 		}
 
 		return;

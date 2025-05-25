@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:48:22 doug>
+ * Time-stamp: <2025-05-24 19:17:47 doug>
  * 
  * @file GenerateCppPassThrough.cpp
  * @author Douglas Mark Royer
@@ -26,7 +26,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	PassThrough::PrintCppHeader(ofstream & Stream) const
+	PassThrough::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		Stream << Name << std::endl;
 
@@ -34,42 +34,35 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	PassThrough::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-		return;
-	}
-	
-	void
-	PassThrough::PrintCppCBOR(ofstream & /*Stream*/) const
+	PassThrough::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	PassThrough::PrintCppStubs(ofstream & /*Stream*/) const
+	PassThrough::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	PassThrough::PrintXSD(ofstream & /*Stream*/) const
+	PassThrough::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	PassThrough::PrintAbnf(ofstream & /*Stream*/) const
+	PassThrough::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	PassThrough::PrintServer(ofstream & /*Stream*/) const
+	PassThrough::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

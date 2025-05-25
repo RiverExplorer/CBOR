@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:48:12 doug>
+ * Time-stamp: <2025-05-24 19:17:57 doug>
  * 
  * @file GenerateCppProcedure.cpp
  * @author Douglas Mark Royer
@@ -25,28 +25,21 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Procedure::PrintCppHeader(ofstream & /*Stream*/) const
+	Procedure::PrintCppHeader(ostream & /*Stream*/, bool /*WithExtern*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	Procedure::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-		return;
-	}
-	
-	void
-	Procedure::PrintCppCBOR(ofstream & /*Stream*/) const
+	Procedure::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	Procedure::PrintCppStubs(ofstream & Stream) const
+	Procedure::PrintCppStubs(ostream & Stream) const
 	{
 		std::string I = Indent();
 		std::string I2 = Indent(IndentLevel + 1);
@@ -69,21 +62,21 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Procedure::PrintXSD(ofstream & /*Stream*/) const
+	Procedure::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Procedure::PrintAbnf(ofstream & /*Stream*/) const
+	Procedure::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Procedure::PrintServer(ofstream & Stream) const
+	Procedure::PrintServer(ostream & Stream) const
 	{
 		/**@todo*/
 		return;

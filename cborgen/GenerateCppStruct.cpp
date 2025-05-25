@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-20 20:41:47 doug>
+ * Time-stamp: <2025-05-24 19:19:30 doug>
  * 
  * @file GenerateCppStuct.cpp
  * @author Douglas Mark Royer
@@ -30,7 +30,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	static void
-	PrintSizeInfo(StructMember * Member, std::string & Tabs, ofstream & Stream)
+	PrintSizeInfo(StructMember * Member, std::string & Tabs, ostream & Stream)
 	{
 		if (Member->IsVariableArray || Member->IsFixedArray) {
 			if (Member->SizeOrValue != "") {
@@ -50,7 +50,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Struct::PrintCppHeader(ofstream & Stream) const
+	Struct::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		Stream << endl;
 
@@ -58,26 +58,44 @@ namespace RiverExplorer::cborgen
 
 		PrintCppNamespaceBegin(Stream);
 		
-		Stream << I << "class " << Name << endl;
-		Stream << I << "{" << endl;
-		Stream << I << "public:" << endl;
+		Stream << I << "class " << Name << endl
+					 << I << "{" << endl
+					 << I << "public:" << endl;
 		IndentLevel++;
 
 		string I2 = Indent();
-		Stream << I2 << Name << "();" << endl;
-		Stream << endl;
-		Stream << I2 << "virtual ~" << Name << "();" << endl;
-		Stream << endl;
-		Stream << I2 << "/**" << endl;
-		Stream << I2 << " * Serialize or deserialize a " << Name << " object." << endl;
-		Stream << I2 << " * " << endl;
-		Stream << I2 << " * @param Cbor An CBOR object, initalzied with" << endl;
-		Stream << I2 << " * CBOR_ENCODE, CBOR_DECODE or CBOR_FREE." << endl;
-		Stream << I2 << " * " << endl;
-		Stream << I2 << " * @return true on no errors." << endl;
-		Stream << I2 << " */" << endl;
-		Stream << I2 << "bool Cbor(CBOR & Cbor);" << endl;
-		Stream << endl;
+		
+		Stream << I2 << "/**" << endl
+					 << I2 << " * " << Name << " - Default Constructor." << endl
+					 << I2 << " */" << endl
+					 << I2 << Name << "();" << endl << endl
+					 << I2 << "/**" << endl
+					 << I2 << " * " << Name << " - Destructor." << endl
+					 << I2 << " */" << endl
+					 << I2 << "virtual ~" << Name << "();" << endl
+					 << endl
+					 << I2 << "/**" << endl
+					 << I2 << " * CBOR Serialize a " << Name << " object." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param Out An initialized std::ostream." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param Obj The " << Name << " object to serialize." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @return Out" << endl
+					 << I2 << " */" << endl
+					 << I2 << "friend std::ostream & operator<<(std::ostream & Out, const " << Name << " & Obj);" << endl
+					 << endl
+					 << I2 << "/**" << endl
+					 << I2 << " * Deserialize a CBOR encoded " << Name << " object." << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param In An initialized std::istream." << endl
+					 << I2 << " *" << endl
+					 << I2 << " *" << endl
+					 << I2 << " * @param Obj The " << Name << " object to deserialize into." << endl
+					 << I2 << " * @return In" << endl
+					 << I2 << " */" << endl
+					 << I2 << "friend std::istream & operator>>(std::istream & In, " << Name << " & Obj);" << endl
+					 << endl;
 		
 		vector<Item*>::const_iterator MIt;
 		StructMember * Member;
@@ -89,7 +107,7 @@ namespace RiverExplorer::cborgen
 
 			Member = dynamic_cast<StructMember*>(*MIt);
 			if (Member == nullptr) {
-				(*MIt)->PrintCppHeader(Stream);
+				(*MIt)->PrintCppHeader(Stream, false); // Not struct, print it.
 				continue;
 			}
 			
@@ -132,44 +150,15 @@ namespace RiverExplorer::cborgen
 		Stream << endl;
 		
 		IndentLevel--;
-		Stream << I << "}; // End of class " << Name << endl << endl;
-
-		Stream << I << "/**" << endl;
-		Stream << I << " * Serialize or deserialize a " << Name << " object." << endl;
-		Stream << I << " * " << endl;
-		Stream << I << " * @param Cbor An CBOR object, initalzied with" << endl;
-		Stream << I << " * CBOR_ENCODE, CBOR_DECODE or CBOR_FREE." << endl;
-		Stream << I << " * " << endl;
-		Stream << I << " * @param Object The address of a " << Name << " object." << endl;
-		Stream << I << " * " << endl;
-		Stream << I << " * @return true on no errors." << endl;
-		Stream << I << " */" << endl;
-		Stream << I << "bool cbor_" << Name << "(CBOR * Cbor, " << Name << " * Object);" << endl;
-
-		Stream << endl;
+		Stream << I << "}; // End of class " << Name << endl << endl
+					 << endl;
 
 		PrintCppNamespaceEnd(Stream);
 		return;
 	}
 
 	void
-	Struct::PrintCppHeaderCbor(ofstream & Stream) const
-	{
-		PrintCppNamespaceBegin(Stream);
-		Stream << "bool cbor_" << Name
-					 << "(CBOR * cbors, " << Name << " * obj);" << endl;
-		PrintCppNamespaceEnd(Stream);
-		Stream << "extern \"C\" bool cbor_" << Name
-					 << "(CBOR * cbors, " << Name << " * obj) {" << endl
-					 << "\treturn(" << CppNamespace << "::"
-					 << Name << "(cbors, obj));" << endl
-					 << "}" << endl;
-		
-		return;
-	}
-	
-	void
-	Struct::PrintCppCBOR(ofstream & Stream) const
+	Struct::PrintCppCBOR(ostream & Stream) const
 	{
 		vector<Item*>::const_iterator MIt;
 		StructMember * Member;
@@ -186,8 +175,8 @@ namespace RiverExplorer::cborgen
 		
 		// Constructor.
 		//
-		Stream << I << Name << "::" << Name << "()" << endl;
-		Stream << I << "{" << endl;
+		Stream << I << Name << "::" << Name << "()" << endl
+					 << I << "{" << endl;
 		IndentLevel++;
 
 		I2 = Indent();
@@ -214,13 +203,13 @@ namespace RiverExplorer::cborgen
 		}
 		Stream << endl << I2 << "return;" << endl;
 		IndentLevel--;
-		Stream << I << "} // End of " << Name << "::" << Name << "()" << endl;
-		Stream << endl;
+		Stream << I << "} // End of " << Name << "::" << Name << "()" << endl
+					 << endl;
 		
 		// Destructor.
 		//
-		Stream << I << Name << "::~" << Name << "()" << endl;
-		Stream << I << "{" << endl;
+		Stream << I << Name << "::~" << Name << "()" << endl
+					 << I << "{" << endl;
 		IndentLevel++;
 
 		I2 = Indent();
@@ -239,14 +228,14 @@ namespace RiverExplorer::cborgen
 		}
 		Stream << I2 << "return;" << endl;
 		IndentLevel--;
-		Stream << I << "}; // End of " << Name << "::~" << Name << "()" << endl;
-		Stream << endl;
+		Stream << I << "}; // End of " << Name << "::~" << Name << "()" << endl
+					 << endl;
 
 		// CBOR
 		//
-		Stream << I << "bool" << endl;
-		Stream << I << Name << "::Cbor(CBOR & Cbor)" << endl;
-		Stream << I << "{" << endl;
+		Stream << I << "bool" << endl
+					 << I << Name << "::Cbor(CBOR & Cbor)" << endl
+					 << I << "{" << endl;
 		IndentLevel++;
 
 		I2 = Indent();
@@ -264,8 +253,8 @@ namespace RiverExplorer::cborgen
 
 			if (Member->Type == "opaque") {
 				if (Member->SizeOrValue == "") {
-					Stream << endl << I2 << "// No size set for array" << endl;
-					Stream << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
+					Stream << endl << I2 << "// No size set for array" << endl
+								 << I2 << "if (!cbor_VectorOfOpaque(&Cbor, &"
 								 << Member->Name << ")) {" << endl
 								 << I2 << "\treturn(false);" << endl
 								 << I2 << "}" << endl;
@@ -280,8 +269,8 @@ namespace RiverExplorer::cborgen
 					
 			} else if (Member->Type == "string") {
 				if (Member->SizeOrValue == "") {
-					Stream << endl << I2 << "// No size set for string." << endl;
-					Stream << I2 << "if (!cbor_StdString(&Cbor, &"
+					Stream << endl << I2 << "// No size set for string." << endl
+								 << I2 << "if (!cbor_StdString(&Cbor, &"
 								 << Member->Name << ")) {" << endl
 								 << I2 << "\treturn(false);" << endl
 								 << I2 << "}" << endl;
@@ -348,8 +337,8 @@ namespace RiverExplorer::cborgen
 		}
 		Stream << I2 << "return;" << endl;
 		IndentLevel--;
-		Stream << I << "}; // End of " << Name << "::Cbor()" << endl;
-		Stream << endl;
+		Stream << I << "}; // End of " << Name << "::Cbor()" << endl
+					 << endl;
 
 		std::string I4 = Indent(IndentLevel + 2);
 		I3 = Indent(IndentLevel + 1);
@@ -372,7 +361,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Struct::PrintCppStubs(ofstream & /*Stream*/) const
+	Struct::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		std::vector<Item*>::const_iterator MIt;
 		Item * AnItem;
@@ -450,7 +439,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Struct::PrintXSD(ofstream & /*Stream*/) const
+	Struct::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
@@ -500,7 +489,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Struct::PrintAbnf(ofstream & Stream) const
+	Struct::PrintAbnf(ostream & Stream) const
 	{
 		vector<Item*>::const_iterator MIt;
 		StructMember *	Member;
@@ -519,8 +508,8 @@ namespace RiverExplorer::cborgen
 				Longest = MAX(Longest, Member->Name.length());
 			}
 		}
-		Stream << endl;
-		Stream << Name << " =";
+		Stream << endl
+					 << Name << " =";
 
 		for (MIt = Members.cbegin(); MIt != Members.cend(); MIt++) {
 			Member = dynamic_cast<StructMember*>(*MIt);
@@ -617,7 +606,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Struct::PrintServer(ofstream & /*Stream*/) const
+	Struct::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
@@ -630,49 +619,42 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	StructMember::PrintCppHeader(ofstream & /*Stream*/) const
+	StructMember::PrintCppHeader(ostream & /*Stream*/, bool /*WithExtern*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	StructMember::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-		return;
-	}
-	
-	void
-	StructMember::PrintCppCBOR (ofstream & /*Stream*/) const
+	StructMember::PrintCppCBOR (ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	StructMember::PrintCppStubs(ofstream & /*Stream*/) const
+	StructMember::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	StructMember::PrintXSD(ofstream & /*Stream*/) const
+	StructMember::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	StructMember::PrintAbnf(ofstream & /*Stream*/) const
+	StructMember::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	StructMember::PrintServer(ofstream & /*Stream*/) const
+	StructMember::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

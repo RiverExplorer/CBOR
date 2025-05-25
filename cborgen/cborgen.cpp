@@ -1,6 +1,6 @@
 /**
  * Project: CBOR
- * Time-stamp: <2025-04-20 20:36:55 doug>
+ * Time-stamp: <2025-05-25 13:20:20 doug>
  * 
  * @file cborgen.cpp
  * @author Douglas Mark Royer
@@ -14,6 +14,7 @@
  * RiverExplorer is a trademark of Douglas Mark Royer
  */
 #include "cborgen.hpp"
+#include "Generate.hpp"
 #include "GenerateCpp.hpp"
 #include <iostream>
 #include <fstream>
@@ -41,7 +42,7 @@ namespace RiverExplorer::cborgen
 	extern std::string ToUpper(const std::string & In);
 	extern void GenerateSharedHpp();
 	extern void GenerateThisFileWasGenerated(std::string Prefix,
-																					 ofstream & Stream);
+																					 ostream & Stream);
 	extern std::string Indent();
 	extern bool IsBuiltInCborType(const std::string & Type);
 	extern std::string RemoveFileExtension(std::string FileName);
@@ -63,12 +64,20 @@ namespace RiverExplorer::cborgen
 	std::vector<Item*>		OrderedItems;
 	State									CurrentState = Unknown;
 	bool									InArray = false;
+	std::string						CurrentName;
 	Constant						*	CurrentConstant = nullptr;
+
 	StructMember				*	CurrentStructMember = nullptr;
 	Struct							*	CurrentStruct = nullptr;
+	bool									BuildingStruct = false;
+	
 	Enum								*	CurrentEnum = nullptr;
 	EnumValue						*	CurrentEnumValue = nullptr;
+	
 	Union								*	CurrentUnion = nullptr;
+	bool									BuildingUnion = false;
+	bool									WaitingForSwitch = false;
+	
 	UnionCase						*	CurrentUnionCase = nullptr;
 	TypeDef							*	CurrentTypeDef = nullptr;
 	Method							* CurrentMethod = nullptr;
@@ -106,6 +115,10 @@ namespace RiverExplorer::cborgen
 		if (Enter) {
 			CurrentTypeSpecifier = Text;
 			std::cout << From << Text << std::endl;
+			if (CurrentVariable == nullptr) {
+				CurrentVariable = new Variable();
+				CurrentVariable->DataType = AmUserDefined_t;
+			}
 		}
 		
 		return;
@@ -116,7 +129,12 @@ namespace RiverExplorer::cborgen
 														 std::string From,
 														 cborParser::EnumTypeSpecContext* Ctx)
 	{
+
 		std::string Text = Ctx->getText();
+		if (Enter) {
+			CurrentState = InEnum;
+			CurrentName = Text;
+		}
 		std::cout << From << Text << std::endl;
 
 		return;
@@ -159,11 +177,19 @@ namespace RiverExplorer::cborgen
 
 		if (Enter) {
 			CurrentState = InStructBody;
-
+			CurrentStruct = new Struct();
+			CurrentStruct->Name = CurrentName;
+			AddToUserDefinedTypes(CurrentName, InputNoExtension);
+			CurrentStruct->DataType = AmStruct_t;
+			CurrentStruct->Type = "struct";
+			BuildingStruct = true;
+			std::cout << From << "--->> Begin Struct." << std::endl;
 		} else {
-
+			//BuildingStruct = false;
+			OrderedItems.push_back(CurrentStruct);
+			CurrentStruct = nullptr;
+			std::cout << From << "--->> End Struct: " << std::endl;
 		}
-		std::cout << From << Text << std::endl;
 
 		return;
 	}
@@ -178,12 +204,14 @@ namespace RiverExplorer::cborgen
 		if (Enter) {
 			CurrentState = InUnion;
 			CurrentUnion = new Union();
+			BuildingUnion = true;
 
 			std::cout << "BEGIN union " << std::endl;
 			
 		} else {
 			OrderedItems.push_back(CurrentUnion);
 			std::cout << "END union " << CurrentUnion->Name << std::endl;
+			//			CurrentUnion = nullptr;
 		}
 
 		return;
@@ -249,9 +277,7 @@ namespace RiverExplorer::cborgen
 		if (Enter) {
 			CurrentState = InConstant;
 			CurrentConstant = new Constant();
-			//if (Ctx->IDENTIFIER() != nullptr) {
-			//CurrentConstant->Name = Ctx->IDENTIFIER()->getSymbol()->getText();
-			//}
+
 		} else {
 			OrderedItems.push_back(CurrentConstant);
 		}
@@ -295,118 +321,282 @@ namespace RiverExplorer::cborgen
 
 		switch (CurrentState) {
 
+		case InSignedInteger:
+			break;
+
+		case InUnsignedInteger:
+			break;
+			
 		case InDeclaration:
 
 			if (WaitingValue && Text != ">") {
 				CurrentVariable->SizeOrValue = Text;
 				WaitingValue = false;
+
+			} else if (BuildingUnion && Text == ")") {
+				break;
+				
+			} else if (BuildingUnion && Text == "{") {
+				break;
+
+			} else if (BuildingUnion && !WaitingForSwitch) {
+				if (Text == "}") {
+					BuildingUnion = false;
+
+				} else if (Text != ";") {
+					if (CurrentVariable == nullptr) {
+						CurrentVariable = new Variable();
+					}
+					if (CurrentVariable->Type == "") {
+						CurrentVariable->Type = Text;
+
+						if (Text == "void") {
+							CurrentUnionCase->CopyFrom(CurrentVariable);
+							delete CurrentVariable;
+							CurrentVariable = nullptr;
+							
+							// Done with this one.
+							// It has already been pushed to union.
+							//
+							CurrentUnionCase = nullptr;
+						}
+							
+					} else {
+						CurrentVariable->Name = Text;
+						CurrentUnionCase->CopyFrom(CurrentVariable);
+						delete CurrentVariable;
+						CurrentVariable = nullptr;
+					}
+					
+				} else if (Text == ";" && BuildingUnion) {
+					CurrentState = InUnionCase;
+				}
+
+			} else if (BuildingUnion && !WaitingForSwitch) {
+				// Get all of the stuff..
+				//
+				CurrentUnionCase->CopyFrom(CurrentVariable);
+				delete CurrentVariable;
+				CurrentVariable = nullptr;
 				
 			} else {
 				if (CurrentVariable == nullptr) {
+
 					if (BuildingTypeDef) {
 						CurrentVariable = CurrentTypeDef->Declaration;
+
+					} else if (BuildingStruct) {
+
+						if (Text == "}") {
+							break;
+							
+						} else if (Text == ";") {
+							BuildingStruct = false;
+							break;
+						}
+
+					} else if (BuildingUnion) {
+
+						if (Text == "}") {
+							break;
+							
+						} else if (Text == ";") {
+							BuildingUnion = false;
+							break;
+						}
+
 					} else {
 						CurrentVariable = new Variable();
 					}
 				}
 
-				if (CurrentVariable->Type == "unsigned") {
-					if (Text == "short") {
-						CurrentVariable->Type = "uint16_t";
-						
-					} else if (Text == "int") {
-						CurrentVariable->Type = "uint32_t";
-						
-					} else if (Text == "hyper") {
-						CurrentVariable->Type = "uint64_t";
+				if (CurrentVariable == nullptr) {
+					CurrentVariable = new Variable();
+				}
+				if (CurrentVariable->Type == "") {
 
-					} else if (Text == "char") {
-						CurrentVariable->Type = "uint8_t";
-
-					} else if (Text == "quadruple") {
-						CurrentVariable->Type = "uint64_t";
-
-					} else {
-						std::cerr
-							<< "Error:Have unsigned, got: " << Text << std::endl;
-					}
-
-				} else if (CurrentVariable->Type == "long" && Text == "double") {
-					CurrentVariable->Type = "long double";
-						
-				}	else if (CurrentVariable->Type == "") {
-					if (Text == "unsigned") {
+					if (Text == "int8_t") {
 						CurrentVariable->Type = Text;
-
-					} else if (Text == "short") {
-						CurrentVariable->Type = "int16_t";
-					
-					} else if (Text == "int") {
-						CurrentVariable->Type = "int32_t";
-					
-					} else if (Text == "hyper") {
-						CurrentVariable->Type = "int64_t";
-					
-					} else if (Text == "quadruple") {
-						CurrentVariable->Type = "int64_t";
-					
-					} else if (Text == "char") {
-						CurrentVariable->Type = Text;
-					
-					} else if (Text == "float") {
-						CurrentVariable->Type = Text;
-					
-					} else if (Text == "double") {
-						CurrentVariable->Type = Text;
-
-					} else if (Text == "bool") {
-						CurrentVariable->Type = Text;
-
-					} else if (Text == "bool_t") {
-						CurrentVariable->Type = "bool";
-					
-					} else if (Text == "uint8_t") {
-						CurrentVariable->Type = Text;
-					
-					} else if (Text == "int8_t") {
-						CurrentVariable->Type = Text;
-					
-					} else if (Text == "uint16_t") {
-						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmInt8_t;
 					
 					} else if (Text == "int16_t") {
 						CurrentVariable->Type = Text;
-					
-					} else if (Text == "uint32_t") {
-						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmInt16_t;
 					
 					} else if (Text == "int32_t") {
 						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmInt32_t;
+					
+					} else if (Text == "int64_t") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmInt64_t;
+					
+					} else if (Text == "uint8_t") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmUInt8_t;
+					
+					} else if (Text == "uint16_t") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmUInt16_t;
+					
+					} else if (Text == "uint32_t") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmUInt32_t;
 					
 					} else if (Text == "uint64_t") {
 						CurrentVariable->Type = Text;
-
-					} else if (Text == "int64_t") {
+						CurrentVariable->DataType = AmUInt64_t;
+					
+					} else if (Text == "float16_t") {
 						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmFloat16_t;
+					
+					} else if (Text == "float32_t") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmFloat32_t;
+					
+					} else if (Text == "float64_t") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmFloat64_t;
+					
+					} else if (Text == "string") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmString_t;
+
+					} else if (Text == "bool") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmBool_t;
+
+					} else if (Text == "bit") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmBit_t;
+
+					} else if (Text == "bits") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmBits_t;
+
+					} else if (Text == "bitmask") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmBitMask_t;
 
 					} else if (Text == "enum") {
 						CurrentVariable->Type = Text;
-						//CurrentState = InEnumTypeDef;
+						CurrentVariable->DataType = AmEnum_t;
 
 					} else if (Text == "struct") {
 						CurrentVariable->Type = Text;
-						//CurrentState = InStructTypeDef;
+						CurrentVariable->DataType = AmStruct_t;
 					
 					} else if (Text == "union") {
 						CurrentVariable->Type = Text;
-						//CurrentState = InUnionTypeDef;
+						CurrentVariable->DataType = AmUnion_t;
+
+					} else if (Text == "map") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmMap_t;
+
+					} else if (Text == "multimap") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmMultimap_t;
+
+					} else if (Text == "opaque") {
+						CurrentVariable->Type = Text;
+						CurrentVariable->DataType = AmOpaque_t;
 
 					} else {
-						CurrentVariable->Type = Text;
+						bool Found = false;
+
+						// If user defined identifier.
+						//
+						// If non-standard signed int...
+						// It could also be an identifier that starts
+						// with "int", "uint", or "float".
+						//
+						if (strncmp(Text.c_str(), "int", 3) == 0) {
+							// If followed by digits _t
+							//
+							const char * Str = Text.c_str();
+							int Decimal = atoi(&Str[3]);
+							
+							if (Decimal > 0) {
+								Str += 3;
+								while (isdigit(*Str)) {
+									Str++;
+								}
+								if (strcmp(Str, "_t") == 0) {
+									// Is big int.
+									//
+									CurrentVariable->Type = Text;
+									CurrentVariable->DataType = AmIntBigNum_t;
+									Found = true;
+								}
+							}
+						}
+
+						if (!Found && (strncmp(Text.c_str(), "uint", 4) == 0)) {
+							// If followed by digits _t
+							//
+							const char * Str = Text.c_str();
+							int Decimal = atoi(&Str[4]);
+							
+							if (Decimal > 0) {
+								Str += 4;
+								while (isdigit(*Str)) {
+									Str++;
+								}
+								if (strcmp(Str, "_t") == 0) {
+									// Is big uint.
+									//
+									CurrentVariable->Type = Text;
+									CurrentVariable->DataType = AmUIntBigNum_t;
+									Found = true;
+								}
+							}
+						}
+
+						if (!Found && (strncmp(Text.c_str(), "float", 5) == 0)) {
+							// If followed by digits _t
+							//
+							const char * Str = Text.c_str();
+							int Decimal = atoi(&Str[5]);
+							
+							if (Decimal > 0) {
+								Str += 5;
+								while (isdigit(*Str)) {
+									Str++;
+								}
+								if (strcmp(Str, "_t") == 0) {
+									// Is big float.
+									//
+									CurrentVariable->Type = Text;
+									CurrentVariable->DataType = AmFloatBigNum_t;
+								}
+							} else {
+								cerr << "ERROR Got float without size." << endl;
+								break;
+							}
+						}
+
+						if (!Found) {
+							// Is identifier.
+							//
+							CurrentVariable->Type = Text;
+							CurrentVariable->DataType = AmIdentifier_t;
+						}
 					}
-					
 				} else if (CurrentVariable->Name == "") {
-					CurrentVariable->Name = Text;
+
+					if (!BuildingUnion) {
+						CurrentVariable->Name = Text;
+					}
+
+					if (WaitingForSwitch) {
+						CurrentUnion->SwitchType = CurrentVariable->Type;
+						CurrentUnion->SwitchVariable = Text;
+						delete CurrentVariable;
+						CurrentVariable = nullptr;
+						WaitingForSwitch = false;
+					}
 
 				}	else {
 					if (Text == ";") {
@@ -414,8 +604,19 @@ namespace RiverExplorer::cborgen
 							OrderedItems.push_back(CurrentTypeDef);
 							CurrentTypeDef = nullptr;
 							BuildingTypeDef = false; // In case it was, it is over now.
+
+						} else if (BuildingStruct) {
+							CurrentStruct->Members.push_back(CurrentVariable);
+							
+						} else if (BuildingUnion) {
+							CurrentUnionCase->CopyFrom(CurrentVariable);
+							delete CurrentVariable;
+							CurrentVariable = nullptr;
+							
 						} else {
-							OrderedItems.push_back(CurrentVariable);
+							if (!BuildingUnion) {
+								OrderedItems.push_back(CurrentVariable);
+							}
 						}
 						CurrentVariable = nullptr;
 
@@ -441,68 +642,38 @@ namespace RiverExplorer::cborgen
 			break;
 			
 		case InVar:
-			std::cout << "Process Node: InVar" << std::endl;
-			std::cout << "Text = " << Text << endl;
-			break;
-			
-		case InVarPtr:
-			std::cout << "Process Node: InVarPtr" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node: InVar" << std::endl
+								<< "Text = " << Text << endl;
 			break;
 			
 		case InVarFixed:
-			std::cout << "Process Node: InVarFixed" << std::endl;
-			std::cout << "Text = " << Text << endl;
-			break;
-			
-		case InVarFixedPtr:
-			std::cout << "Process Node: InVarFixedPtr" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node: InVarFixed" << std::endl
+								<< "Text = " << Text << endl;
 			break;
 			
 		case InVarVariable:
-			std::cout << "Process Node: InVarVariable" << std::endl;
-			std::cout << "Text = " << Text << endl;
-			break;
-			
-		case InVarVariablePtr:
-			std::cout << "Process Node: InVarVariablePtr" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node: InVarVariable" << std::endl
+								<< "Text = " << Text << endl;
 			break;
 			
 		case InOpaqueFixed:
-			std::cout << "Process Node: InOpaqueFixed" << std::endl;
-			std::cout << "Text = " << Text << endl;
-			break;
-			
-		case InOpaqueFixedPtr:
-			std::cout << "Process Node: InOpaqueFixedPtr" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node: InOpaqueFixed" << std::endl
+								<< "Text = " << Text << endl;
 			break;
 			
 		case InOpaqueVariable:
-			std::cout << "Process Node: InOpaqueVariable" << std::endl;
-			std::cout << "Text = " << Text << endl;
-			break;
-			
-		case InOpaqueVariablePtr:
-			std::cout << "Process Node: InOpaqueVariablePtr" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node: InOpaqueVariable" << std::endl
+								<< "Text = " << Text << endl;
 			break;
 			
 		case InString:
-			std::cout << "Process Node: InString" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node: InString" << std::endl
+								<< "Text = " << Text << endl;
 			break;
 			
-		case InStringPtr:
-			std::cout << "Process Node: InStringPtr" << std::endl;
-			std::cout << "Text = " << Text << endl;
-			break;
-
 		case InProgram:
-			std::cout << "Process Node: Program" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node: Program" << std::endl
+								<< "Text = " << Text << endl;
 
 			if (Text == "program") {
 				CurrentProgram = new Program();
@@ -533,8 +704,8 @@ namespace RiverExplorer::cborgen
 			break;
 
 		case InVersion:
-			std::cout << "Process Node Version" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node Version" << std::endl
+								<< "Text = " << Text << endl;
 
 			if (Text == "version") {
 				CurrentVersion = new Version(*CurrentProgram);
@@ -564,8 +735,8 @@ namespace RiverExplorer::cborgen
 			break;
 
 		case  InVersionMethod:
-			std::cout << "Process Node VersionMethod" << std::endl;
-			std::cout << "Text = " << Text << endl;
+			std::cout << "Process Node VersionMethod" << std::endl
+								<< "Text = " << Text << endl;
 
 			if (WaitingValue) {
 				if (Text != ">" && Text != "]") {
@@ -629,10 +800,6 @@ namespace RiverExplorer::cborgen
 			}
 			break;
 			
-		case InStruct:
-			/*EMPTY*/
-			break;
-
 		case InProcedureDef:
 			std::cout << "Text = " << Text << endl;
 			break;
@@ -711,63 +878,76 @@ namespace RiverExplorer::cborgen
 
 		case InTypeDef:
 			if (Enter) {
-				if (CurrentTypeDef == nullptr) {
-					CurrentTypeDef = new TypeDef();
-					CurrentTypeDef->Declaration = new Variable();
-					BuildingTypeDef = true;
-				}
-				//std::cout << "--IN TYPEDEF: " << Text << std::endl;
 
-				if (Text == "typedef") {
-					/*Ignore*/
-					
-				} else if (Text == ";") {
-					OrderedItems.push_back(CurrentTypeDef);
-					CurrentTypeDef = nullptr;
-					CurrentState = Unknown;
-					
-				} else if (CurrentTypeDef->Name == "") {
-					if (CurrentTypeDef->Type == "") {
-						CurrentTypeDef->Type = Text;
-
-					} else if (CurrentTypeDef->Type == "struct") {
-						CurrentTypeDef->Type += " ";
-						CurrentTypeDef->Type += Text;
-					} else {
-						CurrentTypeDef->Name = Text;
-					}
+				if (Text == "struct" || Text == "class") {
+					CurrentStruct = new Struct();
+					CurrentState = InStruct;
 				} else {
-					// Type and Name are set, if there is more
-					// it is array information.
-					//
-					if (Text == "[") {
-						CurrentTypeDef->IsFixedArray = true;
-						
-					} else if (Text == "<>") {
-						CurrentTypeDef->IsVariableArray = true;
+					if (CurrentTypeDef == nullptr) {
+						CurrentTypeDef = new TypeDef();
+						CurrentTypeDef->Declaration = new Variable();
+						BuildingTypeDef = true;
+					}
 
-					} else if (Text == "<") {
-						CurrentTypeDef->IsVariableArray = true;
-
-					} else if (Text == "]") {
+					if (Text == "typedef") {
 						/*Ignore*/
+					
+					} else if (Text == ";") {
+						OrderedItems.push_back(CurrentTypeDef);
+						CurrentTypeDef = nullptr;
+						CurrentState = Unknown;
+					
+					} else if (CurrentTypeDef->Name == "") {
+						if (CurrentTypeDef->Type == "") {
+							CurrentTypeDef->Type = Text;
 
-					} else if (Text == ">") {
-						/*Ignore*/
-
-					} else if (Text == "<>") {
-						CurrentTypeDef->IsVariableArray = true;
+						} else if (CurrentTypeDef->Type == "struct") {
+							CurrentTypeDef->Type += " ";
+							CurrentTypeDef->Type += Text;
+						} else {
+							CurrentTypeDef->Name = Text;
+							}
+					} else {
+						// Type and Name are set, if there is more
+						// it is array information.
+						//
+						if (Text == "[") {
+							CurrentTypeDef->IsFixedArray = true;
 						
-					} else if (CurrentTypeDef->IsFixedArray
-									|| CurrentTypeDef->IsVariableArray) {
+						} else if (Text == "<>") {
+							CurrentTypeDef->IsVariableArray = true;
+
+						} else if (Text == "<") {
+							CurrentTypeDef->IsVariableArray = true;
+
+						} else if (Text == "]") {
+							/*Ignore*/
+
+						} else if (Text == ">") {
+							/*Ignore*/
+
+						} else if (Text == "<>") {
+							CurrentTypeDef->IsVariableArray = true;
+						
+						} else if (CurrentTypeDef->IsFixedArray
+											 || CurrentTypeDef->IsVariableArray) {
 							CurrentTypeDef->SizeOrValue = Text;
+						}
 					}
 				}
 			}
 			break;
 			
 		case InEnum:
-			/*EMPTY*/
+			if (Enter) {
+				if (CurrentEnum == nullptr) {
+					CurrentEnum = new Enum();
+				}
+				if (CurrentEnum->Name == "") {
+					CurrentEnum->Name = Text;
+				}
+				CurrentState = InEnumBody;
+			}
 			break;
 
 		case InEnumBody:
@@ -784,7 +964,7 @@ namespace RiverExplorer::cborgen
 					/*Ignore*/
 					
 				} else if (Text == "=" ) {
-					/*Ignore*/
+					CurrentEnumValue->Name = CurrentName;
 					
 				} else if (Text == "}" ) {
 					/*Ignore*/
@@ -792,11 +972,18 @@ namespace RiverExplorer::cborgen
 				} else if (Text == "," ) {
 					/*ignore*/
 
+				} else if (Text == ";" ) {
+					OrderedItems.push_back(CurrentEnum);
+					CurrentEnum = nullptr;
+
 				} else if (CurrentEnumValue->Name == "") {
 					CurrentEnumValue->Name = Text;
 
 				} else {
 					CurrentEnumValue->Type = Text;
+					if (CurrentEnum == nullptr) {
+						CurrentEnum = new Enum();
+					}
 					CurrentEnum->Enums.push_back(CurrentEnumValue);
 					CurrentEnumValue = nullptr;
 				}
@@ -804,6 +991,10 @@ namespace RiverExplorer::cborgen
 			}
 			break;
 			
+		case InStruct:
+			/*EMPTY*/
+			break;
+
 		case InStructBody:
 			if (Enter) {
 				if (CurrentStructMember == nullptr) {
@@ -822,9 +1013,6 @@ namespace RiverExplorer::cborgen
 					/*Ignore*/
 
 				} else if (Text == "struct") {
-					/*Ignore*/
-					
-				//} else if (Text == CurrentStruct->Name) {
 					/*Ignore*/
 					
 				} else if (Text == ";" ) {
@@ -846,7 +1034,6 @@ namespace RiverExplorer::cborgen
 				} else if (Text == "<") {
 					CurrentStructMember->IsVariableArray = true;
 					InArray = true;
-					//std::cout << "Got Struct " << CurrentStruct->Name << " Start Variable Array " << std::endl;
 					
 				} else if (Text == ">") {
 					InArray = false;
@@ -856,13 +1043,13 @@ namespace RiverExplorer::cborgen
 					if (CurrentStructMember->SizeOrValue == "") {
 						std::cout << " No Max Size " << std::endl;
 					} else {
-						std::cout << " Max Size " << CurrentStructMember->SizeOrValue << std::endl;
+						std::cout << " Max Size "
+											<< CurrentStructMember->SizeOrValue << std::endl;
 					}
 					
 				} else if (Text == "[") {
 					CurrentStructMember->IsFixedArray = true;
 					InArray = true;
-					//std::cout << "Got Struct " << CurrentStruct->Name << " Start Fixed Array " << std::endl;
 					
 				} else if (Text == "]") {
 					InArray = false;
@@ -871,20 +1058,23 @@ namespace RiverExplorer::cborgen
 					if (CurrentStructMember->SizeOrValue == "") {
 						std::cout << " ERROR !! No Max Size" << std::endl;
 					} else {
-						std::cout << " Max Size " << CurrentStructMember->SizeOrValue << std::endl;
+						std::cout << " Max Size "
+											<< CurrentStructMember->SizeOrValue << std::endl;
 					}
 
 				} else if (!InArray) {
 					CurrentStructMember->Name = Text;
 
-					std::cout << "Got Struct " << CurrentStruct->Name << " Named: " << Text << std::endl;
+					std::cout << "Got Struct "
+										<< CurrentStruct->Name << " Named: "
+										<< Text << std::endl;
 
 				} else if (InArray) {
 					CurrentStructMember->SizeOrValue = Text;
-					//std::cout << "Got Struct " << CurrentStruct->Name << " Array Size: " << Text << std::endl;
 					
 				} else {
-					std::cout << "Got Struct " << CurrentStruct->Name << " WHAT? GOT!!: " << Text << std::endl;
+					std::cout << "Got Struct " << CurrentStruct->Name
+										<< " WHAT? GOT!!: " << Text << std::endl;
 				}
 			
 			} else {
@@ -902,13 +1092,12 @@ namespace RiverExplorer::cborgen
 			std::cout << "In Union: " << Text << std::endl;
 
 			if (Text == "default") {
-				if (CurrentUnionCase != nullptr) {
-					CurrentUnion->Cases.push_back(CurrentUnionCase);
-					CurrentUnionCase = nullptr;
-				}
 				CurrentUnionCase = new UnionCase();
 				CurrentUnionCase->CaseValue = Text;
+				CurrentUnionCase->IsDefault = true;
+				CurrentVariable = nullptr;
 				CurrentState = InUnionCase;
+				CurrentUnion->Cases.push_back(CurrentUnionCase);
 
 			} else if (Text == "union") {
 				/*ignore*/
@@ -920,10 +1109,10 @@ namespace RiverExplorer::cborgen
 				/*ignore*/
 				
 			} else if (Text == "(") {
-				/*ignore*/
+				WaitingForSwitch = true;
 				
 			} else if (Text == ")") {
-				/*ignore*/
+				WaitingForSwitch = false;
 				
 			} else if (Text == "{") {
 				/*ignore*/
@@ -932,26 +1121,18 @@ namespace RiverExplorer::cborgen
 				/*ignore*/
 				
 			} else {
-				if (CurrentUnion->Default == nullptr) {
-					if (CurrentUnion->Name == "") {
-						CurrentUnion->Name = Text;
+				if (CurrentUnion->Name == "") {
+					CurrentUnion->Name = Text;
+					AddToUserDefinedTypes(Text, InputNoExtension);
 
-					} else if (CurrentUnion->SwitchType == "") {
-						CurrentUnion->SwitchType = Text;
+				} else if (CurrentUnion->SwitchType == "") {
+					CurrentUnion->SwitchType = Text;
 
-					} else if (CurrentUnion->SwitchVariable == "") {
-						CurrentUnion->SwitchVariable = Text;
+				} else if (CurrentUnion->SwitchVariable == "") {
+					CurrentUnion->SwitchVariable = Text;
 
-					} else if (Text == "default") {
-						CurrentUnion->Default = new UnionCase();
-						CurrentUnion->Default->CaseValue = "void";
-					}
-				} else {
-					if (CurrentUnion->Default->Type == "") {
-						CurrentUnion->Default->Type = Text;
-					} else {
-						CurrentUnion->Name = Text;
-					}
+				} else if (Text == "default") {
+					CurrentUnionCase = new UnionCase();
 				}
 			}
 			
@@ -968,17 +1149,20 @@ namespace RiverExplorer::cborgen
 			} else {
 					
 				if (Text == "case") {
-					if (CurrentUnionCase != nullptr) {
-						CurrentUnion->Cases.push_back(CurrentUnionCase);
-						CurrentUnion = nullptr;
-					}
 					CurrentUnionCase = new UnionCase();
+					CurrentUnion->Cases.push_back(CurrentUnionCase);
+
+				} else	if (Text == "default") {
+					CurrentUnionCase = new UnionCase();
+					CurrentUnionCase->IsDefault = true;
+					CurrentUnionCase->CaseValue = Text;
+					CurrentState = InUnionCase;
+					CurrentUnion->Cases.push_back(CurrentUnionCase);
 
 				} else if (Text == ":") {
 					/*EMPTY*/
 
 				} else if (Text == ";") {
-					CurrentUnion->Cases.push_back(CurrentUnionCase);
 					CurrentUnionCase = nullptr;
 					CurrentState = InUnion;
 				
@@ -1035,7 +1219,13 @@ namespace RiverExplorer::cborgen
 			break;
 			
 		default:
-			std::cout << From << Text << std::endl;
+			if (BuildingUnion && Text == "default") {
+				CurrentVariable = new Variable();
+				CurrentState = InUnionCase;
+
+			} else {
+				std::cerr << "ERROR:" << From << Text << std::endl;
+			}
 			break;
 		}
 
@@ -1062,7 +1252,7 @@ namespace RiverExplorer::cborgen
 		std::string Text = Ctx->getText();
 
 		std::cout << From << Text << std::endl;
-
+		
 		return;
 	}
 
@@ -1118,7 +1308,6 @@ namespace RiverExplorer::cborgen
 				OrderedItems.push_back(NewOne);
 			}
 			std::cout << From << Text << std::endl;
-		} else {
 		}
 
 		return;
@@ -1150,7 +1339,6 @@ namespace RiverExplorer::cborgen
 				OrderedItems.push_back(NewOne);
 			}
 			std::cout << From << Text << std::endl;
-		} else {
 		}
 
 		return;
@@ -1166,7 +1354,6 @@ namespace RiverExplorer::cborgen
 		if (Enter) {
 			CurrentState = InMethod;
 			std::cout << From << Text << std::endl;
-		} else {
 		}
 
 		return;
@@ -1180,9 +1367,7 @@ namespace RiverExplorer::cborgen
 		std::string Text = Ctx->getText();
 
 		if (Enter) {
-			//CurrentState = InVoid;
 			std::cout << From << Text << std::endl;
-		} else {
 		}
 
 		return;
@@ -1196,9 +1381,7 @@ namespace RiverExplorer::cborgen
 		std::string Text = Ctx->getText();
 
 		if (Enter) {
-			//CurrentState = InVoid;
 			std::cout << From << Text << std::endl;
-		} else {
 		}
 
 		return;
@@ -1214,12 +1397,26 @@ namespace RiverExplorer::cborgen
 		if (Enter) {
 			CurrentState = InVoid;
 			std::cout << From << Text << std::endl;
-		} else {
 		}
 
 		return;
 	}
 
+	void
+	MyCborListener::ProcessNode(bool Enter,
+															std::string From,
+															cborParser::IdentifierContext* Ctx)
+	{
+		std::string Text = Ctx->getText();
+
+		if (Enter) {
+			CurrentName = Text;
+			std::cout << From << Text << std::endl;
+		}
+
+		return;
+	}
+		
 	void
 	MyCborListener::ProcessNode(bool Enter,
 														 std::string From,
@@ -1230,7 +1427,6 @@ namespace RiverExplorer::cborgen
 		if (Enter) {
 			CurrentState = InVoid;
 			std::cout << From << Text << std::endl;
-		} else {
 		}
 
 		return;
@@ -1292,7 +1488,8 @@ namespace RiverExplorer::cborgen
 	void
 	MyCborListener::enterEnumTypeSpec(cborParser::EnumTypeSpecContext *Ctx)
 	{
-		ProcessNode(true,"Enter Enum: ", Ctx);
+		CurrentState = InEnum;
+		ProcessNode(true,"Enter Enum: ", Ctx);	
 	}
 
 	void
@@ -1555,7 +1752,6 @@ namespace RiverExplorer::cborgen
 	void
 	MyCborListener::exitVersionMethod(cborParser::VersionMethodContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "VersionMethod Exit : ", Ctx);
 	}
 
@@ -1569,105 +1765,90 @@ namespace RiverExplorer::cborgen
 	void
 	MyCborListener::exitDataType(cborParser::DataTypeContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "DataType Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterWidth(cborParser::WidthContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
 		ProcessNode(true, "Width Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitWidth(cborParser::WidthContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "Width Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterIdentifier(cborParser::IdentifierContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
 		ProcessNode(true, "Identifier Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitIdentifier(cborParser::IdentifierContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "Identifier Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterHexadecimal(cborParser::HexadecimalContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
 		ProcessNode(true, "Hexadecimal Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitHexadecimal(cborParser::HexadecimalContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "Hexadecimal Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterDecimal(cborParser::DecimalContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
 		ProcessNode(true, "Decimal Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitDecimal(cborParser::DecimalContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "Decimal Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterOctal(cborParser::OctalContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
 		ProcessNode(true, "Octal Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitOctal(cborParser::OctalContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "Octal Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterFloat(cborParser::FloatContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
 		ProcessNode(true, "Float Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitFloat(cborParser::FloatContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "Float Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterTags(cborParser::TagsContext * Ctx)
 	{
-		//CurrentState = InWidthMethod;
 		ProcessNode(true, "Tags Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitTags(cborParser::TagsContext * Ctx)
 	{
-		//CurrentState = Unknown;
 		ProcessNode(false, "Tags Exit : ", Ctx);
 	}
 
@@ -1787,28 +1968,33 @@ namespace RiverExplorer::cborgen
 	void
 	MyCborListener::enterUnsignedInteger(cborParser::UnsignedIntegerContext * Ctx)
 	{
-		CurrentState = InUnsignedInteger;
+		CurrentVariable = new Variable();
 		ProcessNode(true, "UnsignedInteger Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitUnsignedInteger(cborParser::UnsignedIntegerContext * Ctx)
 	{
-		CurrentState = Unknown;
+		std::string Text = Ctx->getText();
+		CurrentVariable->Type  = CurrentTypeSpecifier;
 		ProcessNode(false, "UnsignedInteger Exit : ", Ctx);
 	}
 
 	void
 	MyCborListener::enterSignedInteger(cborParser::SignedIntegerContext * Ctx)
 	{
-		CurrentState = InSignedInteger;
+		CurrentVariable = new Variable();
 		ProcessNode(true, "SignedInteger Enter : ", Ctx);
 	}
 	
 	void
 	MyCborListener::exitSignedInteger(cborParser::SignedIntegerContext * Ctx)
 	{
-		CurrentState = Unknown;
+		std::string Text = Ctx->getText();
+		if (CurrentVariable == nullptr) {
+			CurrentVariable = new Variable();
+		}
+		CurrentVariable->Type  = CurrentTypeSpecifier;
 		ProcessNode(false, "SignedInteger Exit : ", Ctx);
 	}
 
@@ -1854,6 +2040,115 @@ namespace RiverExplorer::cborgen
 		ProcessNode(false, "BigNumFloat Exit : ", Ctx);
 	}
 	
+	void
+	MyCborListener::enterString(cborParser::StringContext * Ctx)
+	{
+		CurrentState = InBigNumFloat;
+		ProcessNode(true, "String Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitString(cborParser::StringContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "String Exit : ", Ctx);
+	}
+	
+	void
+	MyCborListener::enterPublicTag(cborParser::PublicTagContext * Ctx)
+	{
+		CurrentState = InBigNumFloat;
+		ProcessNode(true, "PublicTag Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitPublicTag(cborParser::PublicTagContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "PublicTag Exit : ", Ctx);
+	}
+	
+	void
+	MyCborListener::enterNamespaceTag(cborParser::NamespaceTagContext * Ctx)
+	{
+		CurrentState = InBigNumFloat;
+		ProcessNode(true, "NamespaceTag Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitNamespaceTag(cborParser::NamespaceTagContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "NamespaceTag Exit : ", Ctx);
+	}
+	
+	void
+	MyCborListener::enterBitmaskBody(cborParser::BitmaskBodyContext *  Ctx)
+	{
+		ProcessNode(true, "BitmaskBody Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitBitmaskBody(cborParser::BitmaskBodyContext * Ctx)
+	{
+		ProcessNode(false, "BitmaskBody Exit : ", Ctx);
+	}
+		
+	void
+	MyCborListener::enterBitmaskTypeSpec(cborParser::BitmaskTypeSpecContext *  Ctx)
+	{
+		ProcessNode(true, "BitmaskTypeSpec Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitBitmaskTypeSpec(cborParser::BitmaskTypeSpecContext * Ctx)
+	{
+		ProcessNode(false, "BitmaskTypeSpec Exit : ", Ctx);
+	}
+		
+	void
+	MyCborListener::enterBitsTypeSpec(cborParser::BitsTypeSpecContext *  Ctx)
+	{
+		ProcessNode(true, "BitsTypeSpec Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitBitsTypeSpec(cborParser::BitsTypeSpecContext * Ctx)
+	{
+		ProcessNode(false, "BitsTypeSpec Exit : ", Ctx);
+	}
+		
+	void
+	MyCborListener::enterInternal_identifier(cborParser::Internal_identifierContext * Ctx)
+	{
+		CurrentState = InBigNumFloat;
+		ProcessNode(true, "Internal_identifier Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitInternal_identifier(cborParser::Internal_identifierContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "Internal_identifier Exit : ", Ctx);
+	}
+		
+		
+	void
+	MyCborListener::enterNamespace_identifier(cborParser::Namespace_identifierContext * Ctx)
+	{
+		CurrentState = InBigNumFloat;
+		ProcessNode(true, "Namespace_identifier Enter : ", Ctx);
+	}
+	
+	void
+	MyCborListener::exitNamespace_identifier(cborParser::Namespace_identifierContext * Ctx)
+	{
+		CurrentState = Unknown;
+		ProcessNode(false, "Namespace_identifier Exit : ", Ctx);
+	}
+	
+		
+		
 		
 } // End namespace RiverExplorer::cborgen
 
@@ -1865,14 +2160,14 @@ Usage(const char * Pgm)
 						<< std::endl
 						<< basename(strdup(Pgm))
 						<< " [--quiet]"
-						<< " --input <filename.x>"
+						<< " --input <filename.cbor>"
 						<< " (--outdir Dir | -out OutFile"
 						<< " --lang (CPP|C#)"
 						<< " -D[cpp-value]"
 						<< " [--namespace=part1:part2:...]"
 						<< " [--cbor | --xds | --headers | --abnf | --stubs | --server]"
 						<< std::endl;
-
+	exit(1);
 	return;
 }
 
@@ -1956,7 +2251,7 @@ main(int argc, char *argv[])
 			{"input",			RequiredArgument,	0, 0},
 			{"outdir",		RequiredArgument,	0, 1},
 			{"lang",			RequiredArgument,	0, 3},
-			{"cbor",				NoArgument,				0, 4},
+			{"cbor",			NoArgument,				0, 4},
 			{"xsd",				NoArgument,				0, 5},
 			{"headers",		NoArgument,				0, 6},
 			{"abnf",			NoArgument,				0, 7},
@@ -2171,7 +2466,7 @@ main(int argc, char *argv[])
 
 	Preprocess(Input, CppArgs);
 	ifstream cborFile (PostCppFileName);
-	//ifstream cborFile (Input);
+
 	if (cborFile.is_open()) {
 
 		ANTLRInputStream input(cborFile);
@@ -2180,18 +2475,12 @@ main(int argc, char *argv[])
 
 		tokens.fill();
 
-		//for (auto token : tokens.getTokens()) {
-		// std::cout << token->toString() << std::endl;
-		//}
-
 		cborParser parser(&tokens);
 		tree::ParseTree * Tree = parser.cborSpecification();
 
 		MyCborListener	Listener;
 
 		tree::ParseTreeWalker::DEFAULT.walk(&Listener, Tree);
-		
-		//		std::cout << Tree->toStringTree(&parser) << std::endl;
 
 		CppNamespace = NamespaceToCppNamespace();
 		
@@ -2233,35 +2522,76 @@ main(int argc, char *argv[])
 					HeaderFile += InputNoExtension;
 					HeaderFile += ".hpp";
 
-					ofstream Header(HeaderFile);
-
-					bool NamespacePrinted  = false;
-					
-					Header << "/**" << std::endl;
-					if (!NoBanner) {
-						GenerateThisFileWasGenerated(" * ", Header);
-					}
-					Header << " */" << std::endl << std::endl;
+					string		HFile = InputNoExtension;
+					ofstream	Header(HeaderFile);
+					bool			NamespacePrinted  = false;
 							
 					Define = "_RIVEREXPLORER_CBORGEN_";
-
 					Define += Replace(ToUpper(Namespace), ':', '_');
 					Define += "_";
 					Define += ToUpper(InputNoExtension);
-					Define += "_X_HPP_";
-					Header << "#ifndef " << Define << std::endl;
-					Header << "#define " << Define << std::endl;
-					Header << std::endl;
+					Define += "_CBOR_HPP_";
+					Header << "#ifndef " << Define << std::endl
+								 << "#define " << Define << std::endl
+								 << std::endl;
 
-					Header << "#include <CborGenShared.hpp>" << std::endl;
-					Header << "#include <string>" << std::endl;
-					Header << "#include <vector>" << std::endl;
-					Header << "#include <map>" << std::endl;
-					Header << "#include <rpc/rpc.h>" << std::endl;
-					Header << "#ifndef W64" << std::endl;
-					Header << "#include <unistd.h>" << std::endl;
-					Header << "#endif // W64" << std::endl;
-					Header << "#include <memory.h>" << std::endl;
+					if (!NoBanner) {
+						Header << "/**" << std::endl;
+						GenerateThisFileWasGenerated(" * ", Header);
+						Header << " */" << std::endl << std::endl;
+					}
+					Header << "#include <RiverExplorer/CBOR/CBOR.hpp>" << endl
+								 << "#include <CborGenShared.hpp>" << std::endl
+								 << "#include <string>" << std::endl
+								 << "#include <vector>" << std::endl
+								 << "#include <map>" << std::endl
+								 << "#ifndef W64" << std::endl
+								 << "#include <unistd.h>" << std::endl
+								 << "#endif // W64" << std::endl
+								 << "#include <memory.h>" << std::endl
+								 << "#include <iostream>" << std::endl
+								 << "#include <fstream>" << std::endl
+								 << "#include <RiverExplorer/CBOR/CBOR.hpp>" << std::endl;
+
+					for (ItemIt = OrderedItems.cbegin()
+								 ; ItemIt != OrderedItems.cend()
+								 ; ItemIt++) {
+
+						OneItem = *ItemIt;
+						if (!IsBuiltInCborType(OneItem->Type)) {
+							if (OneItem->Type != "") {
+								AddToUserDefinedTypes(OneItem->Type, HFile);
+							}
+						}
+					}
+					OneItem = nullptr;
+					
+					std::set<UserType*, UserTypeComparator>::const_iterator it;
+					UserType * U;
+					
+					if (UserDefinedTypes.size() > 0) {
+						Header << std::endl
+									 << "// Non CBOR library types" << std::endl
+									 << "//"
+									 << std::endl;
+
+						for (it = UserDefinedTypes.cbegin()
+									 ; it != UserDefinedTypes.cend()
+									 ; it++) {
+							U = *it;
+							if (!IsBuiltInCborType(U->Name)) {
+								Header << "#include \""
+											 << U->File
+											 << ".hpp\""
+											 << std::endl;
+							}
+						}
+						Header << std::endl;
+					}
+					
+					string IncludeDir = CppOutputDirectory;
+
+					IncludeDir += "/";
 
 					for (ItemIt = OrderedItems.cbegin()
 								 ; ItemIt != OrderedItems.cend()
@@ -2271,20 +2601,9 @@ main(int argc, char *argv[])
 						OneItem->PrintCppHeader(Header);
 					}
 
-					// Now generate one cbor_xx(CBOR * cbors, obj*);
-					// method for each declaration.
+					// Generate the non-object stuff the object needs.
 					//
-
-					for (ItemIt = OrderedItems.cbegin()
-								 ; ItemIt != OrderedItems.cend()
-								 ; ItemIt++) {
-
-						OneItem = *ItemIt;
-						if (OneItem->Type != "comment" && OneItem->Type != "passthrough") {
-							OneItem->PrintCppHeaderCbor(Header);
-						}
-					}
-
+					GenerateIncludes(Header);
 					Header << std::endl << "#endif // " << Define << std::endl;
 					Header.close();
 				}
@@ -2338,7 +2657,7 @@ main(int argc, char *argv[])
 				if (Namespace != "") {
 					CborFile << std::endl;
 					CborFile << "namespace " << Namespace
-									<< std::endl << "{" << std::endl;
+									 << std::endl << "{" << std::endl;
 					IndentLevel++;
 				}
 #endif				

@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:50:58 doug>
+ * Time-stamp: <2025-05-24 19:17:01 doug>
  * 
  * @file GenerateCppConstant.cpp
  * @author Douglas Mark Royer
@@ -38,7 +38,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Constant::PrintCppHeader(ofstream & Stream) const
+	Constant::PrintCppHeader(ostream & Stream, bool WithExtern) const
 	{
 		string I = Indent(IndentLevel + 1);
 
@@ -54,11 +54,17 @@ namespace RiverExplorer::cborgen
 					//
 					std::string ToUse = SizeOrValue.substr(1, Len - 2);
 
-					Stream << I << "extern const std::string "
+					if (WithExtern) {
+						Stream << I << "extern ";
+					}
+					Stream << I << "const std::string "
 								 << Name << "; // = \"" << ToUse << "\";" << endl;
 				
 				} else {
-					Stream << I << "extern const std::string "
+					if (WithExtern) {
+						Stream << I << "extern ";
+					}
+					Stream << I << "const std::string "
 								 << Name << "; // = " << SizeOrValue << ";" << endl;
 				}
 			}
@@ -66,7 +72,10 @@ namespace RiverExplorer::cborgen
 			size_t Len = SizeOrValue.length();
 			
 			if (SizeOrValue[0] == '\'' && Len == 3) { // Is char
-				Stream << I << "extern const char "
+				if (WithExtern) {
+					Stream << I << "extern ";
+				}
+				Stream << I << "const char "
 							 << Name << "; // = " << SizeOrValue << ";" << endl;
 			} else {
 				// What's wrong.
@@ -76,23 +85,35 @@ namespace RiverExplorer::cborgen
 					//
 					std::string ToUse = SizeOrValue.substr(1, Len - 2);
 
-					Stream << I << "extern const std::string "
+					if (WithExtern) {
+						Stream << I << "extern ";
+					}
+					Stream << I << "const std::string "
 								 << Name << "; // = \"" << ToUse << "\";" << endl;
 					
 				} else {
 					// If is 3 in length, wrong quote.
 					//
-					Stream << I << "extern const char " << Name
+					if (WithExtern) {
+						Stream << I << "extern ";
+					}
+					Stream << I  << "const char " << Name
 								 << "; // = '" << SizeOrValue[1] << "';" << endl;
 				}
 			}
 
 		} else if (Type == "quadruple") {
-			Stream << I << "extern const long double "
+			if (WithExtern) {
+				Stream << I << "extern ";
+			}
+			Stream << I << "const long double "
 						 << Name << "; // = " << SizeOrValue << ";" << endl;
 
 		} else {
-			Stream << I << "extern const " << Type << " " << Name
+			if (WithExtern) {
+				Stream << I << "extern ";
+			}
+			Stream << I << "const " << Type << " " << Name
 						 << "; // = " << SizeOrValue << ";" << endl;
 		}
 		PrintCppNamespaceEnd(Stream);
@@ -101,15 +122,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Constant::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-
-		return;
-	}
-	
-	void
-	Constant::PrintCppCBOR(ofstream & Stream) const
+	Constant::PrintCppCBOR(ostream & Stream) const
 	{
 		string I = Indent(IndentLevel + 1);
 
@@ -171,7 +184,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Constant::PrintCppStubs(ofstream & /*Stream*/) const
+	Constant::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -179,7 +192,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Constant::PrintXSD(ofstream & /*Stream*/) const
+	Constant::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -187,7 +200,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Constant::PrintAbnf(ofstream & Stream) const
+	Constant::PrintAbnf(ostream & Stream) const
 	{
 		string  ToUse;
 
@@ -238,7 +251,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Constant::PrintServer(ofstream & /*Stream*/) const
+	Constant::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 

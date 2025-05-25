@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:48:47 doug>
+ * Time-stamp: <2025-05-24 19:15:52 doug>
  * 
  * @file GenerateCpp.hpp
  * @author Douglas Mark Royer
@@ -40,14 +40,14 @@ namespace RiverExplorer::cborgen
 
 	extern void	GenerateSharedHpp(const std::string & InDirectory);
 
-	extern void	PrintCppNamespaceBegin(std::ofstream & Stream);
+	extern void	PrintCppNamespaceBegin(std::ostream & Stream);
 
-	extern void	PrintCppNamespaceBegin(std::ofstream & Stream,
+	extern void	PrintCppNamespaceBegin(std::ostream & Stream,
 																		 const std::string & NsName);
 	
-	extern void	PrintCppNamespaceEnd(std::ofstream & Stream);
+	extern void	PrintCppNamespaceEnd(std::ostream & Stream);
 
-	extern void	PrintCppNamespaceEnd(std::ofstream & Stream,
+	extern void	PrintCppNamespaceEnd(std::ostream & Stream,
 																	 const std::string & NsName);
 	
 }

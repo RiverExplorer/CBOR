@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:49:09 doug>
+ * Time-stamp: <2025-05-24 19:17:18 doug>
  * 
  * @file GenerateCppEnum.cpp
  * @author Douglas Mark Royer
@@ -28,7 +28,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Enum::PrintCppHeader(ofstream & Stream) const
+	Enum::PrintCppHeader(ostream & Stream, bool WithExtern) const
 	{
 		vector<Item*>::const_iterator MIt;
 		EnumValue * Value;
@@ -37,6 +37,11 @@ namespace RiverExplorer::cborgen
 		bool PrintedOne = false;
 
 		PrintCppNamespaceBegin(Stream);
+		Stream << endl << "#include <limits> " << endl
+					 << endl << "#include <iostream> " << endl
+					 << endl << "#include <fstream> " << endl
+					 << endl << "#include <RiverExplorer/CBOR.hpp> " << endl << endl;
+
 		Stream << I << "enum " << Name << " {" << endl;
 		
 		for (MIt = Enums.cbegin(); MIt != Enums.cend(); MIt++) {
@@ -55,59 +60,125 @@ namespace RiverExplorer::cborgen
 
 		Stream << endl << I << "};" << endl << endl;
 
-		Stream << I << "/**" << endl;
-		Stream << I << " * Serialize or deserialize a " << Name << " object." << endl;
-		Stream << I << " * " << endl;
-		Stream << I << " * @param Cbor An CBOR object, initalzied with" << endl;
-		Stream << I << " * CBOR_ENCODE, CBOR_DECODE or CBOR_FREE." << endl;
-		Stream << I << " * " << endl;
-		Stream << I << " * @param Object The address of a " << Name << " object." << endl;
-		Stream << I << " * " << endl;
-		Stream << I << " * @return true on no errors." << endl;
-		Stream << I << " */" << endl;
-		Stream << I << "bool cbor_" << Name << "(CBOR * Cbor, " << Name << " * Object);" << endl;
-		Stream << endl;
+		Stream << I << "/**" << endl
+					 << I << " * C++ API: CBOR Serialize a " << Name << " object." << endl
+					 << I << " * " << endl
+					 << I << " * @param Out A std::ostream" << endl
+					 << I << " * " << endl
+					 << I << " * @param "<< Name << "Enum The address of a " << Name << " object." << endl
+					 << I << " * " << endl
+					 << I << " * @return Out." << endl
+					 << I << " */" << endl;
+
+		if (WithExtern) {
+			Stream << I << "extern ";
+		}
+
+		Stream << I << "std::ostream & operator<<(std::ostream & Out, " << Name << " & " << Name  << "Enum);"
+					 << endl << endl;
+																											
+		Stream << I << "/**" << endl
+					 << I << " * C++ API: CBOR Deserialize a " << Name << " object." << endl
+					 << I << " * " << endl
+					 << I << " * @param In A std::istream" << endl
+					 << I << " * " << endl
+					 << I << " * @param "<< Name << "Enum The address of a " << Name << " object to be filled in from In." << endl
+					 << I << " * " << endl
+					 << I << " * @return In." << endl
+					 << I << " */" << endl;
+
+		if (WithExtern) {
+			Stream << I << "extern ";
+		}
+
+		Stream << I << "std::ostream & operator>>(std::istream & Out, " << Name << " & " << Name  << "Enum);"
+					 << endl << endl;
+																											
+		Stream << I << "/**" << endl
+					 << I << " *" << endl
+					 << I << " * C++ API: Convert a " << Name << " enum to C string." << endl
+					 << I << " *" << endl
+					 << I << " * @param " << Name << "Enum An initialzied " << Name << " enum." << endl
+					 << I << " *" << endl
+					 << I << " * @return The value of " << Name << "Enum as a string. Will be one of:" << endl
+					 << I << " *" << endl
+					 << I << " * \t\"ErrorNotInitialized\"" << endl;
+		
+		std::vector<Item*>::const_iterator SIt;
+		Item * OneItem;
+		for (SIt = Enums.cbegin(); SIt != Enums.cend(); SIt++) {
+			OneItem = *SIt;
+			Stream << I << " * \t\"" << OneItem->Name << "\"" << endl;
+		}
+		
+		Stream << I << " */" << endl
+					 << I << "extern std::string toString(" << Name << " & " << Name << "Enum);" << endl;
+
+		Stream << endl
+					 << I << "/**" << endl
+					 << I << " *" << endl
+					 << I << " * C++ API: Convert C string back to " << Name << " enum value." << endl
+					 << I << " *" << endl
+					 << I << " * @param Str A string that is one of the " << Name << " values." << endl
+					 << I << " * Where Str must be one of: " << endl
+					 << I << " *" << endl;
+
+		for (SIt = Enums.cbegin(); SIt != Enums.cend(); SIt++) {
+			OneItem = *SIt;
+			Stream << I << " * \t\"" << OneItem->Name << "\"" << endl;
+		}
+		
+		Stream << I << " *" << endl
+					 << I << " * @return The value of Object as a " << Name << "." << endl
+					 << I << " * When aString is not valid, the return value will be" << endl
+					 << I << " * std::numeric_limits<int64_t>::min() cast to a (" << Name << ")." << endl
+					 << I << " *" << endl
+					 << I << " * @note be sure to: #include <limits>" << endl
+					 << I << " */" << endl
+					 << I << "extern " << Name << " " << "fromString(std::string & aString);"
+					 << endl << endl;
 
 		PrintCppNamespaceEnd(Stream);
 	}
 
 	void
-	Enum::PrintCppHeaderCbor(ofstream & Stream) const
-	{
-		PrintCppNamespaceBegin(Stream);
-		std::string I = Indent();
-		
-		Stream << endl << I << "bool cbor_" << Name
-					 << "(CBOR * cbors, " << Name << " * obj);" << endl;
-		PrintCppNamespaceEnd(Stream);
-		
-		Stream << endl << I << "extern \"C\" bool cbor_" << Name
-					 << "(CBOR * cbors, " << Name << " * obj) {" << endl
-					 << "\treturn(" << CppNamespace << "::"
-					 << Name << "(cbors, obj));" << endl
-					 << "}" << endl;
-		
-		return;
-	}
-	
-	void
-	Enum::PrintCppCBOR(ofstream & Stream) const
+	Enum::PrintCppCBOR(ostream & Stream) const
 	{
 		PrintCppNamespaceBegin(Stream);
 		std::string I = Indent();
 		std::string I2 = Indent(IndentLevel + 1);
 
-		Stream << endl << I << "bool cbor_" << Name
-					 << "(CBOR * cbors, " << Name << " * obj) {" << endl;
-		Stream << I2 << "return(cbor_enum(cbors, obj);" << endl;
-		Stream << I << "}" << endl;
+		Stream << "using RiverExplorer;" << endl;
+		
+		Stream << endl
+					 << I << "std::ostream &" << endl
+					 << I << "operator<<(std::ostream & Out, " << Name << " & " << Name << "Enum)" << endl
+					 << I << "{" << endl
+					 << I << "\tint Tmp = " << Name << "Enum;" << endl
+					 << I << "\tCBOR::operator<<(Out, Tmp);" << endl
+					 << I << endl
+					 << I << "\treturn(Out);" << endl
+					 << "}" << endl;
+
+		Stream << endl
+					 << I << "std::istream &" << endl
+					 << I << "operator>>(std::istream & In, " << Name << " & " << Name << "Enum)" << endl
+					 << I << "{" << endl
+					 << I << "\tint Tmp;" << endl
+					 << I << endl
+					 << I << "\tCBOR::operator>>(In,Tmp);" << endl
+					 << I << "\t" << Name << "Enum = static_cast<" << Name << ">(Tmp);" << endl
+					 << I << endl
+					 << I << "\treturn(In);" << endl
+					 << "}" << endl;
+
 		PrintCppNamespaceEnd(Stream);
 
 		return;
 	}
 
 	void
-	Enum::PrintCppStubs(ofstream & /*Stream*/) const
+	Enum::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -115,7 +186,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Enum::PrintXSD(ofstream & /*Stream*/) const
+	Enum::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -123,7 +194,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Enum::PrintAbnf(ofstream & Stream) const
+	Enum::PrintAbnf(ostream & Stream) const
 	{
 		std::vector<Item*>::const_iterator IIt;
 		Item * TheItem;
@@ -203,7 +274,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Enum::PrintServer(ofstream & /*Stream*/) const
+	Enum::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -220,7 +291,7 @@ namespace RiverExplorer::cborgen
 	// HPP
 	//
 	void
-	EnumValue::PrintCppHeader(ofstream & Stream) const
+	EnumValue::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		string I2 = Indent(IndentLevel + 1);
 
@@ -229,16 +300,9 @@ namespace RiverExplorer::cborgen
 		return;
 	}
 
-	void
-	EnumValue::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-		return;
-	}
-	
 	// CBOR
 	void
-	EnumValue::PrintCppCBOR(ofstream & /*Stream*/) const
+	EnumValue::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
@@ -247,7 +311,7 @@ namespace RiverExplorer::cborgen
 	// STUBS
 	//
 	void
-	EnumValue::PrintCppStubs(ofstream & /*Stream*/) const
+	EnumValue::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
@@ -256,7 +320,7 @@ namespace RiverExplorer::cborgen
 	// XSD
 	//
 	void
-	EnumValue::PrintXSD(ofstream & /*Stream*/) const
+	EnumValue::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
@@ -265,7 +329,7 @@ namespace RiverExplorer::cborgen
 	// ABNF
 	//
 	void
-	EnumValue::PrintAbnf(ofstream & Stream) const
+	EnumValue::PrintAbnf(ostream & Stream) const
 	{
 		Stream << Name << " = ";
 
@@ -282,7 +346,7 @@ namespace RiverExplorer::cborgen
 	// SERVER
 	//
 	void
-	EnumValue::PrintServer(ofstream & /*Stream*/) const
+	EnumValue::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

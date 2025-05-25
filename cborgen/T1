@@ -1,0 +1,2 @@
+/bin/rm -rf Created
+./CBORGEN  --namespace RiverExplorer:CBOR --headers --stubs --lang CPP --cbor --outdir Created --input Tests/Basic/Union2.cbor

@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:51:07 doug>
+ * Time-stamp: <2025-05-24 19:16:46 doug>
  * 
  * @file GenerateCppComment.cpp
  * @author Douglas Mark Royer
@@ -27,7 +27,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	static void
-	PrintIt(ofstream & Stream, const string & Str)
+	PrintIt(ostream & Stream, const string & Str)
 	{
 		std::string::const_iterator SIt;
 
@@ -47,7 +47,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Comment::PrintCppHeader(ofstream & Stream) const
+	Comment::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		PrintIt(Stream, Name);
 
@@ -55,15 +55,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Comment::PrintCppHeaderCbor(ofstream & Stream) const
-	{
-		PrintIt(Stream, Name);
-
-		return;
-	}
-	
-	void
-	Comment::PrintCppCBOR(ofstream & Stream) const
+	Comment::PrintCppCBOR(ostream & Stream) const
 	{
 		PrintIt(Stream, Name);
 
@@ -71,7 +63,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Comment::PrintCppStubs(ofstream & Stream) const
+	Comment::PrintCppStubs(ostream & Stream) const
 	{
 		PrintIt(Stream, Name);
 
@@ -79,7 +71,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Comment::PrintXSD(ofstream & Stream) const
+	Comment::PrintXSD(ostream & Stream) const
 	{
 		/**@todo */
 
@@ -87,7 +79,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Comment::PrintAbnf(ofstream & Stream) const
+	Comment::PrintAbnf(ostream & Stream) const
 	{
 		Stream << ";";
 
@@ -102,7 +94,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Comment::PrintServer(ofstream & Stream) const
+	Comment::PrintServer(ostream & Stream) const
 	{
 		PrintIt(Stream, Name);
 

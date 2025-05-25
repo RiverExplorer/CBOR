@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-20 20:43:13 doug>
+ * Time-stamp: <2025-05-24 19:20:37 doug>
  * 
  * @file GenerateCppVersionMethod.cpp
  * @author Douglas Mark Royer
@@ -33,7 +33,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	VersionMethod::PrintCppHeader(ofstream & Stream) const
+	VersionMethod::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		std::vector<string>::const_iterator SIt;
 
@@ -74,14 +74,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	VersionMethod::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-		return;
-	}
-	
-	void
-	VersionMethod::PrintCppCBOR(ofstream & /*Stream*/) const
+	VersionMethod::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 
@@ -89,7 +82,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	VersionMethod::PrintCppStubs(ofstream & Stream) const
+	VersionMethod::PrintCppStubs(ostream & Stream) const
 	{
 		std::vector<string>::const_iterator SIt;
 
@@ -143,21 +136,21 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	VersionMethod::PrintXSD(ofstream & /*Stream*/) const
+	VersionMethod::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	VersionMethod::PrintAbnf(ofstream & /*Stream*/) const
+	VersionMethod::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	VersionMethod::PrintServer(ofstream & /*Stream*/) const
+	VersionMethod::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:48:05 doug>
+ * Time-stamp: <2025-05-24 19:18:07 doug>
  * 
  * @file GenerateCppProgram.cpp
  * @author Douglas Mark Royer
@@ -24,7 +24,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Program::PrintCppHeader(ofstream & Stream) const
+	Program::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		// Name is the 'program' identifier.
 		// Type is the 'program' number (value).
@@ -56,21 +56,14 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Program::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/**@todo*/
-		return;
-	}
-	
-	void
-	Program::PrintCppCBOR(ofstream & /*Stream*/) const
+	Program::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	Program::PrintCppStubs(ofstream & Stream) const
+	Program::PrintCppStubs(ostream & Stream) const
 	{
 		GenerateSharedHpp(CppOutputDirectory);
 		
@@ -84,21 +77,21 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Program::PrintXSD(ofstream & /*Stream*/) const
+	Program::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Program::PrintAbnf(ofstream & /*Stream*/) const
+	Program::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Program::PrintServer(ofstream & /*Stream*/) const
+	Program::PrintServer(ostream & /*Stream*/) const
 	{
 	}
 	

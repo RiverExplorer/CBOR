@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:47:10 doug>
+ * Time-stamp: <2025-05-24 19:20:27 doug>
  * 
  * @file GenerateCppVersion.cpp
  * @author Douglas Mark Royer
@@ -34,7 +34,7 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	Version::PrintCppHeader(ofstream & Stream) const
+	Version::PrintCppHeader(ostream & Stream, bool /*WithExtern*/) const
 	{
 		// Name is the 'version' identifier.
 		// Type is the 'version' number (value).
@@ -67,21 +67,14 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Version::PrintCppHeaderCbor(ofstream & /*Stream*/) const
-	{
-		/*EMPTY*/
-		return;
-	}
-	
-	void
-	Version::PrintCppCBOR(ofstream & /*Stream*/) const
+	Version::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	Version::PrintCppStubs(ofstream & Stream) const
+	Version::PrintCppStubs(ostream & Stream) const
 	{
 		string I = Indent();
 		string StubFileName;
@@ -143,21 +136,21 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	Version::PrintXSD(ofstream & /*Stream*/) const
+	Version::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Version::PrintAbnf(ofstream & /*Stream*/) const
+	Version::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	Version::PrintServer(ofstream & /*Stream*/) const
+	Version::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

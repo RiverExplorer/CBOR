@@ -1,6 +1,6 @@
 #
 # Project: Phoenix
-# Time-stamp: <2025-04-17 19:43:35 doug>
+# Time-stamp: <2025-04-20 22:45:57 doug>
 #
 # Copyright (C) 2025 by Douglas Mark Royer (A.K.A. RiverExplorer)
 # Author Douglas Mark Royer
@@ -138,6 +138,20 @@ clean ::
 	$(RM) $(GENERATED.cpp) $(GENERATED.h) $(GENERATED.other)
 	$(RM) -rf GeneratedFromCBOR/* $(ANTLR4_GENERATED.cpp) $(ANTLR4_GENERATED.h)
 	$(RM) *.interp *.tokens
+	$(RM) cbor.g4
+
+cbor.g4 : ../InternetDraft/Language-00/ANTLR/*.g4
+	echo "// DO NOT EDIT, THIS FILE IS GENERATED" > $@
+	echo "grammar cbor;" >> $@
+	for f in  ../InternetDraft/Language-00/ANTLR/*.g4 ; do \
+		export set F=`basename $${f}` ;\
+		echo ""	>> $@; \
+		echo "//" >> $@; \
+		echo "// $${F}"	>> $@; \
+		echo "//" >> $@; \
+		cat $${f} >> $@; \
+		echo ""	>> $@; \
+	done
 
 $(ANTLR4_GENERATED.cpp) $(ANTLR4_GENERATED.h) : cbor.g4
 	antlr4 -Dlanguage=Cpp -o $(ANTLR4_DIRECTORY) cbor.g4

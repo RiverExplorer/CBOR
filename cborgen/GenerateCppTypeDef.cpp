@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:47:56 doug>
+ * Time-stamp: <2025-05-24 19:19:43 doug>
  * 
  * @file GenerateCppTypeDef.cpp
  * @author Douglas Mark Royer
@@ -26,13 +26,13 @@ namespace RiverExplorer::cborgen
 	}
 	
 	void
-	TypeDef::PrintCppHeader(ofstream & Stream) const
+	TypeDef::PrintCppHeader(ostream & Stream, bool WithExtern) const
 	{
 		string I = Indent();
 
 		PrintCppNamespaceBegin(Stream);
 		Stream << I << "typedef ";
-		Declaration->PrintCppHeader(Stream, false);
+		Declaration->PrintCppHeader(Stream, WithExtern); // ???
 		Stream << endl << endl;
 		PrintCppNamespaceEnd(Stream);
 		
@@ -40,42 +40,35 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	TypeDef::PrintCppHeaderCbor(ofstream & Stream) const
-	{
-		/*EMPTY*/
-		return;
-	}
-	
-	void
-	TypeDef::PrintCppCBOR(ofstream & /*Stream*/) const
+	TypeDef::PrintCppCBOR(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	TypeDef::PrintCppStubs(ofstream & /*Stream*/) const
+	TypeDef::PrintCppStubs(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 
 	void
-	TypeDef::PrintXSD(ofstream & /*Stream*/) const
+	TypeDef::PrintXSD(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	TypeDef::PrintAbnf(ofstream & /*Stream*/) const
+	TypeDef::PrintAbnf(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;
 	}
 	
 	void
-	TypeDef::PrintServer(ofstream & /*Stream*/) const
+	TypeDef::PrintServer(ostream & /*Stream*/) const
 	{
 		/**@todo*/
 		return;

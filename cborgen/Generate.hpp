@@ -1,6 +1,9 @@
+#ifndef _RIVEREXPLORER_CBOR_GENERATE_HPP_
+#define _RIVEREXPLORER_CBOR_GENERATE_HPP_
+
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:46:39 doug>
+ * Time-stamp: <2025-05-24 19:41:20 doug>
  * 
  * @file Generate.hpp
  * @author Douglas Mark Royer
@@ -16,6 +19,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <set>
 
 namespace RiverExplorer::cborgen
 {
@@ -56,9 +60,42 @@ namespace RiverExplorer::cborgen
 	extern std::string	ToUpper(const std::string & In);
 	
 	extern void	GenerateThisFileWasGenerated(std::string Prefix,
-																					 std::ofstream & Stream);
+																					 std::ostream & Stream);
 
 	extern void	GenerateEditThisFile(std::string Prefix,
-																	 std::ofstream & Stream);
+																	 std::ostream & Stream);
+
+	struct UserType
+	{
+		std::string	Name;
+		std::string File;
+	};
+
+	struct UserTypeComparator
+	{
+		bool operator()(const UserType * One, const UserType * Two) const
+		{
+			return(One->Name == Two->Name);
+		}
+	};
 	
+	/**
+	 * Each type has to have an extern encoder and decoder defined.
+	 * This list is a list of the ones needed to be generated.
+	 * If builtin, then no c++ code is generated.
+	 */
+	extern std::set<UserType*, UserTypeComparator>	UserDefinedTypes;
+
+	/**
+	 * Generate one hpp and cpp file for each entry in UserDefinedTypes.
+	 */
+	void GenerateUserDefinedTypes(std::ostream & Stream);
+
+	/**
+	 * Generate the #include ... for user defined types.
+	 *
+	 * @param Out Place the generated data here.
+	 */
+	void	GenerateIncludes(std::ostream & Out);
 }
+#endif // _RIVEREXPLORER_CBOR_GENERATE_HPP_

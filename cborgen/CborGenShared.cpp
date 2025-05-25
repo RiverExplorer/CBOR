@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:51:30 doug>
+ * Time-stamp: <2025-05-24 19:15:16 doug>
  *
  * @file CborGenShared.cpp
  * @author Douglas Mark Royer
@@ -121,7 +121,7 @@ namespace RiverExplorer::cborgen
 )_LONGSTR_";
 
 void
-GenerateCborGenSharedHpp(std::ofstream & Stream)
+GenerateCborGenSharedHpp(std::ostream & Stream)
 {
 	Stream << CborGenSharedHpp;
 

@@ -1,6 +1,6 @@
 /**
  * Project: Phoenix
- * Time-stamp: <2025-04-17 19:49:28 doug>
+ * Time-stamp: <2025-05-24 19:15:41 doug>
  * 
  * @file GenerateCpp.cpp
  * @author Douglas Mark Royer
@@ -23,56 +23,12 @@ using namespace std;
 
 namespace RiverExplorer::cborgen
 {
-	extern void GenerateCborGenSharedHpp(std::ofstream & Stream);
+	extern void GenerateCborGenSharedHpp(std::ostream & Stream);
 	
 	extern string Namespace;
 	extern string InputNoExtension;
 	extern int IndentLevel;
 	
-	string
-	ToCppType(const string & In)
-	{
-		string Results;
-
-		struct Conversion
-		{
-			string In;
-			string Cpp;
-		};
-
-		static Conversion Table[] = {
-			{"short", "int16_t"},
-			{"u_short", "uint16_t"},
-			{"unsigned short", "uint16_t"},
-			{"int", "int32_t"},
-			{"u_int", "uint32_t"},
-			{"unsigned int", "uint32_t"},
-			{"long", "int64_t"},
-			{"u_long", "uint64_t"},
-			{"unsigned long", "uint64_t"},
-			{"hyper", "int64_t"},
-			{"unsigned hyper", "uint64_t"},
-			{"char", "char"},
-			{"u_char", "uint8_t"},
-			{"string", "std::string"},
-			{"bool_t", "bool"},
-			{"opaque", "std::vector<uint8_t>"},
-			{"",""}
-		};
-		
-		for (int Offset = 0; Table[Offset].In != ""; Offset++) {
-			if (In == Table[Offset].In) {
-				Results = Table[Offset].Cpp;
-				break;
-			}
-		}
-		if (Results == "") {
-			Results = In;
-		}
-
-		return(Results);
-	}
-
 	string
 	NamespaceToIncludePath()
 	{
@@ -110,7 +66,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	PrintCppNamespaceBegin(std::ofstream & Stream) 
+	PrintCppNamespaceBegin(std::ostream & Stream) 
 	{
 		if (Namespace != "") {
 			Stream << std::endl;
@@ -123,7 +79,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	PrintCppNamespaceEnd(std::ofstream & Stream)
+	PrintCppNamespaceEnd(std::ostream & Stream)
 	{
 		if (Namespace != "") {
 			IndentLevel--;
@@ -136,7 +92,7 @@ namespace RiverExplorer::cborgen
 
 	
 	void
-	PrintCppNamespaceBegin(std::ofstream & Stream, const std::string & Ns)
+	PrintCppNamespaceBegin(std::ostream & Stream, const std::string & Ns)
 	{
 		if (Namespace != "") {
 			IndentLevel++;
@@ -151,7 +107,7 @@ namespace RiverExplorer::cborgen
 	}
 
 	void
-	PrintCppNamespaceEnd(std::ofstream & Stream, const std::string & Ns)
+	PrintCppNamespaceEnd(std::ostream & Stream, const std::string & Ns)
 	{
 		if (Namespace != "") {
 			IndentLevel--;
