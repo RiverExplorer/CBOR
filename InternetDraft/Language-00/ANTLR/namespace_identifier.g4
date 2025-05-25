@@ -1,1 +1,1 @@
-namespace_identifier = '_' identifier
+namespace_identifier : '_' identifier ;

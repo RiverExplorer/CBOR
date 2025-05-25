@@ -4,14 +4,19 @@
 <t>
 	CBOR is a wonderful over the wire format for data.
 	This specification is for a CBOR protocol language.
-	And the code to send and receive this over the wire
-	protocol currently has to be done by hand without
+	Currently code to send and receive CBOR streamed data
+	of the wire has to be done by hand without
 	tools to coordinate and aid in the development.
+	Some libraries exist, but no protocol definition
+	format could be found that specifically handles CBOR
+	over the wire streams.
 </t>
 <t>
-	This specification defines a protocol definition language.
-	This language and the sample implementation allowes a
+	This specification defines a CBOR protocol definition language.
+	This is the CBOR Language Specification (CLS).
+	This language and the sample implementation allows a
 	developer to define the application layer objects
-	that can be translated into and from a CBOR data stream.
+	that can be translated into and from a CBOR data streams
+	by independently written implementations.
 </t>
 </abstract>

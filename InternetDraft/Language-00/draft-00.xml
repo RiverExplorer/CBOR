@@ -21,7 +21,7 @@
 	tocDepth="4"
 	sortRefs="true">
   <front>
-    <title abbrev="CBOR Language">CBOR Language</title>
+    <title abbrev="CBOR Language Specification">CBOR Language Specification (CLS)</title>
     <seriesInfo name="Internet-Draft" value="draft-royer-cbor-language-00"/>
    
     <author fullname="Doug Royer" initials="DM" surname="Royer">
@@ -53,7 +53,8 @@
   </front>
   <middle>
     <xi:include href="RequirementsLanguage.xml"/>
-    <xi:include href="Introduction.xml"/>
+.so Introduction.xml
+.so CBOR.xml
 .so BasicTypes.xml
 .so Namespaces.xml
 .so Typedef.xml
@@ -82,8 +83,8 @@
  
       <references>
         <name>Informative References</name>
-				<xi:include href="References/reference.cborgen.xml"/>
-				<xi:include href="References/reference.cborgendocs.xml"/>
+				<xi:include href="References/reference.CLSgen.xml"/>
+				<xi:include href="References/reference.CLSgendocs.xml"/>
 					<reference anchor="CBORImplementation" target="https://github.com/RiverExplorer/CBOR">
 					<front>
 						<title>CBORGEN Sample Implementation</title>

@@ -295,7 +295,7 @@ namespace DailyData
 		<t>
 			Examples:
 		</t>
-		<figure anchor="internal-ex1">
+		<figure anchor="internal-ex2">
 			<name>Variable No Arrays Example</name>
 			<artwork type="asciiart">
 				<![CDATA[

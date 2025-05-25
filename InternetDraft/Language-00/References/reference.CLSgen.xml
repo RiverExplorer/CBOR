@@ -1,4 +1,4 @@
-<reference anchor="CBORgenOpenSource" target="https://github.com/RiverExplorer/CBOR">
+<reference anchor="CLSOpenSource" target="https://github.com/RiverExplorer/CBOR">
   <front>
     <title>cborgen Open Source Tool</title>
     <author fullname="Doug Royer" initials="DM" surname="Royer"/>

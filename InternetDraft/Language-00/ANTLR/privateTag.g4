@@ -1,2 +1,2 @@
-privatetag : '[private]'
+privateTag : '[private]'
            ;

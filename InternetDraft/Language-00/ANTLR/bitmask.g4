@@ -1,0 +1,4 @@
+
+bitmaskTypeSpec
+    : 'bitmask' bitmaskBody
+    ;

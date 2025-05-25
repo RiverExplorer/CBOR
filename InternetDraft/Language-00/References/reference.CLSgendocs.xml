@@ -1,4 +1,4 @@
-<reference anchor="cborgendocs" target="https://github.com/RiverExplorer/CBOR">
+<reference anchor="CLSgendocs" target="https://github.com/RiverExplorer/CBOR">
   <front>
     <title>cborgen Protocol Compiler</title>
     <author fullname="Doug Royer" initials="DM" surname="Royer"/>

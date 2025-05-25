@@ -1,3 +1,3 @@
 structTypeSpec
-    : ('struct'|'class') structBody
+    : ('struct'|'class') identifier structBody
     ;

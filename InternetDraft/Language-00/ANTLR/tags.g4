@@ -1,5 +1,7 @@
-tags : ignoretag
-		 | internaltag
-		 | overridetag
-		 | privatetag
-		 ;
+tags : ignoreTag
+     | internalTag
+     | overrideTag
+     | privateTag
+     | namespaceTag
+     | sortableTag
+     ;

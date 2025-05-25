@@ -1,4 +1,4 @@
 enumTypeSpec
-    : 'enum' enumBody
+    : 'enum' identifier enumBody
     ;
 		

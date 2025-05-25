@@ -3,21 +3,29 @@
 <section xmlns:xi="http://www.w3.org/2001/XInclude">
   <name>Introduction</name>
 	<t>NOTICE: This is WORK IN PROGRESS</t>
-<!--	
-	<artset>
-		<artwork align="center" type="ascii-art" src="UnderConstruction.txt"/>
-		<artwork align="center" type="svg" src="UnderConstruction.svg"/>
-		</artset>
--->		
+	<t>
+		This document specifies a CBOR Language Specification (CLS).
+		The purpose of the CLS is to be able to define
+		a consistent over the wire protocol definitions that
+		transfer data between endpoints with the data
+		encoded and decoded as specified in CBOR.
+	</t>
 	<t>
 		A CBOR protocol compiler is tool that reads in one or
 		more CBOR definition files and produces code that
 		can be used by a computer.
 		This code is herein refereed to as generated code.
-		And the input files are called CBOR language files.
+		And the input files are called CBOR Language Specification files,
+		or CLS files.
+		Within this document such files in examples use
+		the ".cls" file name extension.
 	</t>
 	<t>
-		This specification uses C++ and C# in several of the examples.
+		CBOR specifies how to transfer the data.
+		And CLS specifies what will be transferred.
+	</t>
+	<t>
+		This specification uses C/C++ and C# in several of the examples.
 		However a generator could be produced for almost all
 		computer languages.
 		As the purpose of this is to generate code to be compiled
@@ -26,26 +34,26 @@
 	</t>
 	<t>
 		This specification was written in parallel with the creation
-		of an <xref target="CBORgenOpenSource"> with documentation
+		of an <xref target="CLSOpenSource">
 		open source CBOR language protocol compiler</xref>.
-		and documentation at <xref target="cborgendocs"/>.
-		This was a way to help validate the open source compiler and the
-		CBOR language.
+		The documentation at <xref target="CLSgendocs"/>.
+		This was a way to help validate the open source compiler and
+		this specification.
 	</t>
 	<t>
 		Many computer languages have built in and application
 		defined data types that allow for more complex
 		objects that CBOR itself defined.
-		The solution is keep breaking down the data
+		The solution is breakdown the more compled data
 		type until they are objects that can be converted
-		to the CBOR wire protocol.
+		to and from the CBOR stream format.
 	</t>
 	<t>
 		For example an object might consist of a persons
 		name with three parts, their first, middle, and last name.
 		This CBOR language allows for an object to be created
 		with the purpose of the generating code that sends three
-		CBOR textstring objects without the application
+		CBOR text string objects without the application
 		developer having to write the I/O code for
 		each complex data type by hand.
 	</t>
@@ -55,7 +63,7 @@
 		from the CBOR data types.
 	</t>
 	<t>
-		Given the same CBOR language file, each
+		Given the same CLS input file, each
 		CBOR protocol compiler generates compatible
 		over the wire data.
 		Allowing independent development.
@@ -81,11 +89,11 @@
 		they define to ensure that all data types they use
 		in the protocol are supported by all intended computers.
 		This goal allows for both flexibility, and for future
-		system that may have expanded data types.
+		systems that may have expanded data types.
 	</t>
 	<t>
-		The language specification written in the open
-		source ANTLR4:
+		The sample implementation was written
+		using the open source ANTLR4 compiler:
 		<eref target="https://github.com/antlr/antlr4"/>.
 		And is much like Yacc/Bison and lex/Flex grammar.
 	</t>

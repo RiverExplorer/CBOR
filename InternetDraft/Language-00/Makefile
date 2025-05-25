@@ -16,7 +16,9 @@ SOURCES.xml = \
 	Introduction.xml \
 	RequirementsLanguage.xml
 
-ARTWORK.src =
+ARTWORK.src = \
+	ABNF-00.txt \
+	StringRef-00.txt
 
 ARTWORK.txt = $(addprefix Drawings/,$(ARTWORK.src))
 SVG					= $(ARTWORK.src:.txt=.svg)

@@ -1,7 +1,6 @@
 unionBody
-    : 'switch' '(' declaration ')' '{'
-	caseSpec
-	caseSpec*
-	('default' ':' declaration ';')?
-	'}'
+    : caseSpec
+		| comment
+		| passThrough
+		| 'default' ':' declaration ';'
     ;
