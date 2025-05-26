@@ -1,16 +1,16 @@
 typeSpecifier
-	: bitsTypeSpec
-	| bitmaskTypeSpec
-	| 'bool'
-	| enumTypeSpec
+  : bitsTypeSpec
+  | bitmaskTypeSpec
+  | 'bool'
+  | enumTypeSpec
   | float
-	| map
-	| multimap
-	| 'opaque'
-	| signedInteger
-	| 'string'
-//	| structTypeSpec
-//	| unionTypeSpec
-	| unsignedInteger
-	| identifier
-	;
+  | map
+  | multimap
+  | 'opaque'
+  | signedInteger
+  | 'string'
+//  | structTypeSpec
+//  | unionTypeSpec
+  | unsignedInteger
+  | identifier
+  ;

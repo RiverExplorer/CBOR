@@ -1,6 +1,6 @@
 unionBody
     : caseSpec
-		| comment
-		| passThrough
-		| 'default' ':' declaration ';'
+    | comment
+    | passThrough
+    | 'default' ':' declaration ';'
     ;

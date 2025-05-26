@@ -2,4 +2,4 @@ definition
     : typeDef
     | constantDef
     ;
-		
+    

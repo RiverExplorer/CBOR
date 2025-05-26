@@ -1,13 +1,13 @@
 specs
-	: structTypeSpec
-	| unionTypeSpec
-	| enumTypeSpec
-	| constantDef
-	| namespaceDef
-	| comment
-	| passThrough
-	| program
-	| declaration ';'
-	| typeDef
-	;
-	
+  : structTypeSpec
+  | unionTypeSpec
+  | enumTypeSpec
+  | constantDef
+  | namespaceDef
+  | comment
+  | passThrough
+  | program
+  | declaration ';'
+  | typeDef
+  ;
+  

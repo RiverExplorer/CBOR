@@ -1,5 +1,6 @@
-unionTypeSpec : 'union' identifier 'switch' '(' declaration ')'
-                '{'
-								  unionBody+
-                '}' ';'
-              ;
+unionTypeSpec
+  : 'union' identifier 'switch' '(' declaration ')'
+    '{'
+       unionBody+
+    '}' ';'
+  ;

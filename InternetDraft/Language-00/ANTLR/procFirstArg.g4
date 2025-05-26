@@ -1,5 +1,5 @@
 procFirstArg
-	: 'void'
-	| dataType identifier?
-	;
-	
+  : 'void'
+  | dataType identifier?
+  ;
+  

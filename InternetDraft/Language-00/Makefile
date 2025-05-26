@@ -12,9 +12,25 @@ VERSION	=	00
 
 SOURCES.xml = \
 	Abstract.xml \
+	ANTLR4.xml \
+	BasicTypes.xml \
+	BITS.xml \
+	CBOR.xml \
+	Comment.xml \
+	draft-00.xml \
+	Enum.xml \
 	IANA.xml \
+	Integers.xml \
 	Introduction.xml \
-	RequirementsLanguage.xml
+	Map.xml \
+	Methods.xml \
+	Namespaces.xml \
+	Program.xml \
+	RequirementsLanguage.xml \
+	SecurityConsiderations.xml \
+	Structures.xml \
+	Typedef.xml \
+	Unions.xml
 
 ARTWORK.src = \
 	ABNF-00.txt \
@@ -82,31 +98,29 @@ pdf : $(TARGET.pdf)
 
 html : $(TARGET.html)
 
-$(TARGET.txt) : ALL-ANTLR.g4 ALL-XDR.xml $(ARTWORK.svg) $(ARTWORK.txt) $(TOPDOC.xml)  $(REFERENCES.xml) $(INCLUDES)
+$(TARGET.txt) : ALL-ANTLR.g4 $(ARTWORK.svg) $(ARTWORK.txt) $(TOPDOC.xml)  $(REFERENCES.xml) $(INCLUDES)
 	xml2rfc $(XML2RFC_FLAGS) -o $@ $(TOPDOC.xml) $(REMOVE_SVG_WARNING)
 
-$(TARGET.pdf) : ALL-ANTLR.g4 ALL-XDR.xml $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
+$(TARGET.pdf) : ALL-ANTLR.g4 $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
 	xml2rfc $(XML2RFC_FLAGS) --pdf -o $@ $(TOPDOC.xml) $(REMOVE_SVG_WARNING)
 
-$(TARGET.html): ALL-ANTLR.g4 ALL-XDR.xml $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
+$(TARGET.html): ALL-ANTLR.g4 $(ARTWORK.svg) $(TOPDOC.xml) $(REFERENCES.xml) $(INCLUDES)
 	xml2rfc $(XML2RFC_FLAGS) --html -o $@ $(TOPDOC.xml) $(REMOVE_SVG_WARNING)
 
-$(TOPDOC.xml) : draft-00.xml ALL-ANTLR.g4 ALL-XDR.xml $(SOURCES.xml) $(REFERENCES.xml) $(INCLUDES) $(ARTWORK.txt) $(ARTWORK.svg)
+$(TOPDOC.xml) : draft-00.xml ALL-ANTLR.g4 $(SOURCES.xml) $(REFERENCES.xml) $(INCLUDES) $(ARTWORK.txt) $(ARTWORK.svg)
 	soelim < draft-00.xml | sed '/^\.lf*/d' > temp.xml
 	xmllint --xinclude --format temp.xml > $@
 
-ALL-ANTLR.g4 : $(ANTLR)
-ifneq ($(ANTLR),)
-	cat $(ANTLR) >> $@
-endif
+#ALL-XDR.xml : $(INCLUDE.xml) $(GENERATED.XDR)
+#ifneq ($(GENERATED.XDR),)
+#	echo "<section anchor='all-xdr'>" > $@
+#	echo "<name>Complete XDR</name>" >> $@
+#	cat $(GENERATED.XDR) >> $@
+#	echo "</section>" >> $@
+#endif
 
-ALL-XDR.xml : $(INCLUDE.xml) $(GENERATED.XDR)
-ifneq ($(GENERATED.XDR),)
-	echo "<section anchor='all-xdr'>" > $@
-	echo "<name>Complete XDR</name>" >> $@
-	cat $(GENERATED.XDR) >> $@
-	echo "</section>" >> $@
-endif
+ALL-ANTLR.g4 : $(ANTLR)
+	./MakeAllANTLR
 
 $(INCLUDE.xml) : $(INCLUDE.cpp)
 

@@ -1,6 +1,6 @@
 typeDef
     : 'typedef' declaration ';'
     | 'enum' identifier enumBody ';'
-		| structTypeSpec ';'
+    | structTypeSpec ';'
 //    | 'union' identifier unionBody ';'
     ;

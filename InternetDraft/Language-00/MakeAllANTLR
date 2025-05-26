@@ -1,0 +1,15 @@
+#!/bin/tcsh -f
+#set echo
+
+set Out = ALL-ANTLR.g4
+
+echo "# The CBOR Phoenix cborgen grammar" >> $Out
+echo "#" >> $Out
+echo "grammar cbor" >> $Out
+foreach g4 ( ANTLR/*.g4 )
+				echo "" >> $Out
+				echo "# ${g4}" >> $Out
+				echo "#" >> $Out
+				cat ${g4} >> $Out
+end
+ 

@@ -11,14 +11,6 @@
 			have methods of calling and using "C" APIs methods and data.
 		</t>
 		<t>
-			For every "CLS TYPE" "foo", is a "C" code API of "cbor_foo(...)"
-			that can encode and decode the data to and from a CBOR
-			over the wire value.
-			The "CLS TYPE" is normative.
-			The "C" API is informative and meant as a guide to
-			implementors.
-		</t>
-		<t>
 			The UTC value used in this specification is designed
 			to be compatible with time_t on <xref target="POSIX"/>
 			compliant systems.
@@ -170,122 +162,107 @@
 			</li>
 		</ul>
 
-		<table>
-			<name>CLC strings and arrays.</name>
-			<thead>
-				<tr>
-					<th>
-						NAME
-					</th>
-					<th>
-						Description:
-					</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>
-						string
-					</td>
-					<td>
-						<ul>
-							<li>
-								A string is always a variable array.
-								If you need a fixed size character array, use a fixed
-								array of 8 (ASCII), 16 (UTF-16), or 32 (UTF-32), values.
-							</li>
-							<li>
-								A string may contain zero characters, this is an
-								empty string.
-							</li>
-							<li>
-								A string be null, in which is valid and
-								is transmitted as a CBOR 'null'.
-							</li>
-							<li>
-								A string is an array of UTF-8 printable characters.
-								With an optional maximum length.
-							</li>
-							<li>
-								A string is an array of printable characters.
-								And each character may be 1, 2, 3, or 4 octets
-								in size.
-								The length specifies the number of printable characters
-								in the string not the size of the array.
-								This is also why a string can not be a fixed array.
-							</li>
-							<li>
-								The octet count (size) of any string, could be the same
-								as the number of characters (length),
-								or the size could be up to 4 times larger.
-							</li>
-							<li>
-								The length is the number of characters in the array.
-							</li>
-							<li>
-								The size is the number of octets in the array.
-							</li>
-							<li>
-								The length is always equal to or less than
-								the size.
-							</li>
-						</ul>
-							<artwork type="asciiart">
-// A string variable array of printable characters,
-// unlimited in length.
+		<dl>
+			<dt>string</dt>
+			<dd>
+				<ul>
+					<li>
+						A string is always a variable array.
+						If you need a fixed size character array, use a fixed
+						array of 8 (ASCII), 16 (UTF-16), or 32 (UTF-32), values.
+					</li>
+					<li>
+						A string may contain zero characters, this is an
+						empty string.
+					</li>
+					<li>
+						A string be null, in which is valid and
+						is transmitted as a CBOR 'null'.
+					</li>
+					<li>
+						A string is an array of UTF-8 printable characters.
+						With an optional maximum length.
+					</li>
+					<li>
+						A string is an array of printable characters.
+						And each character may be 1, 2, 3, or 4 octets
+						in size.
+						The length specifies the number of printable characters
+						in the string not the size of the array.
+						This is also why a string can not be a fixed array.
+					</li>
+					<li>
+						The octet count (size) of any string, could be the same
+						as the number of characters (length),
+						or the size could be up to 4 times larger.
+					</li>
+					<li>
+						The length is the number of characters in the array.
+					</li>
+					<li>
+						The size is the number of octets in the array.
+					</li>
+					<li>
+						The length is always equal to or less than
+						the size.
+					</li>
+				</ul>
+			</dd>
+		</dl>
+		
+		<artwork type="asciiart">
+// A string variable array of printable
+// characters, unlimited in length.
 //
 string MyVariableName&lt;&gt;;
 
-// A string variable array of printable characters,
-// up to 25 characters in length.
-// And up to 100 octets is size.
+// A string variable array of printable
+// characters, up to 25 characters in
+// length. And up to 100 octets is size.
 //
 string MyVariableName2&lt;25&gt;;
-							</artwork>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						opaque
-					</td>
-					<td>
-						<ul>
-							<li>
-								An opaque array is an array of 8-bit octets.
-								And will not be network byte encoded or decoded.
-							</li>
-							<li>
-								The size and length of an opaque array are
-								always the same value.
-							</li>
-						</ul>
-						<artwork type="asciiart">
-// This is a fixed array that is always 42 octets in size.
+		</artwork>
+		<dl>
+			<dt>opaque</dt>
+			<dd>
+				<ul>
+					<li>
+						An opaque array is an array of 8-bit octets.
+						And will not be network byte encoded or decoded.
+					</li>
+					<li>
+						The size and length of an opaque array are
+						always the same value.
+					</li>
+				</ul>
+			</dd>
+		</dl>
+		<artwork type="asciiart">
+// This is a fixed array that is always
+// 42 octets in size.
 // All 'opaque' objects are 8-bit values.
 //
 opaque MyOpaqueData[42];   
 
-// A variable length array up to 42 octets in size.
+// A variable length array up to 42
+// octets in size.
 //
 opaque MyOpaqueData&lt;42&gt;;
 
-// A variable length array of unlimited number of 8-bit octets.
+// A variable length array of unlimited
+// number of 8-bit octets.
 //
 opaque MyOpaqueData&lt;&gt;;
-						</artwork>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		</artwork>
 		<t>
 			Arrays in CBOR have a "&lt;&gt;" in them to indicate they are arrays.
 		</t>
 		<figure>
-			<artwork type="abnf" name="" alt=""><![CDATA[
-			CBOR:
-			string StringOfCharacters<>;
-			Widget ArrayOfWidget<>;
-			opaque PNGFileData<>;
+			<artwork align="left" type="abnf"><![CDATA[
+CBOR:
+string StringOfCharacters<>;
+Widget ArrayOfWidget<>;
+opaque PNGFileData<>;
 ]]></artwork>
 		</figure>
 		<t>
@@ -324,7 +301,9 @@ opaque MyOpaqueData&lt;&gt;;
 	<section>
 		<name>Number of bits in value</name>
 		<t>
-			The CBOR protocol allows for bit value, and streams bits.
+			The CBOR protocol Language allows for bit value, bits values,
+			and bit masks,
+			See <xref target="BITS">BITS</xref>
 		</t>
 		<t>
 			In this specification terminal values may specify a bit width.
@@ -349,25 +328,31 @@ opaque MyOpaqueData&lt;&gt;;
 			and is composed of an 8-bit (Offset), 2-bit (Flags or F),
 			and 22-bit (Length) value.
 		</t>
+		<t>
+			Here in CBOR protocol language:
+		</t>
 		<figure anchor="Header32Example">
-	<artwork align="left" type="abnf" name="" alt=""><![CDATA[
+			<artwork align="left" type="abnf" name="" alt=""><![CDATA[
 Header:32 = Offset:8 Flags:2 Length:22
 ]]></artwork>
-</figure>
+		</figure>
 		<t>
-			Example pseudo code for the ABNF in
+			They are written most significant bits to least significant
+			bits. So, Length (<xref target="Header32Example"/>) is 22 bits and occupies the least significant
+			bits in the value.
+		</t>
+		<t>
+			Example pseudo code for the CLS in
 			<xref target="Header32Example"/> could be:
 		</t>
 		<figure anchor="Header32ExamplePseudo">
 		<sourcecode>
-
 // Header is a 32-bit unsigned integer.
 // Offset is an 8-bit unsigned integer.
 // Flags (F) is a 2-bit unsigned integer.
 // Length is a 22-bit unsigned integer
 //
 Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
-
 		</sourcecode>
 		</figure>
 
@@ -377,9 +362,12 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 			shifts the 8-bit "Offset" over 24 bits to the left, then
 			shifts the 2-bit value "Flags (F)" over 22 bits,
 			then, places the lower 24-bits "Length" into the results.
-
 			The result would be all three values into the
-			one 32-bit result as illustrated in <xref target="ABNF-00"/>:
+			one 32-bit result as illustrated in <xref target="ABNF-00"/>.
+		</t>
+		<t>
+			NOTE: Bits do not have to fill up any value, and can span
+			multiple values. See <xref target="BITS">BITS</xref>
 		</t>
 
 		<figure anchor="ABNF-00" align="center">
@@ -392,7 +380,14 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 	</section>
 
 	<section>
-		<name>Common Definitions</name>
+		<name>CLS Predefined Data Types</name>
+		<t>
+			The CLS language allows the developer to code for application,
+			many of which are built with computer languages that require
+			known and compiled in data sizes.
+			These sizes are converted to and from CBOR stream format
+			as needed.
+		</t>
 		<table>
 			<name>Phoenix Protocol types</name>
 			<thead>
@@ -402,9 +397,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 					</th>
 					<th>
 						Notes
-					</th>
-					<th>
-						CBOR API
 					</th>
 				</tr>
 			</thead>
@@ -418,9 +410,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 							An 8-bit unsigned integer.
 						</t>
 					</td>
-					<td>
-						cbor_uint8_t()
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -430,9 +419,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						<t>
 							A 16-bit unsigned integer.
 						</t>
-					</td>
-					<td>
-						cbor_uint16_t()
 					</td>
 				</tr>
 				<tr>
@@ -444,9 +430,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 							A 32-bit unsigned integer.
 						</t>
 					</td>
-					<td>
-						cbor_uint32_t()
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -457,9 +440,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 							A 64-bit unsigned integer.
 						</t>
 					</td>
-					<td>
-						cbor_uint64_t()
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -469,9 +449,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						<t>
 							A string of UTF-8 characters.
 						</t>
-					</td>
-					<td>
-						cbor_string()
 					</td>
 				</tr>
 				<tr>
@@ -485,9 +462,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 							over this protocol.
 						</t>
 					</td>
-					<td>
-						cbor_opaque()
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -498,9 +472,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						When the highest bit is one (1)
 						it is a vendor specific Op.
 						Otherwise, it is set to zero (0).
-					</td>
-					<td>
-						cbor_Op()
 					</td>
 				</tr>
 				<tr>
@@ -513,9 +484,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						This is used in a few places to signify
 						the operation to apply to any included data.
 					</td>
-					<td>
-						cbor_Op() With the value cat to a (Op).
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -524,9 +492,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 					<td>
 						An 8-bit value.
 						Signifies the operation will get a value.
-					</td>
-					<td>
-						cbor_Op() With the value cat to a (Op).
 					</td>
 				</tr>
 				<tr>
@@ -537,9 +502,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						An 8-bit value.
 						Signifies the operation will update an existing value.
 					</td>
-					<td>
-						cbor_Op() With the value cat to a (Op).
-					</td>
 				</tr>
 				<tr>
 					<td>
@@ -549,20 +511,15 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						An 8-bit value.
 						Signifies the operation will delete key/value pair.
 					</td>
-					<td>
-						cbor_Op() With the value cat to a (Op).
-					</td>
 				</tr>
 				<tr>
 					<td>
 						true
 					</td>
 					<td>
-						An 8-bit value.
+						An 1-bit value.
 						A value of true.
-					</td>
-					<td>
-						cbor_false()
+						Set to '1'.
 					</td>
 				</tr>
 				<tr>
@@ -570,11 +527,9 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						false
 					</td>
 					<td>
-						An 8-bit value.
+						An 1-bit value.
 						A value of false.
-					</td>
-					<td>
-						cbor_true()
+						Set to '0'.
 					</td>
 				</tr>
 				<tr>
@@ -583,49 +538,6 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 					</td>
 					<td>
 						A true or false value.
-					</td>
-					<td>
-						cbor_enabled()
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Unused7
-					</td>
-					<td>
-						A 7-bit value, set to zeros.
-					</td>
-					<td>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Unused8
-					</td>
-					<td>
-						An 8-bit value, set to zeros.
-					</td>
-					<td>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Unused16
-					</td>
-					<td>
-						A 16-bit value, set to zeros.
-					</td>
-					<td>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Unused23
-					</td>
-					<td>
-						A 23-bit value, set to zeros.
-					</td>
-					<td>
 					</td>
 				</tr>
 				<tr>
@@ -636,8 +548,7 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						A 1 bit value, set to 1.
 						It is placed in the highest bit
 						position in the value.
-					</td>
-					<td>
+						Applies as specified in this specification.
 					</td>
 				</tr>
 				<tr>
@@ -648,8 +559,7 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 						A 1 bit value, set to 0.
 						It is placed in the highest bit
 						position in the value.
-					</td>
-					<td>
+						Applies as specified in this specification.
 					</td>
 				</tr>
 			</tbody>

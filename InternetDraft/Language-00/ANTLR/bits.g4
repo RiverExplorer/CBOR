@@ -1,5 +1,4 @@
-
 bitsTypeSpec
-	: 'bit' typeSpecifier
-	| 'bits' typeSpecifier width
-	;
+  : 'bit' typeSpecifier
+  | 'bits' typeSpecifier width
+  ;

@@ -1,4 +1,4 @@
 width
-	: (':' DECIMAL)
-	;
-	
+  : (':' DECIMAL)
+  ;
+  

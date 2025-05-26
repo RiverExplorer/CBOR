@@ -1,7 +1,7 @@
 constant
     : decimal
-		| float
+    | float
     | hexadecimal
     | octal
     ;
-		
+    

@@ -1,4 +1,4 @@
 namespaceDef
-	: 'namespace' identifier ( ':' identifier )* ';'
-	;
-	
+  : 'namespace' identifier ( ':' identifier )* ';'
+  ;
+  

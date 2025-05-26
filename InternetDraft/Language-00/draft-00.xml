@@ -61,6 +61,7 @@
 .so Enum.xml
 .so Structures.xml
 .so Unions.xml
+.so BITS.xml
 .so Program.xml
 <!--    <xi:include href="Commands.xml"/> -->
 		<xi:include href="IANA.xml"/>
@@ -105,18 +106,14 @@
 		<section anchor="all-antlr-g4">
 			<name>Complete ANGLR grammar</name>
 			<figure  anchor="all-g4">
-				<name>Complate ANGLR grammar</name>
 				<artwork type="asciiart">
 					<![CDATA[
-grammar cbor;
-
 .so ALL-ANTLR.g4
 					]]>
 				</artwork>
 			</figure>
 		</section>
 <!-- .so ANTLR4.xml -->
-		
     <section anchor="Acknowledgements" numbered="false">
       <!-- [REPLACE/DELETE] an Acknowledgements section is optional -->
       <name>Acknowledgments</name>

@@ -1,2 +1,2 @@
 publicTag : '[public]'
-					;
+          ;

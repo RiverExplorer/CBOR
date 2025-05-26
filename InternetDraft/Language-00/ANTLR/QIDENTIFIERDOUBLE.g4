@@ -1,5 +1,6 @@
-// A value enclosed in double quotes (")
+# A value enclosed in double quotes (")
+#
 QIDENTIFIERDOUBLE
-	: '"' [a-zA-Z] ([a-zA-Z0-9_])* '"'
-	;
-	
+  : '"' [a-zA-Z] ([a-zA-Z0-9_])* '"'
+  ;
+  
