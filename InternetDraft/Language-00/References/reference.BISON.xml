@@ -1,0 +1,12 @@
+<reference anchor="YACC" target="">
+  <front>
+    <title>Bison - A Parser Generator</title>
+    <abstract>
+			<t>
+				Bison, is a parser generator that is part of the GNU Project.
+				Bison reads a specification in Bison syntax and produces
+				code to parse data, often used with lex or flex.
+			</t>
+    </abstract>
+  </front>
+</reference>

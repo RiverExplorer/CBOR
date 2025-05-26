@@ -1,0 +1,12 @@
+<reference anchor="YACC" target="">
+  <front>
+    <title>Yacc (Yet Another Compiler-Compiler</title>
+    <author fullname="Stephen C. Johnson" initials="SCJ" surname="Johnson"/>
+    <abstract>
+			<t>
+				Yacc (Yet Another Compiler-Compiler) is a computer program for
+				the UNIX	operating system developed by Stephen C. Johnson.
+			</t>
+    </abstract>
+  </front>
+</reference>

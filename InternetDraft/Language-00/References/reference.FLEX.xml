@@ -1,0 +1,12 @@
+<reference anchor="YACC" target="">
+  <front>
+    <title>Flex - A fast Lexical Analyzer</title>
+    <abstract>
+			<t>
+				It is a computer program that generates lexical analyzers
+				It is frequently used as the lex implementation together with
+				Yacc or Bison parser generator on UNIX like systems.
+			</t>
+    </abstract>
+  </front>
+</reference>

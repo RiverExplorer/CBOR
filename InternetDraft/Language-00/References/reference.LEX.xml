@@ -1,0 +1,13 @@
+<reference anchor="YACC" target="">
+  <front>
+    <title>Lex - A Lexical Analyzer</title>
+    <abstract>
+			<t>
+				Lex is a computer program that generates lexical analyzers
+				It is commonly used with the yacc parser generator and is
+				the standard lexical analyzer generator on many UNIX
+				systems.
+			</t>
+    </abstract>
+  </front>
+</reference>
