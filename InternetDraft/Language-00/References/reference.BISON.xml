@@ -1,6 +1,7 @@
-<reference anchor="YACC" target="">
+<reference anchor="BISON" target="">
   <front>
     <title>Bison - A Parser Generator</title>
+    <author fullname="Unknown" initials="" surname=""/>
     <abstract>
 			<t>
 				Bison, is a parser generator that is part of the GNU Project.

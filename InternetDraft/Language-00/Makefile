@@ -12,14 +12,15 @@ VERSION	=	00
 
 SOURCES.xml = \
 	Abstract.xml \
+	ASyncSync.xml \
 	ANTLR4.xml \
-	BasicTypes.xml \
+	BasicDataTypes.xml \
 	BITS.xml \
-	CBOR.xml \
 	Comment.xml \
 	draft-00.xml \
 	Enum.xml \
 	IANA.xml \
+	Identifiers.xml \
 	Integers.xml \
 	Introduction.xml \
 	Map.xml \
@@ -28,6 +29,7 @@ SOURCES.xml = \
 	Program.xml \
 	RequirementsLanguage.xml \
 	SecurityConsiderations.xml \
+	Stream.xml \
 	Structures.xml \
 	Typedef.xml \
 	Unions.xml

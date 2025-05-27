@@ -1,0 +1,1204 @@
+<!-- Copyright 2025 RiverExplorer LLC and Douglas Mark Royer -->
+
+<section xmlns:xi="http://www.w3.org/2001/XInclude">
+	<name>CLS Basics</name>
+	<section>
+		<name>UTC and Array Overview</name>
+		<t>
+			The UTC value used in this specification is designed
+			to be compatible with time_t on <xref target="POSIX"/>
+			compliant systems.
+			In POSIX systems, time_t is defined as an integer type used for
+			representing time in seconds since the UNIX epoch, which
+			is 00:00:00 UTC on January 1, 1970.
+			And in this specification is 64-bit unsigned integer.
+		</t>
+		<t>
+			Arrays are used in a lot of data flows.
+			String are always an array of printable characters.
+			Some data needs to be converted to a from
+			network byte order.
+			Data that does not need to be converted to and
+			from network byte order is called 'opaque' data.
+			A PNG file is an example of opaque data.
+			The PNG data itself is defined so that it is readable
+			without any additional encoding.
+		</t>
+		<t>
+			In this CBOR Language Specification (CLS), a
+			data type that is an array, is fixed in length,
+			or variable in length.
+		</t>
+		<t>
+			A fixed array:
+		</t>
+		<ul>
+			<li>
+				A fixed array has its length surrounded by square
+				brackets '[' and ']'.
+			</li>
+			<li>
+				Each element in a fixed array is exactly the same size.
+			</li>
+			<li>
+				The total size of a fixed array is calculated by multiplying
+				the array length by the size of each element in the fixed array.
+			</li>
+			<li>
+				A fixed size array can never be empty or null.
+			</li>
+		</ul>
+		<t>
+			A variable sized array.
+			A variable array is one of two types:
+		</t>
+		<ul>
+			<li>It is an array of UTF-8 characters, called a string.</li>
+			<li>Or it is an array of some non string data type.</li>
+		</ul>
+		<t>
+			Common to all variable array types:
+		</t>
+		<ul>
+			<li>
+				<t>
+				Both a string and non-string variable array
+				may have a maximum length surrounded by angle
+				brackets:
+				</t>
+				<t>
+					'&lt;' max-length '&gt;'.
+				</t>
+			</li>
+			<li>
+				<t>
+					Or they specify an unlimited length
+					by having empty angle brackets, no maximum length
+					specified.
+					In this context 'unlimited' means not pre-defined.
+				</t>
+				<t>
+					'&lt;&gt;'.
+				</t>
+			</li>
+			<li>
+				<t>
+					Any variable array may have zero entries at
+					run time.
+					This is an empty array and is valid in
+					this language specification.
+				</t>
+			</li>
+			<li>
+				<t>
+					Any variable arrays may be null at run time.
+					This is an null array and is valid in
+					this language specification.
+					And are transmitted as CBOR 'null' values.
+				</t>
+			</li>
+		</ul>
+		<t>
+			Non-string variable arrays:
+		</t>
+		<ul>
+			<li>
+				Non-string variable arrays are defined by specifying
+				their data type, and their optional maximum length.
+			</li>
+			<li>
+				Variable arrays that are not string arrays have
+				their total size calculated by multiplying
+				the array length (which may or might not be
+				the same as any optional maximum length)
+				by the size of each element
+				in the variable array.
+				A non-string variable array size is always
+				less than or the same as any optional
+				maximum length.
+			</li>
+			<li>
+				All elements in a non-string variable array
+				have exactly the same size.
+			</li>
+		</ul>
+		<t>
+			String variable arrays:
+		</t>
+		<ul>
+			<li>
+				A variable array of UTF-8 characters is a 'string' array.
+				String arrays are defined using the 'string' data type.
+			</li>
+			<li>
+				<t>
+					Variable arrays that are string arrays (a string
+					data type) have their
+					total size calculated by adding up the number of
+					octets in all of the characters in the array.
+					Which may or might not be the same as any
+					optional maximum length.
+					And the size (octet count) may be up to 4 times the maximum
+					length (character count).
+					Each UTF-8 character may be 1, 2, 3, or 4 octets
+					in size.
+				</t>
+				<t>
+					This is why a 'string' can not be a fixed size array, as
+					you may not know the total number of octets when
+					generating the code.
+					And clipping off parts of a UTF-8 4, 3, or 2
+					octet character makes the string useless.
+					If a string was a fixed array, then you have
+					to describe how to pad the unused
+					values each time, and decide on left or right padding.
+				</t>
+			</li>
+		</ul>
+		<dl>
+			<dt>string</dt>
+			<dd>
+				<ul>
+					<li>
+						A string is always a variable array.
+						If you need a fixed size character array, use a fixed
+						array of 8 (ASCII), 16 (UTF-16), or 32 (UTF-32), values.
+					</li>
+					<li>
+						A string may contain zero characters, this is an
+						empty string.
+					</li>
+					<li>
+						A string be null, in which is valid and
+						is transmitted as a CBOR 'null'.
+					</li>
+					<li>
+						A string is an array of UTF-8 printable characters.
+						With an optional maximum length.
+					</li>
+					<li>
+						A string is an array of printable characters.
+						And each character may be 1, 2, 3, or 4 octets
+						in size.
+						The length specifies the number of printable characters
+						in the string not the size of the array.
+						This is also why a string can not be a fixed array.
+					</li>
+					<li>
+						The octet count (size) of any string, could be the same
+						as the number of characters (length),
+						or the size could be up to 4 times larger.
+					</li>
+					<li>
+						The length is the number of characters in the array.
+					</li>
+					<li>
+						The size is the number of octets in the array.
+					</li>
+					<li>
+						The length is always equal to or less than
+						the size.
+					</li>
+				</ul>
+			</dd>
+		</dl>
+		
+		<artwork type="asciiart">
+// A string variable array of printable
+// characters, unlimited in length.
+//
+string MyVariableName&lt;&gt;;
+
+// A string variable array of printable
+// characters, up to 25 characters in
+// length. And up to 100 octets is size.
+//
+string MyVariableName2&lt;25&gt;;
+		</artwork>
+		<dl>
+			<dt>opaque</dt>
+			<dd>
+				<ul>
+					<li>
+						An opaque array is an array of 8-bit octets.
+						And will not be network byte encoded or decoded.
+					</li>
+					<li>
+						The size and length of an opaque array are
+						always the same value.
+					</li>
+				</ul>
+			</dd>
+		</dl>
+		<artwork type="asciiart">
+// This is a fixed array that is always
+// 42 octets in size.
+// All 'opaque' objects are 8-bit values.
+//
+opaque MyOpaqueData[42];   
+
+// A variable length array up to 42
+// octets in size.
+//
+opaque MyOpaqueData&lt;42&gt;;
+
+// A variable length array of unlimited
+// number of 8-bit octets.
+//
+opaque MyOpaqueData&lt;&gt;;
+		</artwork>
+		<t>
+			Variable arrays in CBOR have a "&lt;&gt;" in them to indicate
+			they are variable arrays.
+		</t>
+		<t>
+			Fixed arrays in CBOR have a "[]" in them to indicate
+			they are fixed size arrays.
+		</t>
+	</section>
+	<section anchor="IndifiniteLengths">
+		<name>Indefinite Length Arrays</name>
+		<t>
+			Variable arrays that have their encoding started before
+			the length is know will transmit the data with the CBOR
+			additional information value 31.
+			And will be terminated with the CBOR "break" stop code 31.
+			As defined in CBOR.
+		</t>
+		<t>
+			And they will be tagged in the protocol definition
+			file as "[stream]".
+		</t>
+		<t>
+			No array without the "[stream]" tag will be encoded
+			as a CBOR indefinite length value.
+		</t>
+		<t>
+			An array with the "[stream]" tag may be transmitted
+			as a CBOR non-indefinite length value if known
+			before the encoding begins.
+		</t>
+		<t>
+			Examples of an indefinite variable length array
+			where the encoding starts before the length is known:
+		</t>
+		<figure anchor="ILength">
+			<artwork align="left" type="abnf"><![CDATA[
+[stream] float16_t MicrophoneInputData<>;
+
+[stream] uint8_t LiveTelemetry<>;
+
+[stream] string LiveTranscription<>;
+]]></artwork>
+		</figure>
+		<t>
+			The "[stream]" tag is a hint to the implementation
+			that the data tagged needs to be able to be processed
+			before the length is known.
+		</t>
+	</section>
+	<section anchor="Channel">
+		<name>Channels</name>
+		<t>
+			Some interactions in a data stream require a 
+			complete transfer of data before the logic of the
+			application can proceed.
+			This type of data is synchronous data, and is the default.
+			It does not mean that the other endpoint must reply.
+			It means the data must be transferred or sent before the
+			application goes to its next programmed operation.
+		</t>
+		<t>
+			In some cases the data transfer can occur over time.
+			For example a live transcription can occur at the
+			same time that a user is reading their email on
+			the same session.
+			One way to implement this is with threading.
+			Threading is a programming technique where separate
+			flows of application logic can be processed in parallel.
+		</t>
+		<t>
+			There are two basic ways to do parallel data transfer.
+		</t>
+		<ul>
+			<li>
+				Open two or more sessions.
+				One for each parallel operation.
+			</li>
+			<li>
+				Multiplex the data over one connection.
+			</li>
+		</ul>
+		<t>
+			Opening two or more sessions is out of scope for this
+			specification because no additional specification beyond
+			what is needed with multiplex coordination would be needed.
+			And Servers may limit the number of simultaneous connections from
+			the same authenticated user.
+		</t>
+		<t>
+			A multiplexed transfer of data requires a in-stream switching
+			mechanism.
+			This mechanism is called channeling.
+			Both endpoints must be capable of and agree to channeling.
+		</t>
+		<t>
+			All objects that are to be channeled have the "[channel N]" tag
+			applied to them.
+			With 'N' being the channel number.
+			The "[channel N]" tag can be added to any data type, structure,
+			or method.
+		</t>
+		<t>
+			All objects that do not have a "[channel N]" tag are done
+			in the single session connection, which is channel zero (0)
+			and must be done synchronously.
+		</t>
+		<t>
+			The "[channel N]" tag has a mandatory parameter indicating
+			the channel number or name.
+			Channel numbers are positive integers or protocol defined names.
+			Channel zero (0) is reserved for synchronous communication
+			only and is the default.
+			Channel names must be identifiers (<xref target="Identifiers"/>).
+			And only one synchronous channel may exist, and it
+			must be channel zero (0).
+			When not tagged, the default is "[channel 0]"
+			Tagging with "[channel 0]" is
+			the same as not tagging the object.
+		</t>
+		<t>
+			The multiplexing is done without the application knowing
+			it is done.
+			The application sends a blob of data, and the underlying
+			implementation breaks it into pieces as needed based on
+			the amount of backlogged data across all channels.
+		</t>
+		<t>
+			As an aid to reading CLS files, a channel may be
+			assigned a name.
+			The name must be defined before its first use in
+			"[channel N]".
+		</t>
+		<t>
+			Exampling naming a channel:
+		</t>
+		<figure anchor="NameChannel">
+			<artwork align="left" type="abnf"><![CDATA[
+channel[1] = Notifications;
+
+// Channel numbers only have to be
+// unique positive numbers,
+// They do not have to be sequential.
+//
+channel[12] = LiveTranscript;
+
+// And used:
+// This channel is dedicated to transcripted text.
+// And synchronious.
+//
+[channel LiveTranscript] [stream] string TranscriptText<>;
+
+// This notification channel is an
+// asynchronous channel that receives
+// notifications from the other communication
+// end point.
+//
+// When a notification arrives, then 'Callback_Identifier'
+// which must be a method, will be called.
+//
+[channel Notifications] [async] GetNotifications(Callback_Identifier);
+]]></artwork>
+		</figure>
+
+	</section>
+	<section anchor="Async">
+		<name>Async</name>
+		<t>
+			All Objects may be tagged with the "[async]" tag.
+			The "[async]" tag indicates that the application has
+			sent the data, and will not wait for the reply.
+			Instead, the CLS implementation will notify the application
+			a reply has been received.
+		</t>
+	</section>
+
+	<section>
+		<name>Number of bits in value</name>
+		<t>
+			The CBOR protocol Language allows for bit value, bits values,
+			and bit masks,
+			See <xref target="BITS">BITS</xref>
+		</t>
+		<t>
+			In this specification terminal values may specify a bit width.
+			Indicating the number of bits in the value.
+		</t>
+		<t>
+			Where the "width" is the number of bits in the value.
+			And must be an unsigned integer greater than zero.
+			And is always expressed in decimal.
+		</t>
+		<t>
+			When the left side of a rule has a width: 
+			The number of bits on the left side must equal
+			the number of bits on the right side.
+		</t>
+		<t>
+			The most significant values are placed to the left of
+			lesser signification values in the rule:
+		</t>
+		<t>
+			In this example A Header is 32-bits in size
+			and is composed of an 8-bit (Offset), 2-bit (Flags or F),
+			and 22-bit (Length) value.
+		</t>
+		<t>
+			Here in CBOR protocol language:
+		</t>
+		<figure anchor="Header32Example">
+			<artwork align="left" type="abnf" name="" alt=""><![CDATA[
+Header:32 = Offset:8 Flags:2 Length:22
+]]></artwork>
+		</figure>
+		<t>
+			They are written most significant bits to least significant
+			bits. So, Length (<xref target="Header32Example"/>) is 22 bits and occupies the least significant
+			bits in the value.
+		</t>
+		<t>
+			Example pseudo code for the CLS in
+			<xref target="Header32Example"/> could be:
+		</t>
+		<figure anchor="Header32ExamplePseudo">
+		<sourcecode>
+// Header is a 32-bit unsigned integer.
+// Offset is an 8-bit unsigned integer.
+// Flags (F) is a 2-bit unsigned integer.
+// Length is a 22-bit unsigned integer
+//
+Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
+		</sourcecode>
+		</figure>
+		<t>
+			The pseudo code in
+			<xref target="Header32ExamplePseudo"/>
+			shifts the 8-bit "Offset" over 24 bits to the left, then
+			shifts the 2-bit value "Flags (F)" over 22 bits,
+			then, places the lower 24-bits "Length" into the results.
+			The result would be all three values into the
+			one 32-bit result as illustrated in <xref target="ABNF-00"/>.
+		</t>
+		<t>
+			NOTE: Bits do not have to fill up any value, and can span
+			multiple values. See <xref target="BITS">BITS</xref>
+		</t>
+
+		<figure anchor="ABNF-00" align="center">
+			<name>Packed Bit Example</name>
+			<artset>
+				<artwork align="center" type="ascii-art" src="Drawings/ABNF-00.txt"/>
+				<artwork align="center" type="svg" src="Generated/ABNF-00.svg"/>
+			</artset>
+		</figure>
+	</section>
+
+	<section>
+		<name>Data Types - Detail</name>
+		<t>
+			The CLS language allows the developer to code for application,
+			many of which are built with computer languages that require
+			known and compiled in data sizes.
+			These sizes are converted to and from CBOR stream format
+			as needed.
+		</t>
+		<table>
+			<name>Phoenix Protocol types</name>
+			<thead>
+				<tr>
+					<th>
+						TYPE
+					</th>
+					<th>
+						Notes
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>
+						uint_t
+					</td>
+					<td>
+						An unsigned integer of any size.
+						When the CLS file specifies a uint_t, then
+						it could be CBOR encoded as a CBOR major type 0,
+						or as a CBOR major type 6 tag 2 bignum.
+						It is encoded as a CBOR major type 0,
+						unless it is larger than 64-bits.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						uint8_t
+					</td>
+					<td>
+						<t>
+							An 8-bit unsigned integer.
+							Encoded as a CBOR major type 0.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						uint16_t
+					</td>
+					<td>
+						<t>
+							A 16-bit unsigned integer.
+							Encoded as a CBOR major type 0.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						uint32_t
+					</td>
+					<td>
+						<t>
+							A 32-bit unsigned integer.
+							Encoded as a CBOR major type 0.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						uint64_t
+					</td>
+					<td>
+						<t>
+							A 64-bit unsigned integer.
+							Encoded as a CBOR major type 0.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						int_t
+					</td>
+					<td>
+						<t>
+							An signed integer of any size.
+							When the CLS file specifies a int_t, then
+							it could be CBOR encoded as a CBOR major type 1,
+							or as a CBOR major type 6 tag 2 or tag 3 bignum.
+							It is encoded as a CBOR major type 1,
+							unless it is larger than 64-bits.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						int8_t
+					</td>
+					<td>
+						<t>
+							An 8-bit signed integer.
+							Encoded as a CBOR major type 1.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						int16_t
+					</td>
+					<td>
+						<t>
+							A 16-bit signed integer.
+							Encoded as a CBOR major type 1.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						int32_t
+					</td>
+					<td>
+						<t>
+							A 32-bit signed integer.
+							Encoded as a CBOR major type 1.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						int64_t
+					</td>
+					<td>
+						<t>
+							A 64-bit signed integer.
+							Encoded as a CBOR major type 1.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						float_t
+					</td>
+					<td>
+						<t>
+							A floating point number.
+							When the CLS file specifies a float_t, then it
+							will be CBOR encoded as a CBOR major type 7,
+							or major type	6 tag 5 bigfloat.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						float[e.m]_t
+					</td>
+					<td>
+						<t>
+							A floating point number with a minimum exponent
+							precision bits of 'e' bits and
+							a minumum mantassa precission bits of 'm' bits.
+							When the CLS file specifies a float_t, then it
+							will be CBOR encoded as a CBOR major type 7,
+							or major type	6 tag 5 bigfloat when too large
+							for a type 7.
+						</t>
+						<t>
+							Examples: float8.23_t, float11.52_t, float15.113_t
+						</t>
+						<t>
+							IMPLEMENTATION NOTE: Most platforms and
+							compilers do not support random bit floating point number
+							widths.
+							Implementors should use caution when specifying
+							non standard bit widths in floating point numbers.
+							Protocol designers should specify in the protocol file
+							any size or precision requirements as comments in the file.
+						</t>
+						<ul>
+							<li>
+								float5.10_t type is a float16_t.
+							</li>
+							<li>
+								float8.23_t type is a float32_t.
+							</li>
+							<li>
+								float11.52_t is a float64_t.
+							</li>
+						</ul>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						float16_t
+					</td>
+					<td>
+						<t>
+							A 16-bit signed integer.
+							Encoded as a CBOR major type 7.
+						</t>
+						<t>
+							The same as a float5.10_t type.
+						</t>
+						<t>
+							IMPLEMENTATION NOTE: Not all platforms and
+							compilers support 16 bit floating point numbers.
+							Conversion methods may need to be implemented
+							in such cases.
+							Implementors should use caution when specifying
+							that a 16-bit floating point should be used.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						float32_t
+					</td>
+					<td>
+						<t>
+							A 32-bit IEEE floating point number.
+							Encoded as a CBOR major type 7.
+						</t>
+						<t>
+							The same as a float8.23_t type.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						float64_t
+					</td>
+					<td>
+						<t>
+							A 64-bit IEEE floating point number.
+							Encoded as a CBOR major type 7.
+						</t>
+						<t>
+							The same as a float11.52_t type.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						string
+					</td>
+					<td>
+						<t>
+							A string of UTF-8 characters.
+							Encoded as a CBOR major type 3.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						opaque
+					</td>
+					<td>
+						<t>
+							An array of 8-bit values that will not be
+							CBOR encoded or CBOR decoded when transferring the data
+							over this protocol.
+							Encoded as a CBOR major type 2.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						map
+					</td>
+					<td>
+						<t>
+							A map is an ordered list of key/value pairs.
+							With the key being unique in the map.
+						</t>
+						<t>
+							A map is converted to a CBOR major type 5 map.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						multimap
+					</td>
+					<td>
+						<t>
+							A multimap is an ordered list of key/value pairs.
+							Where the keys are not necessarily unique.
+							Duplicate keys are allowed.
+						</t>
+						<t>
+							A multimap is converted to a CBOR major type 5
+							map.
+							With each unique key in the multimap having
+							a value part that is a CBOR major type 4 array
+							with ordered values.
+							One array entry for each value in
+							in the multimap.
+						</t>
+					</td>
+				</tr>
+				<tr>
+					<td>
+						Op
+					</td>
+					<td>
+						An 8-bit value.
+						When the highest bit is one (1)
+						it is a vendor specific Op.
+						Otherwise, it is set to zero (0).
+					</td>
+				</tr>
+				<tr>
+					<td>
+						true
+					</td>
+					<td>
+						An 1-bit value.
+						A value of true.
+						Set to '1'.
+						A true value is sent as a CBOR major type 0
+						data item that might be packed with other
+						bits, as defined in the CLS definition file.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						false
+					</td>
+					<td>
+						An 1-bit value.
+						A value of false.
+						Set to '0'.
+						A true value is sent as a CBOR major type 0
+						data item that might be packed with other
+						bits, as defined in the CLS definition file.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						enabled
+					</td>
+					<td>
+						A true or false value.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						VENDOR_BIT
+					</td>
+					<td>
+						A 1 bit wide attribute value, set to 1.
+						It is placed in the highest bit
+						position in the value.
+						Applies as specified in this specification.
+						This is not a bit field, it is an attribute
+						of the command being transmitted.
+					</td>
+				</tr>
+				<tr>
+					<td>
+						PHOENIX_BIT
+					</td>
+					<td>
+						A 1 bit wide attribute value, set to 0.
+						It is placed in the highest bit
+						position in the value.
+						Applies as specified in this specification.
+						This is not a bit field, it is an attribute
+						of the command being transmitted.
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<t>
+			Floating point numbers implementation notes.
+			Many sizes exist depending on the operating system
+			and compilers used.
+			Some sizes used are 16, 24, 32, 40, 64, and 80, 96, and 128 bit
+			floating point numbers.
+			Generally implementations should go to the next larger
+			size in their implementation if they do not natively support a
+			size in the protocol definition file.
+			Protocol designers should specify in the protocol file
+			any size or precision requirements as comments in the file.
+		</t>
+		<t>
+			Implementation that require specific floating point widths
+			could implement	them as a user defined data type:
+		</t>
+		<figure anchor="CustomFloatingPoint">
+			<artwork align="left" type="asciiart"><![CDATA[
+struct MyMadeUpFloat96
+{
+  bit IsNegative;
+  bits Exponent:16;
+  bits Mantissa:79;
+};
+]]></artwork>
+		</figure>
+		
+	</section>
+
+	<section anchor="StringRef">
+		<name>StringRef and DataRef</name>
+		<t>
+			This protocol allows for the reference to strings and data
+			objects, by octet offset into the object.
+			This is is called a StringRef or DataRef.
+			The StringRef and DataRef do not contain the string or data,
+			it is a reference to data in an existing string or data object.
+			An example usage is in an index object that points
+			to data within a string or data, such as the parts
+			of a multipart MIME object.
+			They consists of two parts:
+		</t>
+		<table>
+			<name>StringRef and DataRef ABNF/CBOR Mapping</name>
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Size</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>Offset</td>
+					<td>uint_t</td>
+					<td>
+						The octet count to the start of the data.
+						With zero being the	first octet in the object.
+					</td>
+				</tr>
+				<tr>
+					<td>Length</td>
+					<td>uint_t</td>
+					<td>
+						The length in octets of the referenced object in the data.
+					</td>
+				</tr>
+			</tbody>
+		</table>
+		<t>
+			The only difference between a StringRef and a DataRef is
+			that a String ref points to readable string values that
+			may be 1, 2, 3, or 4 octets in length each.
+			And a DataRef points to objects that are always 8-bits
+			in size.
+		</t>
+		<t>
+			Here is an example of a StringRef over the wire that is
+			8 octets in size.
+		</t>
+		<figure anchor="StringRefFigure" align="center">
+			<name>StringRef Format</name>
+			<artset>
+				<artwork align="center" type="ascii-art" src="Drawings/StringRef-00.txt"/>
+				<artwork align="center" type="svg" src="Generated/StringRef-00.svg"/>
+			</artset>
+		</figure>
+
+		<t>
+			ABNF:
+		</t>
+	</section>
+
+	<section anchor="PredefinedDataTypes">
+		<name>CBOR Language Predefined Data Types</name>
+		<t>
+			Here is a summary of all of the predefined data types:
+		</t>
+		<t>
+			This protocol language closely resembles the CBOR data model.
+			The following data types are defined in the language.
+			Each of these basic data types have a correlating
+			CBOR data type.
+			When possible the data types used in this language
+			are the same as their <xref target="POSIX"/> counterpart.
+		</t>
+		<t>
+			Some computer languages specify the size of integers.
+			With this language, an implementation still specifies
+			the size and the implementation reduces	the lesser over
+			the wire size	when possible.
+			And this implementation will expand them as needed.
+		</t>
+		<t>
+			For example, the application may require a 64-unsigned
+		integer (uint64_t) named CustomerCount.
+		And assume only four (4) customers exists.
+		So the implementation sends a one (1) octet CBOR
+		value over the wire, in hex it would be 0x04.
+	</t>
+	<t>
+		That exemplifies the unique data models of the
+		the application	data size and the CBOR over the wire data size.
+		It is the jobs of a protocol compiler to translate
+		the received 0x01 into an uint64_t as described
+		in this example. And to notice that a 64-bit value,
+		depending on the size of its value, could be
+		sent in as few as one octet to as many as ten.
+	</t>
+.so Integers.xml
+
+	<section anchor="FloatDef">
+		<name>Float</name>
+		<t>
+			ANTLR:
+		</t>
+		<figure anchor="float.g4">
+			<name>float grammar</name>
+			<artwork type="asciiart">
+				<![CDATA[
+.so ANTLR/float.g4
+				]]>
+			</artwork>
+		</figure>
+		<t>
+			Examples:
+		</t>
+		<figure anchor="float-ex1">
+			<name>Float Examples</name>
+			<artwork type="asciiart">
+				<![CDATA[
+float16_t Size;
+
+float32_t BiggerSize;
+				]]>
+			</artwork>
+		</figure>
+		<t>
+			Floating point numbers are similar to unsigned integers
+			except they are prefixed with 'float' and not 'uint'.
+		</t>
+		<dl>
+			<dt>float16_t</dt>
+			<dd>
+				A 16-bit floating point number.
+				And the corresponding CBOR data type is float.
+			</dd>
+			<dt>float32_t</dt>
+			<dd>
+				A 32-bit floating point number.
+				And the corresponding CBOR data type is float.
+			</dd>
+			<dt>float64_t</dt>
+			<dd>
+				A 64-bit floating point number.
+				And the corresponding CBOR data type is float.
+			</dd>
+			<dt>float96_t</dt>
+			<dd>
+				A 96-bit floating point number.
+				On some systems this is a long double.
+				And the corresponding CBOR data type is bigfloat.
+			</dd>
+			<dt>float128_t</dt>
+			<dd>
+				A 128-bit floating point number.
+				On some systems this is a long double.
+				And the corresponding CBOR data type is bigfloat.
+			</dd>
+			<dt>... floatLL_t ...</dt>
+			<dd>
+				Assuming LL is more than 64 and a multiple of 8.
+				An LL-bits floating point number.
+				And the corresponding CBOR data type is bigfloat.
+			</dd>
+		</dl>
+	</section>
+	<section anchor="StringDef">
+		<name>String</name>
+		<dl>
+			<dt>string</dt>
+			<dd>
+				<t>
+					A string. A
+					A variable array of characters.
+				</t>
+				<t>Examples:</t>
+				<figure anchor="string-array-ex1">
+					<name>String Examples</name>
+					<artwork type="asciiart">
+						<![CDATA[
+// A string that has no less than 1
+// and no more than 30 characters.
+//
+string AStringVariableName<1,30>;
+
+// A string that has no less than 4
+// and no limit on the total size.
+//
+string OtherString<4,*>;
+
+// A string that has exactly 40 characters.
+//
+string OtherString[40];
+						]]>
+					</artwork>
+				</figure>
+			</dd>
+		</dl>
+		<t>
+			ANTLR:
+		</t>
+		<figure anchor="string.g4">
+				<name>string grammar</name>
+			<artwork type="asciiart">
+				<![CDATA[
+.so ANTLR/string.g4
+				]]>
+			</artwork>
+		</figure>
+	</section>
+.so Map.xml
+</section>
+
+<section anchor="Arrays">
+		<name>Arrays</name>
+		<t>
+			Arrays can be fixed length, or variable length.
+			Fixed length arrays have all of their elements
+			transmitted each time, thus each element must contain
+			a valid value.
+		</t>
+		<section anchor="FixedArrays">
+			<name>Fixed Length Arrays</name>
+			<t>
+				Fixed length arrays have their size bounded by square brackets.
+				Here are some examples:
+			</t>
+			<t>
+				Variable Length Array Examples.
+			</t>
+			<figure anchor="arrays-ex1">
+				<name>Arrays Examples</name>
+				<artwork type="asciiart">
+					<![CDATA[
+// An array that consists of three 32 bit floating
+// point numbers.
+//
+float32_t Transform3D[3];
+
+// An array that contains 1024 8-bit signed integer values.
+//
+int8_t Samples[1024];
+					]]>
+				</artwork>
+			</figure>
+		</section>
+		<section anchor="VariableArraysDef">
+			<name>Variable Length Arrays</name>
+			<t>
+				Variable length arrays can have a variable number
+				of elements.
+				You can specify the minimum number of elements, the
+				default is zero (0).
+				You can specify the maximum number of elements, the
+				default is an unlimited amount of entries.
+				An unlimited maximum value is indicated with the '*' symbol.
+			</t>
+			<t>
+				Fixed length arrays have their size bounded by angle brackets.
+				Here are some examples:
+			</t>
+			<t>
+				Variable Length Array Examples:
+			</t>
+			<artwork type="asciiart">
+				<![CDATA[
+// A variable length array that can hold zero,
+// or up to an unlimited number of 32 bit
+// floating point entries.
+// The minimum value is empty and the maximum value is empty.
+//
+float32_t Samples<>;<
+
+// A variable length array that can hold zero,
+// or up to 100 32-bit unsigned entries.
+//
+uint32_t DistanceMarks<0,100>;
+
+// A variable length array that must contain at least 2
+// 32-bit floating point numbers and no more than
+// 128 entries.
+//
+float32_t Trajectory<2,128>;
+
+// A variable length array that must contain at least 2
+// 32-bit floating point numbers and an unlimited
+// number of entries.
+//
+float32_t Variation<2,*>;
+					]]>
+			</artwork>
+		</section>
+	</section>
+
+</section>
+<!-- [CHECK] The 'Requirements Language' section is optional -->

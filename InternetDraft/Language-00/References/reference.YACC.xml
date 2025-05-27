@@ -1,4 +1,4 @@
-<reference anchor="YACC" target="">
+<reference anchor="YACC">
   <front>
     <title>Yacc (Yet Another Compiler-Compiler</title>
     <author fullname="Stephen C. Johnson" initials="SCJ" surname="Johnson"/>

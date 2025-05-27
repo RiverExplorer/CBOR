@@ -1,0 +1,13 @@
+<section anchor="Stream">
+	<name>Stream Data</name>
+	<t>
+		Data that has has a variable amount of data, like
+		mp3 audio and mp4 video are transmitted as stream data.
+	</t>
+	<t>
+		Stream data may be transmitted asynchronously or synchronously.
+	</t>
+	<t>
+		TODO
+	</t>
+</section>

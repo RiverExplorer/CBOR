@@ -12,6 +12,14 @@
 	over the wire streams.
 </t>
 <t>
+	Many applications are built and compiled with computer
+	languages that require that the size and type of variable be known
+	at compile time.
+	This specification allows an application protocol designer
+	to specific the application requirements without regard
+	to how CBOR encodes and decodes the data.
+</t>
+<t>
 	This specification defines a CBOR protocol definition language.
 	This is the CBOR Language Specification (CLS).
 	This language and the sample implementation allows a

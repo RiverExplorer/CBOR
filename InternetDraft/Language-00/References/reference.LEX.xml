@@ -1,6 +1,7 @@
-<reference anchor="YACC" target="">
+<reference anchor="LEX">
   <front>
     <title>Lex - A Lexical Analyzer</title>
+		<author fullname="unknown" initials="" surname=""/>
     <abstract>
 			<t>
 				Lex is a computer program that generates lexical analyzers

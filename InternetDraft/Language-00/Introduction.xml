@@ -33,6 +33,11 @@
 		helpful to fully understand this specification.
 	</t>
 	<t>
+		Many of the code examples are commented using the doxygen
+		<xref target="DOXYGEN"/>
+		style of commenting.
+	</t>
+	<t>
 		This specification was written in parallel with the creation
 		of an <xref target="CLSOpenSource">
 		open source CBOR language protocol compiler</xref>.
@@ -44,9 +49,10 @@
 		Many computer languages have built in and application
 		defined data types that allow for more complex
 		objects that CBOR itself defined.
-		The solution is breakdown the more compled data
+		The solution is breakdown the more complex data
 		type until they are objects that can be converted
 		to and from the CBOR stream format.
+		And then consolidating them during decoding.
 	</t>
 	<t>
 		For example an object might consist of a persons
@@ -95,6 +101,17 @@
 		The sample implementation was written
 		using the open source ANTLR4 compiler:
 		<eref target="https://github.com/antlr/antlr4"/>.
-		And is much like Yacc/Bison and lex/Flex grammar.
+		And is much like Yacc(<xref target="YACC"/>)/Bison(<xref target="BISON"/>) and lex(<xref target="LEX"/>)/Flex(<xref target="FLEX"/>) grammar.
+	</t>
+	<t>
+		Some data requires synchronous interactions.
+		And other data may be transmitted asynchronously.
+		See <xref target="AsyncSync"> Async and Sync Data</xref>.
+	</t>
+	<t>
+		Some data such as audio and video may be streamed
+		and not sent as blocks of data.
+		Streamed data may be send asynchronously or synchronously
+		See <xref target="Stream">Stream Data</xref>
 	</t>
 </section>

@@ -1,6 +1,7 @@
-<reference anchor="YACC" target="">
+<reference anchor="FLEX">
   <front>
     <title>Flex - A fast Lexical Analyzer</title>
+		<author fullname="unknown" initials="" surname=""/>
     <abstract>
 			<t>
 				It is a computer program that generates lexical analyzers

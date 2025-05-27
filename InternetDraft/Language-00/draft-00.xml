@@ -54,14 +54,16 @@
   <middle>
     <xi:include href="RequirementsLanguage.xml"/>
 .so Introduction.xml
-.so CBOR.xml
-.so BasicTypes.xml
+.so BasicDataTypes.xml
+.so Identifiers.xml
 .so Namespaces.xml
 .so Typedef.xml
 .so Enum.xml
 .so Structures.xml
 .so Unions.xml
 .so BITS.xml
+.so ASyncSync.xml
+.so Stream.xml
 .so Program.xml
 <!--    <xi:include href="Commands.xml"/> -->
 		<xi:include href="IANA.xml"/>
@@ -85,6 +87,11 @@
       <references>
         <name>Informative References</name>
 				<xi:include href="References/reference.CLSgen.xml"/>
+        <xi:include href="References/reference.LEX.xml"/>
+        <xi:include href="References/reference.FLEX.xml"/>
+        <xi:include href="References/reference.BISON.xml"/>
+        <xi:include href="References/reference.YACC.xml"/>
+        <xi:include href="References/reference.DOXYGEN.xml"/>
 				<xi:include href="References/reference.CLSgendocs.xml"/>
 					<reference anchor="CBORImplementation" target="https://github.com/RiverExplorer/CBOR">
 					<front>

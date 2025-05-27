@@ -1,1 +1,1 @@
-internal_identifier : '_' identifier ;
+internal_identifier : '_' IDENTIFIER ;

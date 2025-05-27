@@ -1,0 +1,10 @@
+<section anchor="AsyncSync">
+	<name>Async and Sync Data</name>
+	<t>
+		Some or all of a protocol can be transmitted asynchronously
+		or synchronously.
+	</t>
+	<t>
+		TODO
+	</t>
+</section>

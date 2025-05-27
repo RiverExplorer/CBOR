@@ -18,6 +18,14 @@
  over the wire streams.
  
        
+ Many applications are built and compiled with computer
+ languages that require that the size and type of variable be known
+ at compile time.
+ This specification allows an application protocol designer
+ to specific the application requirements without regard
+ to how CBOR encodes and decodes the data.
+ 
+       
  This specification defines a CBOR protocol definition language.
  This is the CBOR Language Specification (CLS).
  This language and the sample implementation allows a
@@ -1234,7 +1242,7 @@ li > p:last-of-type:only-child {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Royer</td>
-<td class="center">Expires 26 November 2025</td>
+<td class="center">Expires 27 November 2025</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1247,12 +1255,12 @@ li > p:last-of-type:only-child {
 <dd class="internet-draft">draft-royer-cbor-language-00</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-05-25" class="published">25 May 2025</time>
+<time datetime="2025-05-26" class="published">26 May 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-11-26">26 November 2025</time></dd>
+<dd class="expires"><time datetime="2025-11-27">27 November 2025</time></dd>
 <dt class="label-authors">Author:</dt>
 <dd class="authors">
 <div class="author">
@@ -1275,12 +1283,19 @@ li > p:last-of-type:only-child {
  format could be found that specifically handles CBOR
  over the wire streams.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
 <p id="section-abstract-2">
+ Many applications are built and compiled with computer
+ languages that require that the size and type of variable be known
+ at compile time.
+ This specification allows an application protocol designer
+ to specific the application requirements without regard
+ to how CBOR encodes and decodes the data.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+<p id="section-abstract-3">
  This specification defines a CBOR protocol definition language.
  This is the CBOR Language Specification (CLS).
  This language and the sample implementation allows a
  developer to define the application layer objects
  that can be translated into and from a CBOR data streams
- by independently written implementations.<a href="#section-abstract-2" class="pilcrow">¶</a></p>
+ by independently written implementations.<a href="#section-abstract-3" class="pilcrow">¶</a></p>
 </section>
 <div id="status-of-memo">
 <section id="section-boilerplate.1">
@@ -1301,7 +1316,7 @@ li > p:last-of-type:only-child {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 26 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 27 November 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1337,19 +1352,75 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.2.1" class="keepWithNext"><a href="#section-2" class="auto internal xref">2</a>.  <a href="#name-introduction" class="internal xref">Introduction</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
-            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-cls-type" class="internal xref">CLS Type</a></p>
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="auto internal xref">3</a>.  <a href="#name-cls-basics" class="internal xref">CLS Basics</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
-                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-cls-type-2" class="internal xref">CLS Type</a></p>
+                <p id="section-toc.1-1.3.2.1.1" class="keepWithNext"><a href="#section-3.1" class="auto internal xref">3.1</a>.  <a href="#name-utc-and-array-overview" class="internal xref">UTC and Array Overview</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
-                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-number-of-bits-in-value" class="internal xref">Number of bits in value</a></p>
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="auto internal xref">3.2</a>.  <a href="#name-indefinite-length-arrays" class="internal xref">Indefinite Length Arrays</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
-                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-cls-predefined-data-types" class="internal xref">CLS Predefined Data Types</a></p>
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="auto internal xref">3.3</a>.  <a href="#name-channels" class="internal xref">Channels</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.4">
-                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-stringref" class="internal xref">StringRef</a></p>
+                <p id="section-toc.1-1.3.2.4.1"><a href="#section-3.4" class="auto internal xref">3.4</a>.  <a href="#name-async" class="internal xref">Async</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.5">
+                <p id="section-toc.1-1.3.2.5.1"><a href="#section-3.5" class="auto internal xref">3.5</a>.  <a href="#name-number-of-bits-in-value" class="internal xref">Number of bits in value</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.6">
+                <p id="section-toc.1-1.3.2.6.1"><a href="#section-3.6" class="auto internal xref">3.6</a>.  <a href="#name-data-types-detail" class="internal xref">Data Types - Detail</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.7">
+                <p id="section-toc.1-1.3.2.7.1"><a href="#section-3.7" class="auto internal xref">3.7</a>.  <a href="#name-stringref-and-dataref" class="internal xref">StringRef and DataRef</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8">
+                <p id="section-toc.1-1.3.2.8.1"><a href="#section-3.8" class="auto internal xref">3.8</a>.  <a href="#name-cbor-language-predefined-da" class="internal xref">CBOR Language Predefined Data Types</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.1">
+                    <p id="section-toc.1-1.3.2.8.2.1.1"><a href="#section-3.8.1" class="auto internal xref">3.8.1</a>.  <a href="#name-integers" class="internal xref">Integers</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.1.2.1">
+                        <p id="section-toc.1-1.3.2.8.2.1.2.1.1"><a href="#section-3.8.1.1" class="auto internal xref">3.8.1.1</a>.  <a href="#name-unsigned-integer" class="internal xref">Unsigned Integer</a></p>
+</li>
+                      <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.1.2.2">
+                        <p id="section-toc.1-1.3.2.8.2.1.2.2.1"><a href="#section-3.8.1.2" class="auto internal xref">3.8.1.2</a>.  <a href="#name-signed-integer" class="internal xref">Signed Integer</a></p>
+</li>
+                      <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.1.2.3">
+                        <p id="section-toc.1-1.3.2.8.2.1.2.3.1"><a href="#section-3.8.1.3" class="auto internal xref">3.8.1.3</a>.  <a href="#name-big-integers" class="internal xref">Big Integers</a></p>
+</li>
+                    </ul>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.2">
+                    <p id="section-toc.1-1.3.2.8.2.2.1"><a href="#section-3.8.2" class="auto internal xref">3.8.2</a>.  <a href="#name-float" class="internal xref">Float</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.3">
+                    <p id="section-toc.1-1.3.2.8.2.3.1"><a href="#section-3.8.3" class="auto internal xref">3.8.3</a>.  <a href="#name-string" class="internal xref">String</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.4">
+                    <p id="section-toc.1-1.3.2.8.2.4.1"><a href="#section-3.8.4" class="auto internal xref">3.8.4</a>.  <a href="#name-maps-and-multimaps" class="internal xref">Maps and MultiMaps</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.4.2.1">
+                        <p id="section-toc.1-1.3.2.8.2.4.2.1.1"><a href="#section-3.8.4.1" class="auto internal xref">3.8.4.1</a>.  <a href="#name-map" class="internal xref">Map</a></p>
+</li>
+                      <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.8.2.4.2.2">
+                        <p id="section-toc.1-1.3.2.8.2.4.2.2.1"><a href="#section-3.8.4.2" class="auto internal xref">3.8.4.2</a>.  <a href="#name-multimap" class="internal xref">Multimap</a></p>
+</li>
+                    </ul>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.9">
+                <p id="section-toc.1-1.3.2.9.1"><a href="#section-3.9" class="auto internal xref">3.9</a>.  <a href="#name-arrays" class="internal xref">Arrays</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.9.2.1">
+                    <p id="section-toc.1-1.3.2.9.2.1.1"><a href="#section-3.9.1" class="auto internal xref">3.9.1</a>.  <a href="#name-fixed-length-arrays" class="internal xref">Fixed Length Arrays</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.9.2.2">
+                    <p id="section-toc.1-1.3.2.9.2.2.1"><a href="#section-3.9.2" class="auto internal xref">3.9.2</a>.  <a href="#name-variable-length-arrays" class="internal xref">Variable Length Arrays</a></p>
+</li>
+                </ul>
 </li>
             </ul>
 </li>
@@ -1357,7 +1428,7 @@ li > p:last-of-type:only-child {
             <p id="section-toc.1-1.4.1"><a href="#section-4" class="auto internal xref">4</a>.  <a href="#name-identifiers-and-variables" class="internal xref">Identifiers and Variables</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
-                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-how-to-name-a-variable-or-i" class="internal xref">How to name a variable or identifier</a></p>
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="auto internal xref">4.1</a>.  <a href="#name-identifiers-and-scope" class="internal xref">Identifiers and Scope</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1.2.1">
                     <p id="section-toc.1-1.4.2.1.2.1.1"><a href="#section-4.1.1" class="auto internal xref">4.1.1</a>.  <a href="#name-publicly-scoped-identifiers" class="internal xref">Publicly scoped Identifiers</a></p>
@@ -1382,7 +1453,7 @@ li > p:last-of-type:only-child {
                 <p id="section-toc.1-1.5.2.2.1"><a href="#section-5.2" class="auto internal xref">5.2</a>.  <a href="#name-fixed-size-array" class="internal xref">Fixed Size Array '[]'</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3">
-                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-variable-size-array-max" class="internal xref">Variable Size Array '&lt;Max&gt;'</a></p>
+                <p id="section-toc.1-1.5.2.3.1"><a href="#section-5.3" class="auto internal xref">5.3</a>.  <a href="#name-variable-size-array-minmax" class="internal xref">Variable Size Array '&lt;Min,Max&gt;'</a></p>
 <ul class="compact toc ulBare ulEmpty">
 <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5.2.3.2.1">
                     <p id="section-toc.1-1.5.2.3.2.1.1"><a href="#section-5.3.1" class="auto internal xref">5.3.1</a>.  <a href="#name-variable-size-array-with-mi" class="internal xref">Variable Size Array With Minimum and Maximum Size</a></p>
@@ -1401,72 +1472,31 @@ li > p:last-of-type:only-child {
             </ul>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
-            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-cbor-language-predefined-da" class="internal xref">CBOR Language Predefined Data Types</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1">
-                <p id="section-toc.1-1.6.2.1.1"><a href="#section-6.1" class="auto internal xref">6.1</a>.  <a href="#name-integers" class="internal xref">Integers</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.1">
-                    <p id="section-toc.1-1.6.2.1.2.1.1"><a href="#section-6.1.1" class="auto internal xref">6.1.1</a>.  <a href="#name-unsigned-integer" class="internal xref">Unsigned Integer</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.2">
-                    <p id="section-toc.1-1.6.2.1.2.2.1"><a href="#section-6.1.2" class="auto internal xref">6.1.2</a>.  <a href="#name-signed-integer" class="internal xref">Signed Integer</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.1.2.3">
-                    <p id="section-toc.1-1.6.2.1.2.3.1"><a href="#section-6.1.3" class="auto internal xref">6.1.3</a>.  <a href="#name-big-integers" class="internal xref">Big Integers</a></p>
-</li>
-                </ul>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.2">
-                <p id="section-toc.1-1.6.2.2.1"><a href="#section-6.2" class="auto internal xref">6.2</a>.  <a href="#name-float" class="internal xref">Float</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.3">
-                <p id="section-toc.1-1.6.2.3.1"><a href="#section-6.3" class="auto internal xref">6.3</a>.  <a href="#name-string" class="internal xref">String</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4">
-                <p id="section-toc.1-1.6.2.4.1"><a href="#section-6.4" class="auto internal xref">6.4</a>.  <a href="#name-maps-and-multimaps" class="internal xref">Maps and MultiMaps</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.1">
-                    <p id="section-toc.1-1.6.2.4.2.1.1"><a href="#section-6.4.1" class="auto internal xref">6.4.1</a>.  <a href="#name-map" class="internal xref">Map</a></p>
-</li>
-                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6.2.4.2.2">
-                    <p id="section-toc.1-1.6.2.4.2.2.1"><a href="#section-6.4.2" class="auto internal xref">6.4.2</a>.  <a href="#name-multimap" class="internal xref">Multimap</a></p>
-</li>
-                </ul>
-</li>
-            </ul>
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="auto internal xref">6</a>.  <a href="#name-declaring-variables" class="internal xref">Declaring Variables</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
-            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-arrays" class="internal xref">Arrays</a></p>
-<ul class="compact toc ulBare ulEmpty">
-<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.1">
-                <p id="section-toc.1-1.7.2.1.1"><a href="#section-7.1" class="auto internal xref">7.1</a>.  <a href="#name-fixed-length-arrays" class="internal xref">Fixed Length Arrays</a></p>
-</li>
-              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7.2.2">
-                <p id="section-toc.1-1.7.2.2.1"><a href="#section-7.2" class="auto internal xref">7.2</a>.  <a href="#name-variable-length-arrays" class="internal xref">Variable Length Arrays</a></p>
-</li>
-            </ul>
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="auto internal xref">7</a>.  <a href="#name-namespaces" class="internal xref">Namespaces</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
-            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-declaring-variables" class="internal xref">Declaring Variables</a></p>
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="auto internal xref">8</a>.  <a href="#name-user-type-definitions" class="internal xref">User Type Definitions</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
-            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-namespaces" class="internal xref">Namespaces</a></p>
+            <p id="section-toc.1-1.9.1"><a href="#section-9" class="auto internal xref">9</a>.  <a href="#name-enum" class="internal xref">Enum</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
-            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-user-type-definitions" class="internal xref">User Type Definitions</a></p>
+            <p id="section-toc.1-1.10.1"><a href="#section-10" class="auto internal xref">10</a>. <a href="#name-structues" class="internal xref">Structues</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.11">
-            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-enum" class="internal xref">Enum</a></p>
+            <p id="section-toc.1-1.11.1"><a href="#section-11" class="auto internal xref">11</a>. <a href="#name-union" class="internal xref">Union</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.12">
-            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-structues" class="internal xref">Structues</a></p>
+            <p id="section-toc.1-1.12.1"><a href="#section-12" class="auto internal xref">12</a>. <a href="#name-bit-bits-and-bitmasks" class="internal xref">Bit, bits, and bitmasks</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.13">
-            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-union" class="internal xref">Union</a></p>
+            <p id="section-toc.1-1.13.1"><a href="#section-13" class="auto internal xref">13</a>. <a href="#name-async-and-sync-data" class="internal xref">Async and Sync Data</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.14">
-            <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref">14</a>. <a href="#name-bit-bits-and-bitmasks" class="internal xref">Bit, bits, and bitmasks</a></p>
+            <p id="section-toc.1-1.14.1"><a href="#section-14" class="auto internal xref">14</a>. <a href="#name-stream-data" class="internal xref">Stream Data</a></p>
 </li>
           <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.15">
             <p id="section-toc.1-1.15.1"><a href="#section-15" class="auto internal xref">15</a>. <a href="#name-program" class="internal xref">Program</a></p>
@@ -1552,31 +1582,36 @@ li > p:last-of-type:only-child {
  and run on a computer, some programming experience is
  helpful to fully understand this specification.<a href="#section-2-5" class="pilcrow">¶</a></p>
 <p id="section-2-6">
+ Many of the code examples are commented using the doxygen
+ <span>[<a href="#DOXYGEN" class="cite xref">DOXYGEN</a>]</span>
+ style of commenting.<a href="#section-2-6" class="pilcrow">¶</a></p>
+<p id="section-2-7">
  This specification was written in parallel with the creation
  of an <span><a href="#CLSOpenSource" class="internal xref">open source CBOR language protocol compiler</a> [<a href="#CLSOpenSource" class="cite xref">CLSOpenSource</a>]</span>.
  The documentation at <span>[<a href="#CLSgendocs" class="cite xref">CLSgendocs</a>]</span>.
  This was a way to help validate the open source compiler and
- this specification.<a href="#section-2-6" class="pilcrow">¶</a></p>
-<p id="section-2-7">
+ this specification.<a href="#section-2-7" class="pilcrow">¶</a></p>
+<p id="section-2-8">
  Many computer languages have built in and application
  defined data types that allow for more complex
  objects that CBOR itself defined.
- The solution is breakdown the more compled data
+ The solution is breakdown the more complex data
  type until they are objects that can be converted
- to and from the CBOR stream format.<a href="#section-2-7" class="pilcrow">¶</a></p>
-<p id="section-2-8">
+ to and from the CBOR stream format.
+ And then consolidating them during decoding.<a href="#section-2-8" class="pilcrow">¶</a></p>
+<p id="section-2-9">
  For example an object might consist of a persons
  name with three parts, their first, middle, and last name.
  This CBOR language allows for an object to be created
  with the purpose of the generating code that sends three
  CBOR text string objects without the application
  developer having to write the I/O code for
- each complex data type by hand.<a href="#section-2-8" class="pilcrow">¶</a></p>
-<p id="section-2-9">
+ each complex data type by hand.<a href="#section-2-9" class="pilcrow">¶</a></p>
+<p id="section-2-10">
  All CBOR data types can be specified in this
  language as well as more complex types built
- from the CBOR data types.<a href="#section-2-9" class="pilcrow">¶</a></p>
-<p id="section-2-10">
+ from the CBOR data types.<a href="#section-2-10" class="pilcrow">¶</a></p>
+<p id="section-2-11">
  Given the same CLS input file, each
  CBOR protocol compiler generates compatible
  over the wire data.
@@ -1584,8 +1619,8 @@ li > p:last-of-type:only-child {
  Application protocols can be developed and
  designed using this language and implementations would
  not need to hand code the reading or writing of the protocol
- details.<a href="#section-2-10" class="pilcrow">¶</a></p>
-<p id="section-2-11">
+ details.<a href="#section-2-11" class="pilcrow">¶</a></p>
+<p id="section-2-12">
  The goal of this language is to allow two or more cooperating
  applications to exchange data.
  It its not to guarantee that all generated code will work
@@ -1602,35 +1637,39 @@ li > p:last-of-type:only-child {
  they define to ensure that all data types they use
  in the protocol are supported by all intended computers.
  This goal allows for both flexibility, and for future
- systems that may have expanded data types.<a href="#section-2-11" class="pilcrow">¶</a></p>
-<p id="section-2-12">
+ systems that may have expanded data types.<a href="#section-2-12" class="pilcrow">¶</a></p>
+<p id="section-2-13">
  The sample implementation was written
  using the open source ANTLR4 compiler:
  <span><a href="https://github.com/antlr/antlr4">https://github.com/antlr/antlr4</a></span>.
- And is much like Yacc/Bison and lex/Flex grammar.<a href="#section-2-12" class="pilcrow">¶</a></p>
+ And is much like Yacc(<span>[<a href="#YACC" class="cite xref">YACC</a>]</span>)/Bison(<span>[<a href="#BISON" class="cite xref">BISON</a>]</span>) and lex(<span>[<a href="#LEX" class="cite xref">LEX</a>]</span>)/Flex(<span>[<a href="#FLEX" class="cite xref">FLEX</a>]</span>) grammar.<a href="#section-2-13" class="pilcrow">¶</a></p>
+<p id="section-2-14">
+ Some data requires synchronous interactions.
+ And other data may be transmitted asynchronously.
+ See <span><a href="#AsyncSync" class="internal xref">Async and Sync Data</a> (<a href="#AsyncSync" class="auto internal xref">Section 13</a>)</span>.<a href="#section-2-14" class="pilcrow">¶</a></p>
+<p id="section-2-15">
+ Some data such as audio and video may be streamed
+ and not sent as blocks of data.
+ Streamed data may be send asynchronously or synchronously
+ See <span><a href="#Stream" class="internal xref">Stream Data</a> (<a href="#Stream" class="auto internal xref">Section 14</a>)</span><a href="#section-2-15" class="pilcrow">¶</a></p>
 </section>
 <section id="section-3">
-      <h2 id="name-cls-type">
-<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-cls-type" class="section-name selfRef">CLS Type</a>
+      <h2 id="name-cls-basics">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-cls-basics" class="section-name selfRef">CLS Basics</a>
       </h2>
 <section id="section-3.1">
-        <h3 id="name-cls-type-2">
-<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-cls-type-2" class="section-name selfRef">CLS Type</a>
+        <h3 id="name-utc-and-array-overview">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-utc-and-array-overview" class="section-name selfRef">UTC and Array Overview</a>
         </h3>
 <p id="section-3.1-1">
- The meaning of "CLS TYPE" in this specification refers
- to a data type as a "C" code API type.
- The "C" language was chosen because many other languages
- have methods of calling and using "C" APIs methods and data.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
-<p id="section-3.1-2">
  The UTC value used in this specification is designed
  to be compatible with time_t on <span>[<a href="#POSIX" class="cite xref">POSIX</a>]</span>
  compliant systems.
  In POSIX systems, time_t is defined as an integer type used for
  representing time in seconds since the UNIX epoch, which
  is 00:00:00 UTC on January 1, 1970.
- And in this specification is 64-bit unsigned integer.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
-<p id="section-3.1-3">
+ And in this specification is 64-bit unsigned integer.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.1-2">
  Arrays are used in a lot of data flows.
  String are always an array of printable characters.
  Some data needs to be converted to a from
@@ -1639,81 +1678,81 @@ li > p:last-of-type:only-child {
  from network byte order is called 'opaque' data.
  A PNG file is an example of opaque data.
  The PNG data itself is defined so that it is readable
- without any additional encoding.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
-<p id="section-3.1-4">
+ without any additional encoding.<a href="#section-3.1-2" class="pilcrow">¶</a></p>
+<p id="section-3.1-3">
  In this CBOR Language Specification (CLS), a
  data type that is an array, is fixed in length,
- or variable in length.<a href="#section-3.1-4" class="pilcrow">¶</a></p>
-<p id="section-3.1-5">
- A fixed array:<a href="#section-3.1-5" class="pilcrow">¶</a></p>
+ or variable in length.<a href="#section-3.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1-4">
+ A fixed array:<a href="#section-3.1-4" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.1-6.1">
+<li class="normal" id="section-3.1-5.1">
  A fixed array has its length surrounded by square
- brackets '[' and ']'.<a href="#section-3.1-6.1" class="pilcrow">¶</a>
+ brackets '[' and ']'.<a href="#section-3.1-5.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-6.2">
- Each element in a fixed array is exactly the same size.<a href="#section-3.1-6.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-3.1-5.2">
+ Each element in a fixed array is exactly the same size.<a href="#section-3.1-5.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-6.3">
+          <li class="normal" id="section-3.1-5.3">
  The total size of a fixed array is calculated by multiplying
- the array length by the size of each element in the fixed array.<a href="#section-3.1-6.3" class="pilcrow">¶</a>
+ the array length by the size of each element in the fixed array.<a href="#section-3.1-5.3" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-6.4">
- A fixed size array can never be empty or null.<a href="#section-3.1-6.4" class="pilcrow">¶</a>
+          <li class="normal" id="section-3.1-5.4">
+ A fixed size array can never be empty or null.<a href="#section-3.1-5.4" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-3.1-7">
+<p id="section-3.1-6">
  A variable sized array.
- A variable array is one of two types:<a href="#section-3.1-7" class="pilcrow">¶</a></p>
+ A variable array is one of two types:<a href="#section-3.1-6" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.1-8.1">It is an array of UTF-8 characters, a string.<a href="#section-3.1-8.1" class="pilcrow">¶</a>
+<li class="normal" id="section-3.1-7.1">It is an array of UTF-8 characters, called a string.<a href="#section-3.1-7.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-8.2">Or it is an array of some non string data type.<a href="#section-3.1-8.2" class="pilcrow">¶</a>
+          <li class="normal" id="section-3.1-7.2">Or it is an array of some non string data type.<a href="#section-3.1-7.2" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-3.1-9">
- Common to all variable array types:<a href="#section-3.1-9" class="pilcrow">¶</a></p>
+<p id="section-3.1-8">
+ Common to all variable array types:<a href="#section-3.1-8" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.1-10.1">
-            <p id="section-3.1-10.1.1">
+<li class="normal" id="section-3.1-9.1">
+            <p id="section-3.1-9.1.1">
  Both a string and non-string variable array
  may have a maximum length surrounded by angle
- brackets:<a href="#section-3.1-10.1.1" class="pilcrow">¶</a></p>
-<p id="section-3.1-10.1.2">
- '&lt;' max-length '&gt;'.<a href="#section-3.1-10.1.2" class="pilcrow">¶</a></p>
+ brackets:<a href="#section-3.1-9.1.1" class="pilcrow">¶</a></p>
+<p id="section-3.1-9.1.2">
+ '&lt;' max-length '&gt;'.<a href="#section-3.1-9.1.2" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.1-10.2">
-            <p id="section-3.1-10.2.1">
+          <li class="normal" id="section-3.1-9.2">
+            <p id="section-3.1-9.2.1">
  Or they specify an unlimited length
  by having empty angle brackets, no maximum length
  specified.
- In this context 'unlimited' means not pre-defined.<a href="#section-3.1-10.2.1" class="pilcrow">¶</a></p>
-<p id="section-3.1-10.2.2">
- '&lt;&gt;'.<a href="#section-3.1-10.2.2" class="pilcrow">¶</a></p>
+ In this context 'unlimited' means not pre-defined.<a href="#section-3.1-9.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.1-9.2.2">
+ '&lt;&gt;'.<a href="#section-3.1-9.2.2" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.1-10.3">
-            <p id="section-3.1-10.3.1">
+          <li class="normal" id="section-3.1-9.3">
+            <p id="section-3.1-9.3.1">
  Any variable array may have zero entries at
  run time.
  This is an empty array and is valid in
- this language specification.<a href="#section-3.1-10.3.1" class="pilcrow">¶</a></p>
+ this language specification.<a href="#section-3.1-9.3.1" class="pilcrow">¶</a></p>
 </li>
-          <li class="normal" id="section-3.1-10.4">
-            <p id="section-3.1-10.4.1">
+          <li class="normal" id="section-3.1-9.4">
+            <p id="section-3.1-9.4.1">
  Any variable arrays may be null at run time.
  This is an null array and is valid in
  this language specification.
- And are transmitted as CBOR 'null' values.<a href="#section-3.1-10.4.1" class="pilcrow">¶</a></p>
+ And are transmitted as CBOR 'null' values.<a href="#section-3.1-9.4.1" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<p id="section-3.1-11">
- Non-string variable arrays:<a href="#section-3.1-11" class="pilcrow">¶</a></p>
+<p id="section-3.1-10">
+ Non-string variable arrays:<a href="#section-3.1-10" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.1-12.1">
+<li class="normal" id="section-3.1-11.1">
  Non-string variable arrays are defined by specifying
- their data type, and their optional maximum length.<a href="#section-3.1-12.1" class="pilcrow">¶</a>
+ their data type, and their optional maximum length.<a href="#section-3.1-11.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-12.2">
+          <li class="normal" id="section-3.1-11.2">
  Variable arrays that are not string arrays have
  their total size calculated by multiplying
  the array length (which may or might not be
@@ -1722,22 +1761,22 @@ li > p:last-of-type:only-child {
  in the variable array.
  A non-string variable array size is always
  less than or the same as any optional
- maximum length.<a href="#section-3.1-12.2" class="pilcrow">¶</a>
+ maximum length.<a href="#section-3.1-11.2" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-12.3">
+          <li class="normal" id="section-3.1-11.3">
  All elements in a non-string variable array
- have exactly the same size.<a href="#section-3.1-12.3" class="pilcrow">¶</a>
+ have exactly the same size.<a href="#section-3.1-11.3" class="pilcrow">¶</a>
 </li>
         </ul>
-<p id="section-3.1-13">
- String variable arrays:<a href="#section-3.1-13" class="pilcrow">¶</a></p>
+<p id="section-3.1-12">
+ String variable arrays:<a href="#section-3.1-12" class="pilcrow">¶</a></p>
 <ul class="normal">
-<li class="normal" id="section-3.1-14.1">
+<li class="normal" id="section-3.1-13.1">
  A variable array of UTF-8 characters is a 'string' array.
- String arrays are defined using the 'string' data type.<a href="#section-3.1-14.1" class="pilcrow">¶</a>
+ String arrays are defined using the 'string' data type.<a href="#section-3.1-13.1" class="pilcrow">¶</a>
 </li>
-          <li class="normal" id="section-3.1-14.2">
-            <p id="section-3.1-14.2.1">
+          <li class="normal" id="section-3.1-13.2">
+            <p id="section-3.1-13.2.1">
  Variable arrays that are string arrays (a string
  data type) have their
  total size calculated by adding up the number of
@@ -1747,8 +1786,8 @@ li > p:last-of-type:only-child {
  And the size (octet count) may be up to 4 times the maximum
  length (character count).
  Each UTF-8 character may be 1, 2, 3, or 4 octets
- in size.<a href="#section-3.1-14.2.1" class="pilcrow">¶</a></p>
-<p id="section-3.1-14.2.2">
+ in size.<a href="#section-3.1-13.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.1-13.2.2">
  This is why a 'string' can not be a fixed size array, as
  you may not know the total number of octets when
  generating the code.
@@ -1756,58 +1795,58 @@ li > p:last-of-type:only-child {
  octet character makes the string useless.
  If a string was a fixed array, then you have
  to describe how to pad the unused
- values each time, and decide on left or right padding.<a href="#section-3.1-14.2.2" class="pilcrow">¶</a></p>
+ values each time, and decide on left or right padding.<a href="#section-3.1-13.2.2" class="pilcrow">¶</a></p>
 </li>
         </ul>
-<span class="break"></span><dl class="dlParallel" id="section-3.1-15">
-          <dt id="section-3.1-15.1">string</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-15.2">
+<span class="break"></span><dl class="dlParallel" id="section-3.1-14">
+          <dt id="section-3.1-14.1">string</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-14.2">
             <ul class="normal">
-<li class="normal" id="section-3.1-15.2.1.1">
+<li class="normal" id="section-3.1-14.2.1.1">
  A string is always a variable array.
  If you need a fixed size character array, use a fixed
- array of 8 (ASCII), 16 (UTF-16), or 32 (UTF-32), values.<a href="#section-3.1-15.2.1.1" class="pilcrow">¶</a>
+ array of 8 (ASCII), 16 (UTF-16), or 32 (UTF-32), values.<a href="#section-3.1-14.2.1.1" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.2">
+              <li class="normal" id="section-3.1-14.2.1.2">
  A string may contain zero characters, this is an
- empty string.<a href="#section-3.1-15.2.1.2" class="pilcrow">¶</a>
+ empty string.<a href="#section-3.1-14.2.1.2" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.3">
+              <li class="normal" id="section-3.1-14.2.1.3">
  A string be null, in which is valid and
- is transmitted as a CBOR 'null'.<a href="#section-3.1-15.2.1.3" class="pilcrow">¶</a>
+ is transmitted as a CBOR 'null'.<a href="#section-3.1-14.2.1.3" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.4">
+              <li class="normal" id="section-3.1-14.2.1.4">
  A string is an array of UTF-8 printable characters.
- With an optional maximum length.<a href="#section-3.1-15.2.1.4" class="pilcrow">¶</a>
+ With an optional maximum length.<a href="#section-3.1-14.2.1.4" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.5">
+              <li class="normal" id="section-3.1-14.2.1.5">
  A string is an array of printable characters.
  And each character may be 1, 2, 3, or 4 octets
  in size.
  The length specifies the number of printable characters
  in the string not the size of the array.
- This is also why a string can not be a fixed array.<a href="#section-3.1-15.2.1.5" class="pilcrow">¶</a>
+ This is also why a string can not be a fixed array.<a href="#section-3.1-14.2.1.5" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.6">
+              <li class="normal" id="section-3.1-14.2.1.6">
  The octet count (size) of any string, could be the same
  as the number of characters (length),
- or the size could be up to 4 times larger.<a href="#section-3.1-15.2.1.6" class="pilcrow">¶</a>
+ or the size could be up to 4 times larger.<a href="#section-3.1-14.2.1.6" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.7">
- The length is the number of characters in the array.<a href="#section-3.1-15.2.1.7" class="pilcrow">¶</a>
+              <li class="normal" id="section-3.1-14.2.1.7">
+ The length is the number of characters in the array.<a href="#section-3.1-14.2.1.7" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.8">
- The size is the number of octets in the array.<a href="#section-3.1-15.2.1.8" class="pilcrow">¶</a>
+              <li class="normal" id="section-3.1-14.2.1.8">
+ The size is the number of octets in the array.<a href="#section-3.1-14.2.1.8" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-15.2.1.9">
+              <li class="normal" id="section-3.1-14.2.1.9">
  The length is always equal to or less than
- the size.<a href="#section-3.1-15.2.1.9" class="pilcrow">¶</a>
+ the size.<a href="#section-3.1-14.2.1.9" class="pilcrow">¶</a>
 </li>
             </ul>
 </dd>
         <dd class="break"></dd>
 </dl>
-<div class="alignLeft art-asciiart art-text artwork" id="section-3.1-16">
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.1-15">
 <pre>
 // A string variable array of printable
 // characters, unlimited in length.
@@ -1819,25 +1858,25 @@ string MyVariableName&lt;&gt;;
 // length. And up to 100 octets is size.
 //
 string MyVariableName2&lt;25&gt;;
-</pre><a href="#section-3.1-16" class="pilcrow">¶</a>
+</pre><a href="#section-3.1-15" class="pilcrow">¶</a>
 </div>
-<span class="break"></span><dl class="dlParallel" id="section-3.1-17">
-          <dt id="section-3.1-17.1">opaque</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-17.2">
+<span class="break"></span><dl class="dlParallel" id="section-3.1-16">
+          <dt id="section-3.1-16.1">opaque</dt>
+          <dd style="margin-left: 1.5em" id="section-3.1-16.2">
             <ul class="normal">
-<li class="normal" id="section-3.1-17.2.1.1">
+<li class="normal" id="section-3.1-16.2.1.1">
  An opaque array is an array of 8-bit octets.
- And will not be network byte encoded or decoded.<a href="#section-3.1-17.2.1.1" class="pilcrow">¶</a>
+ And will not be network byte encoded or decoded.<a href="#section-3.1-16.2.1.1" class="pilcrow">¶</a>
 </li>
-              <li class="normal" id="section-3.1-17.2.1.2">
+              <li class="normal" id="section-3.1-16.2.1.2">
  The size and length of an opaque array are
- always the same value.<a href="#section-3.1-17.2.1.2" class="pilcrow">¶</a>
+ always the same value.<a href="#section-3.1-16.2.1.2" class="pilcrow">¶</a>
 </li>
             </ul>
 </dd>
         <dd class="break"></dd>
 </dl>
-<div class="alignLeft art-asciiart art-text artwork" id="section-3.1-18">
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.1-17">
 <pre>
 // This is a fixed array that is always
 // 42 octets in size.
@@ -1854,107 +1893,219 @@ opaque MyOpaqueData&lt;42&gt;;
 // number of 8-bit octets.
 //
 opaque MyOpaqueData&lt;&gt;;
-</pre><a href="#section-3.1-18" class="pilcrow">¶</a>
+</pre><a href="#section-3.1-17" class="pilcrow">¶</a>
 </div>
+<p id="section-3.1-18">
+ Variable arrays in CBOR have a "&lt;&gt;" in them to indicate
+ they are variable arrays.<a href="#section-3.1-18" class="pilcrow">¶</a></p>
 <p id="section-3.1-19">
- Arrays in CBOR have a "&lt;&gt;" in them to indicate they are arrays.<a href="#section-3.1-19" class="pilcrow">¶</a></p>
+ Fixed arrays in CBOR have a "[]" in them to indicate
+ they are fixed size arrays.<a href="#section-3.1-19" class="pilcrow">¶</a></p>
+</section>
+<div id="IndifiniteLengths">
+<section id="section-3.2">
+        <h3 id="name-indefinite-length-arrays">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-indefinite-length-arrays" class="section-name selfRef">Indefinite Length Arrays</a>
+        </h3>
+<p id="section-3.2-1">
+ Variable arrays that have their encoding started before
+ the length is know will transmit the data with the CBOR
+ additional information value 31.
+ And will be terminated with the CBOR "break" stop code 31.
+ As defined in CBOR.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.2-2">
+ And they will be tagged in the protocol definition
+ file as "[stream]".<a href="#section-3.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.2-3">
+ No array without the "[stream]" tag will be encoded
+ as a CBOR indefinite length value.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
+<p id="section-3.2-4">
+ An array with the "[stream]" tag may be transmitted
+ as a CBOR non-indefinite length value if known
+ before the encoding begins.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
+<p id="section-3.2-5">
+ Examples of an indefinite variable length array
+ where the encoding starts before the length is known:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
+<div id="ILength">
 <figure id="figure-1">
-          <div class="alignLeft art-abnf art-text artwork" id="section-3.1-20.1">
+          <div class="alignLeft art-abnf art-text artwork" id="section-3.2-6.1">
 <pre>
-CBOR:
-string StringOfCharacters&lt;&gt;;
-Widget ArrayOfWidget&lt;&gt;;
-opaque PNGFileData&lt;&gt;;
+[stream] float16_t MicrophoneInputData&lt;&gt;;
+
+[stream] uint8_t LiveTelemetry&lt;&gt;;
+
+[stream] string LiveTranscription&lt;&gt;;
 </pre>
 </div>
 <figcaption><a href="#figure-1" class="selfRef">Figure 1</a></figcaption></figure>
-<p id="section-3.1-21">
- Where:<a href="#section-3.1-21" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-3.1-22">
-          <dt id="section-3.1-22.1">sting:</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-22.2">A CBOR protocol data type.<a href="#section-3.1-22.2" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-3.1-22.3">StingOfCharacters</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-22.4">
- A user defined name for this array.<a href="#section-3.1-22.4" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-3.1-22.5">Widget:</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-22.6">
- An example of a a user defined data type.<a href="#section-3.1-22.6" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-3.1-22.7">Array of Widget:</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-22.8">
- A user defined name for this array.<a href="#section-3.1-22.8" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-3.1-22.9">opaque:</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-22.10">A CBOR protocol data type.<a href="#section-3.1-22.10" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-3.1-22.11">PNFFileData:</dt>
-          <dd style="margin-left: 1.5em" id="section-3.1-22.12">
- A user defined name for this array.<a href="#section-3.1-22.12" class="pilcrow">¶</a>
-</dd>
-        <dd class="break"></dd>
-</dl>
-<p id="section-3.1-23">
- The opaque data type represents data that is not
- encoded in any way.
- A PNG file is an example that does not get network byte order
- translated, it is sent as an opaque blob of unaltered data.<a href="#section-3.1-23" class="pilcrow">¶</a></p>
-<p id="section-3.1-24">
- A 'string' in CBOR represents a string of printable characters.<a href="#section-3.1-24" class="pilcrow">¶</a></p>
-</section>
-<section id="section-3.2">
-        <h3 id="name-number-of-bits-in-value">
-<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-number-of-bits-in-value" class="section-name selfRef">Number of bits in value</a>
-        </h3>
-<p id="section-3.2-1">
- The CBOR protocol Language allows for bit value, bits values,
- and bit masks,
- See <span><a href="#BITS" class="internal xref">BITS</a> (<a href="#BITS" class="auto internal xref">Section 14</a>)</span><a href="#section-3.2-1" class="pilcrow">¶</a></p>
-<p id="section-3.2-2">
- In this specification terminal values may specify a bit width.
- Indicating the number of bits in the value.<a href="#section-3.2-2" class="pilcrow">¶</a></p>
-<p id="section-3.2-3">
- Where the "width" is the number of bits in the value.
- And must be an unsigned integer greater than zero.
- And is always expressed in decimal.<a href="#section-3.2-3" class="pilcrow">¶</a></p>
-<p id="section-3.2-4">
- When the left side of a rule has a width: 
- The number of bits on the left side must equal
- the number of bits on the right side.<a href="#section-3.2-4" class="pilcrow">¶</a></p>
-<p id="section-3.2-5">
- The most significant values are placed to the left of
- lesser signification values in the rule:<a href="#section-3.2-5" class="pilcrow">¶</a></p>
-<p id="section-3.2-6">
- In this example A Header is 32-bits in size
- and is composed of an 8-bit (Offset), 2-bit (Flags or F),
- and 22-bit (Length) value.<a href="#section-3.2-6" class="pilcrow">¶</a></p>
+</div>
 <p id="section-3.2-7">
- Here in CBOR protocol language:<a href="#section-3.2-7" class="pilcrow">¶</a></p>
-<div id="Header32Example">
+ The "[stream]" tag is a hint to the implementation
+ that the data tagged needs to be able to be processed
+ before the length is known.<a href="#section-3.2-7" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="Channel">
+<section id="section-3.3">
+        <h3 id="name-channels">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-channels" class="section-name selfRef">Channels</a>
+        </h3>
+<p id="section-3.3-1">
+ Some interactions in a data stream require a 
+ complete transfer of data before the logic of the
+ application can proceed.
+ This type of data is synchronous data, and is the default.
+ It does not mean that the other endpoint must reply.
+ It means the data must be transferred or sent before the
+ application goes to its next programmed operation.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.3-2">
+ In some cases the data transfer can occur over time.
+ For example a live transcription can occur at the
+ same time that a user is reading their email on
+ the same session.
+ One way to implement this is with threading.
+ Threading is a programming technique where separate
+ flows of application logic can be processed in parallel.<a href="#section-3.3-2" class="pilcrow">¶</a></p>
+<p id="section-3.3-3">
+ There are two basic ways to do parallel data transfer.<a href="#section-3.3-3" class="pilcrow">¶</a></p>
+<ul class="normal">
+<li class="normal" id="section-3.3-4.1">
+ Open two or more sessions.
+ One for each parallel operation.<a href="#section-3.3-4.1" class="pilcrow">¶</a>
+</li>
+          <li class="normal" id="section-3.3-4.2">
+ Multiplex the data over one connection.<a href="#section-3.3-4.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-3.3-5">
+ Opening two or more sessions is out of scope for this
+ specification because no additional specification beyond
+ what is needed with multiplex coordination would be needed.
+ And Servers may limit the number of simultaneous connections from
+ the same authenticated user.<a href="#section-3.3-5" class="pilcrow">¶</a></p>
+<p id="section-3.3-6">
+ A multiplexed transfer of data requires a in-stream switching
+ mechanism.
+ This mechanism is called channeling.
+ Both endpoints must be capable of and agree to channeling.<a href="#section-3.3-6" class="pilcrow">¶</a></p>
+<p id="section-3.3-7">
+ All objects that are to be channeled have the "[channel N]" tag
+ applied to them.
+ With 'N' being the channel number.
+ The "[channel N]" tag can be added to any data type, structure,
+ or method.<a href="#section-3.3-7" class="pilcrow">¶</a></p>
+<p id="section-3.3-8">
+ All objects that do not have a "[channel N]" tag are done
+ in the single session connection, which is channel zero (0)
+ and must be done synchronously.<a href="#section-3.3-8" class="pilcrow">¶</a></p>
+<p id="section-3.3-9">
+ The "[channel N]" tag has a mandatory parameter indicating
+ the channel number or name.
+ Channel numbers are positive integers.
+ Channel zero (0) is reserved for synchronous communication
+ only and is the default.
+ Channel names must be identifiers (<a href="#Identifiers" class="auto internal xref">Section 4</a>).
+ And only one synchronous channel may exist, and it
+ must be channel zero (0).
+ When not tagged, the default is "[channel 0]"
+ Tagging with "[channel 0]" is
+ the same as not tagging the object.<a href="#section-3.3-9" class="pilcrow">¶</a></p>
+<p id="section-3.3-10">
+ The multiplexing is done without the application knowing
+ it is done.
+ The application sends a blob of data, and the underlying
+ implementation breaks it into pieces as needed based on
+ the amount of backlogged data across all channels.<a href="#section-3.3-10" class="pilcrow">¶</a></p>
+<p id="section-3.3-11">
+ As an aid to reading CLS files, a channel may be
+ assigned a name.
+ The name must be defined before its first use in
+ "[channel N]".<a href="#section-3.3-11" class="pilcrow">¶</a></p>
+<p id="section-3.3-12">
+ Exampling naming a channel:<a href="#section-3.3-12" class="pilcrow">¶</a></p>
+<div id="NameChannel">
 <figure id="figure-2">
-          <div class="alignLeft art-abnf art-text artwork" id="section-3.2-8.1">
+          <div class="alignLeft art-abnf art-text artwork" id="section-3.3-13.1">
 <pre>
-Header:32 = Offset:8 Flags:2 Length:22
+channel[1] = Notifications;
+
+// Channel numbers only have to be
+// unique positive numbers,
+// They do not have to be sequential.
+//
+channel[12] = LiveTranscript;
+
+// And used:
+//
+[channel LiveTranscript] [stream] string TranscriptText&lt;&gt;;
+
+[channel Notifications] [async] GetNotifications(Callback_Identifier);
 </pre>
 </div>
 <figcaption><a href="#figure-2" class="selfRef">Figure 2</a></figcaption></figure>
 </div>
-<p id="section-3.2-9">
- They are written most significant bits to least significant
- bits. So, Length (<a href="#Header32Example" class="auto internal xref">Figure 2</a>) is 22 bits and occupies the least significant
- bits in the value.<a href="#section-3.2-9" class="pilcrow">¶</a></p>
-<p id="section-3.2-10">
- Example pseudo code for the CLS in
- <a href="#Header32Example" class="auto internal xref">Figure 2</a> could be:<a href="#section-3.2-10" class="pilcrow">¶</a></p>
-<div id="Header32ExamplePseudo">
+</section>
+</div>
+<div id="Async">
+<section id="section-3.4">
+        <h3 id="name-async">
+<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-async" class="section-name selfRef">Async</a>
+        </h3>
+<p id="section-3.4-1">
+ All Objects may be tagged with the "[async]" tag.
+ The "[async]" tag indicates that the application has
+ sent the data, and will not wait for the reply.
+ Instead, the CLS implementation will notify the application
+ a reply has been received.<a href="#section-3.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<section id="section-3.5">
+        <h3 id="name-number-of-bits-in-value">
+<a href="#section-3.5" class="section-number selfRef">3.5. </a><a href="#name-number-of-bits-in-value" class="section-name selfRef">Number of bits in value</a>
+        </h3>
+<p id="section-3.5-1">
+ The CBOR protocol Language allows for bit value, bits values,
+ and bit masks,
+ See <span><a href="#BITS" class="internal xref">BITS</a> (<a href="#BITS" class="auto internal xref">Section 12</a>)</span><a href="#section-3.5-1" class="pilcrow">¶</a></p>
+<p id="section-3.5-2">
+ In this specification terminal values may specify a bit width.
+ Indicating the number of bits in the value.<a href="#section-3.5-2" class="pilcrow">¶</a></p>
+<p id="section-3.5-3">
+ Where the "width" is the number of bits in the value.
+ And must be an unsigned integer greater than zero.
+ And is always expressed in decimal.<a href="#section-3.5-3" class="pilcrow">¶</a></p>
+<p id="section-3.5-4">
+ When the left side of a rule has a width: 
+ The number of bits on the left side must equal
+ the number of bits on the right side.<a href="#section-3.5-4" class="pilcrow">¶</a></p>
+<p id="section-3.5-5">
+ The most significant values are placed to the left of
+ lesser signification values in the rule:<a href="#section-3.5-5" class="pilcrow">¶</a></p>
+<p id="section-3.5-6">
+ In this example A Header is 32-bits in size
+ and is composed of an 8-bit (Offset), 2-bit (Flags or F),
+ and 22-bit (Length) value.<a href="#section-3.5-6" class="pilcrow">¶</a></p>
+<p id="section-3.5-7">
+ Here in CBOR protocol language:<a href="#section-3.5-7" class="pilcrow">¶</a></p>
+<div id="Header32Example">
 <figure id="figure-3">
-          <div class="sourcecode" id="section-3.2-11.1">
+          <div class="alignLeft art-abnf art-text artwork" id="section-3.5-8.1">
+<pre>
+Header:32 = Offset:8 Flags:2 Length:22
+</pre>
+</div>
+<figcaption><a href="#figure-3" class="selfRef">Figure 3</a></figcaption></figure>
+</div>
+<p id="section-3.5-9">
+ They are written most significant bits to least significant
+ bits. So, Length (<a href="#Header32Example" class="auto internal xref">Figure 3</a>) is 22 bits and occupies the least significant
+ bits in the value.<a href="#section-3.5-9" class="pilcrow">¶</a></p>
+<p id="section-3.5-10">
+ Example pseudo code for the CLS in
+ <a href="#Header32Example" class="auto internal xref">Figure 3</a> could be:<a href="#section-3.5-10" class="pilcrow">¶</a></p>
+<div id="Header32ExamplePseudo">
+<figure id="figure-4">
+          <div class="sourcecode" id="section-3.5-11.1">
 <pre>
 // Header is a 32-bit unsigned integer.
 // Offset is an 8-bit unsigned integer.
@@ -1964,23 +2115,23 @@ Header:32 = Offset:8 Flags:2 Length:22
 Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
 </pre>
 </div>
-<figcaption><a href="#figure-3" class="selfRef">Figure 3</a></figcaption></figure>
+<figcaption><a href="#figure-4" class="selfRef">Figure 4</a></figcaption></figure>
 </div>
-<p id="section-3.2-12">
+<p id="section-3.5-12">
  The pseudo code in
- <a href="#Header32ExamplePseudo" class="auto internal xref">Figure 3</a>
+ <a href="#Header32ExamplePseudo" class="auto internal xref">Figure 4</a>
  shifts the 8-bit "Offset" over 24 bits to the left, then
  shifts the 2-bit value "Flags (F)" over 22 bits,
  then, places the lower 24-bits "Length" into the results.
  The result would be all three values into the
- one 32-bit result as illustrated in <a href="#ABNF-00" class="auto internal xref">Figure 4</a>.<a href="#section-3.2-12" class="pilcrow">¶</a></p>
-<p id="section-3.2-13">
+ one 32-bit result as illustrated in <a href="#ABNF-00" class="auto internal xref">Figure 5</a>.<a href="#section-3.5-12" class="pilcrow">¶</a></p>
+<p id="section-3.5-13">
  NOTE: Bits do not have to fill up any value, and can span
- multiple values. See <span><a href="#BITS" class="internal xref">BITS</a> (<a href="#BITS" class="auto internal xref">Section 14</a>)</span><a href="#section-3.2-13" class="pilcrow">¶</a></p>
+ multiple values. See <span><a href="#BITS" class="internal xref">BITS</a> (<a href="#BITS" class="auto internal xref">Section 12</a>)</span><a href="#section-3.5-13" class="pilcrow">¶</a></p>
 <span id="name-packed-bit-example"></span><div id="ABNF-00">
-<figure id="figure-4">
-          <div id="section-3.2-14.1">
-            <div class="alignCenter art-svg artwork" id="section-3.2-14.1.2">
+<figure id="figure-5">
+          <div id="section-3.5-14.1">
+            <div class="alignCenter art-svg artwork" id="section-3.5-14.1.2">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="96" width="304" viewBox="0 0 304 96" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <path d="M 8,32 L 8,80" fill="none" stroke="black"></path>
                 <path d="M 80,16 L 80,64" fill="none" stroke="black"></path>
@@ -2000,24 +2151,24 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
                   <text x="156" y="52">Length</text>
                   <text x="48" y="84">32-bits</text>
                 </g>
-              </svg><a href="#section-3.2-14.1.2" class="pilcrow">¶</a>
+              </svg><a href="#section-3.5-14.1.2" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-4" class="selfRef">Figure 4</a>:
+<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
 <a href="#name-packed-bit-example" class="selfRef">Packed Bit Example</a>
           </figcaption></figure>
 </div>
 </section>
-<section id="section-3.3">
-        <h3 id="name-cls-predefined-data-types">
-<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-cls-predefined-data-types" class="section-name selfRef">CLS Predefined Data Types</a>
+<section id="section-3.6">
+        <h3 id="name-data-types-detail">
+<a href="#section-3.6" class="section-number selfRef">3.6. </a><a href="#name-data-types-detail" class="section-name selfRef">Data Types - Detail</a>
         </h3>
-<p id="section-3.3-1">
+<p id="section-3.6-1">
  The CLS language allows the developer to code for application,
  many of which are built with computer languages that require
  known and compiled in data sizes.
  These sizes are converted to and from CBOR stream format
- as needed.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+ as needed.<a href="#section-3.6-1" class="pilcrow">¶</a></p>
 <span id="name-phoenix-protocol-types"></span><table class="center" id="table-1">
           <caption>
 <a href="#table-1" class="selfRef">Table 1</a>:
@@ -2036,11 +2187,25 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
           <tbody>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">
+ uint_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+ An unsigned integer of any size.
+ When the CLS file specifies a uint_t, then
+ it could be CBOR encoded as a CBOR major type 0,
+ or as a CBOR major type 6 tag 2 bignum.
+ It is encoded as a CBOR major type 0,
+ unless it is larger than 64-bits.
+ </td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
  uint8_t
  </td>
               <td class="text-left" rowspan="1" colspan="1">
-                <p id="section-3.3-2.2.1.2.1">
- An 8-bit unsigned integer.<a href="#section-3.3-2.2.1.2.1" class="pilcrow">¶</a></p>
+                <p id="section-3.6-2.2.2.2.1">
+ An 8-bit unsigned integer.
+ Encoded as a CBOR major type 0.<a href="#section-3.6-2.2.2.2.1" class="pilcrow">¶</a></p>
 </td>
             </tr>
             <tr>
@@ -2048,8 +2213,9 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  uint16_t
  </td>
               <td class="text-left" rowspan="1" colspan="1">
-                <p id="section-3.3-2.2.2.2.1">
- A 16-bit unsigned integer.<a href="#section-3.3-2.2.2.2.1" class="pilcrow">¶</a></p>
+                <p id="section-3.6-2.2.3.2.1">
+ A 16-bit unsigned integer.
+ Encoded as a CBOR major type 0.<a href="#section-3.6-2.2.3.2.1" class="pilcrow">¶</a></p>
 </td>
             </tr>
             <tr>
@@ -2057,8 +2223,9 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  uint32_t
  </td>
               <td class="text-left" rowspan="1" colspan="1">
-                <p id="section-3.3-2.2.3.2.1">
- A 32-bit unsigned integer.<a href="#section-3.3-2.2.3.2.1" class="pilcrow">¶</a></p>
+                <p id="section-3.6-2.2.4.2.1">
+ A 32-bit unsigned integer.
+ Encoded as a CBOR major type 0.<a href="#section-3.6-2.2.4.2.1" class="pilcrow">¶</a></p>
 </td>
             </tr>
             <tr>
@@ -2066,8 +2233,154 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  uint64_t
  </td>
               <td class="text-left" rowspan="1" colspan="1">
-                <p id="section-3.3-2.2.4.2.1">
- A 64-bit unsigned integer.<a href="#section-3.3-2.2.4.2.1" class="pilcrow">¶</a></p>
+                <p id="section-3.6-2.2.5.2.1">
+ A 64-bit unsigned integer.
+ Encoded as a CBOR major type 0.<a href="#section-3.6-2.2.5.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ int_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.6.2.1">
+ An signed integer of any size.
+ When the CLS file specifies a int_t, then
+ it could be CBOR encoded as a CBOR major type 1,
+ or as a CBOR major type 6 tag 2 or tag 3 bignum.
+ It is encoded as a CBOR major type 1,
+ unless it is larger than 64-bits.<a href="#section-3.6-2.2.6.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ int8_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.7.2.1">
+ An 8-bit signed integer.
+ Encoded as a CBOR major type 1.<a href="#section-3.6-2.2.7.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ int16_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.8.2.1">
+ A 16-bit signed integer.
+ Encoded as a CBOR major type 1.<a href="#section-3.6-2.2.8.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ int32_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.9.2.1">
+ A 32-bit signed integer.
+ Encoded as a CBOR major type 1.<a href="#section-3.6-2.2.9.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ int64_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.10.2.1">
+ A 64-bit signed integer.
+ Encoded as a CBOR major type 1.<a href="#section-3.6-2.2.10.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ float_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.11.2.1">
+ A floating point number.
+ When the CLS file specifies a float_t, then it
+ will be CBOR encoded as a CBOR major type 7,
+ or major type 6 tag 5 bigfloat.<a href="#section-3.6-2.2.11.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ float[e.m]_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.12.2.1">
+ A floating point number with a minimum exponent
+ precision bits of 'e' bits and
+ a minumum mantassa precission bits of 'm' bits.
+ When the CLS file specifies a float_t, then it
+ will be CBOR encoded as a CBOR major type 7,
+ or major type 6 tag 5 bigfloat when too large
+ for a type 7.<a href="#section-3.6-2.2.12.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.12.2.2">
+ Examples: float8.23_t, float11.52_t, float15.113_t<a href="#section-3.6-2.2.12.2.2" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.12.2.3">
+ IMPLEMENTATION NOTE: Most platforms and
+ compilers do not support random bit floating point number
+ widths.
+ Implementors should use caution when specifying
+ non standard bit widths in floating point numbers.
+ Protocol designers should specify in the protocol file
+ any size or precision requirements as comments in the file.<a href="#section-3.6-2.2.12.2.3" class="pilcrow">¶</a></p>
+<ul class="normal text-left">
+<li class="normal text-left" id="section-3.6-2.2.12.2.4.1">
+ float5.10_t type is a float16_t.<a href="#section-3.6-2.2.12.2.4.1" class="pilcrow">¶</a>
+</li>
+                  <li class="normal text-left" id="section-3.6-2.2.12.2.4.2">
+ float8.23_t type is a float32_t.<a href="#section-3.6-2.2.12.2.4.2" class="pilcrow">¶</a>
+</li>
+                  <li class="normal text-left" id="section-3.6-2.2.12.2.4.3">
+ float11.52_t is a float64_t.<a href="#section-3.6-2.2.12.2.4.3" class="pilcrow">¶</a>
+</li>
+                </ul>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ float16_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.13.2.1">
+ A 16-bit signed integer.
+ Encoded as a CBOR major type 7.<a href="#section-3.6-2.2.13.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.13.2.2">
+ The same as a float5.10_t type.<a href="#section-3.6-2.2.13.2.2" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.13.2.3">
+ IMPLEMENTATION NOTE: Not all platforms and
+ compilers support 16 bit floating point numbers.
+ Conversion methods may need to be implemented
+ in such cases.
+ Implementors should use caution when specifying
+ that a 16-bit floating point should be used.<a href="#section-3.6-2.2.13.2.3" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ float32_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.14.2.1">
+ A 32-bit IEEE floating point number.
+ Encoded as a CBOR major type 7.<a href="#section-3.6-2.2.14.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.14.2.2">
+ The same as a float8.23_t type.<a href="#section-3.6-2.2.14.2.2" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ float64_t
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.15.2.1">
+ A 64-bit IEEE floating point number.
+ Encoded as a CBOR major type 7.<a href="#section-3.6-2.2.15.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.15.2.2">
+ The same as a float11.52_t type.<a href="#section-3.6-2.2.15.2.2" class="pilcrow">¶</a></p>
 </td>
             </tr>
             <tr>
@@ -2075,8 +2388,9 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  string
  </td>
               <td class="text-left" rowspan="1" colspan="1">
-                <p id="section-3.3-2.2.5.2.1">
- A string of UTF-8 characters.<a href="#section-3.3-2.2.5.2.1" class="pilcrow">¶</a></p>
+                <p id="section-3.6-2.2.16.2.1">
+ A string of UTF-8 characters.
+ Encoded as a CBOR major type 3.<a href="#section-3.6-2.2.16.2.1" class="pilcrow">¶</a></p>
 </td>
             </tr>
             <tr>
@@ -2084,10 +2398,42 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  opaque
  </td>
               <td class="text-left" rowspan="1" colspan="1">
-                <p id="section-3.3-2.2.6.2.1">
+                <p id="section-3.6-2.2.17.2.1">
  An array of 8-bit values that will not be
  CBOR encoded or CBOR decoded when transferring the data
- over this protocol.<a href="#section-3.3-2.2.6.2.1" class="pilcrow">¶</a></p>
+ over this protocol.
+ Encoded as a CBOR major type 2.<a href="#section-3.6-2.2.17.2.1" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ map
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.18.2.1">
+ A map is an ordered list of key/value pairs.
+ With the key being unique in the map.<a href="#section-3.6-2.2.18.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.18.2.2">
+ A map is converted to a CBOR major type 5 map.<a href="#section-3.6-2.2.18.2.2" class="pilcrow">¶</a></p>
+</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">
+ multimap
+ </td>
+              <td class="text-left" rowspan="1" colspan="1">
+                <p id="section-3.6-2.2.19.2.1">
+ A multimap is an ordered list of key/value pairs.
+ Where the keys are not necessarily unique.
+ Duplicate keys are allowed.<a href="#section-3.6-2.2.19.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.6-2.2.19.2.2">
+ A multimap is converted to a CBOR major type 5
+ map.
+ With each unique key in the multimap having
+ a value part that is a CBOR major type 4 array
+ with ordered values.
+ One array entry for each value in
+ in the multimap.<a href="#section-3.6-2.2.19.2.2" class="pilcrow">¶</a></p>
 </td>
             </tr>
             <tr>
@@ -2103,50 +2449,15 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">
- OpSet
- </td>
-              <td class="text-left" rowspan="1" colspan="1">
- An 8-bit value.
- Signifies the operation will set a value.
- This is used in a few places to signify
- the operation to apply to any included data.
- </td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">
- OpGet
- </td>
-              <td class="text-left" rowspan="1" colspan="1">
- An 8-bit value.
- Signifies the operation will get a value.
- </td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">
- OpUpdate
- </td>
-              <td class="text-left" rowspan="1" colspan="1">
- An 8-bit value.
- Signifies the operation will update an existing value.
- </td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">
- OpDelete
- </td>
-              <td class="text-left" rowspan="1" colspan="1">
- An 8-bit value.
- Signifies the operation will delete key/value pair.
- </td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">
  true
  </td>
               <td class="text-left" rowspan="1" colspan="1">
  An 1-bit value.
  A value of true.
  Set to '1'.
+ A true value is sent as a CBOR major type 0
+ data item that might be packed with other
+ bits, as defined in the CLS definition file.
  </td>
             </tr>
             <tr>
@@ -2157,6 +2468,9 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  An 1-bit value.
  A value of false.
  Set to '0'.
+ A true value is sent as a CBOR major type 0
+ data item that might be packed with other
+ bits, as defined in the CLS definition file.
  </td>
             </tr>
             <tr>
@@ -2172,10 +2486,12 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  VENDOR_BIT
  </td>
               <td class="text-left" rowspan="1" colspan="1">
- A 1 bit value, set to 1.
+ A 1 bit wide attribute value, set to 1.
  It is placed in the highest bit
  position in the value.
  Applies as specified in this specification.
+ This is not a bit field, it is an attribute
+ of the command being transmitted.
  </td>
             </tr>
             <tr>
@@ -2183,77 +2499,103 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  PHOENIX_BIT
  </td>
               <td class="text-left" rowspan="1" colspan="1">
- A 1 bit value, set to 0.
+ A 1 bit wide attribute value, set to 0.
  It is placed in the highest bit
  position in the value.
  Applies as specified in this specification.
+ This is not a bit field, it is an attribute
+ of the command being transmitted.
  </td>
             </tr>
           </tbody>
         </table>
+<p id="section-3.6-3">
+ Floating point numbers implementation notes.
+ Many sizes exist depending on the operating system
+ and compilers used.
+ Some sizes used are 16, 24, 32, 40, 64, and 80, 96, and 128 bit
+ floating point numbers.
+ Generally implementations should go to the next larger
+ size in their implementation if they do not natively support a
+ size in the protocol definition file.
+ Protocol designers should specify in the protocol file
+ any size or precision requirements as comments in the file.<a href="#section-3.6-3" class="pilcrow">¶</a></p>
+<p id="section-3.6-4">
+ Implementation that require specific floating point widths
+ could implement them as a user defined data type:<a href="#section-3.6-4" class="pilcrow">¶</a></p>
+<div id="CustomFloatingPoint">
+<figure id="figure-6">
+          <div class="alignLeft art-asciiart art-text artwork" id="section-3.6-5.1">
+<pre>
+struct MyMadeUpFloat96
+{
+  bit IsNegative;
+  bits Exponent:16;
+  bits Mantissa:79;
+};
+</pre>
+</div>
+<figcaption><a href="#figure-6" class="selfRef">Figure 6</a></figcaption></figure>
+</div>
 </section>
 <div id="StringRef">
-<section id="section-3.4">
-        <h3 id="name-stringref">
-<a href="#section-3.4" class="section-number selfRef">3.4. </a><a href="#name-stringref" class="section-name selfRef">StringRef</a>
+<section id="section-3.7">
+        <h3 id="name-stringref-and-dataref">
+<a href="#section-3.7" class="section-number selfRef">3.7. </a><a href="#name-stringref-and-dataref" class="section-name selfRef">StringRef and DataRef</a>
         </h3>
-<p id="section-3.4-1">
- This protocol references strings in existing MIME objects
- by octet offset into the MIME object.
- This is is called a StringRef.
- All strings can be referenced by using a total of 8 octets.
- The StringRef does not contain the string, it is a 
- reference an existing string in a MIME object.
- A StringRef consists of two parts:<a href="#section-3.4-1" class="pilcrow">¶</a></p>
-<span id="name-stringref-abnf-cbor-mapping"></span><table class="center" id="table-2">
+<p id="section-3.7-1">
+ This protocol allows for the reference to strings and data
+ objects, by octet offset into the object.
+ This is is called a StringRef or DataRef.
+ The StringRef and DataRef do not contain the string or data,
+ it is a reference to data in an existing string or data object.
+ An example usage is in an index object that points
+ to data within a string or data, such as the parts
+ of a multipart MIME object.
+ They consists of two parts:<a href="#section-3.7-1" class="pilcrow">¶</a></p>
+<span id="name-stringref-and-dataref-abnf-"></span><table class="center" id="table-2">
           <caption>
 <a href="#table-2" class="selfRef">Table 2</a>:
-<a href="#name-stringref-abnf-cbor-mapping" class="selfRef">StringRef ABNF/CBOR Mapping</a>
+<a href="#name-stringref-and-dataref-abnf-" class="selfRef">StringRef and DataRef ABNF/CBOR Mapping</a>
           </caption>
 <thead>
             <tr>
               <th class="text-left" rowspan="1" colspan="1">Name</th>
+              <th class="text-left" rowspan="1" colspan="1">Size</th>
               <th class="text-left" rowspan="1" colspan="1">Description</th>
-              <th class="text-left" rowspan="1" colspan="1">CBOR API</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">Offset</td>
+              <td class="text-left" rowspan="1" colspan="1">uint_t</td>
               <td class="text-left" rowspan="1" colspan="1">
- The octet count to the start of the string with zero being the
- first octet in the message.
- </td>
-              <td class="text-left" rowspan="1" colspan="1">
- cbor_Offset()
+ The octet count to the start of the data.
+ With zero being the first octet in the object.
  </td>
             </tr>
             <tr>
               <td class="text-left" rowspan="1" colspan="1">Length</td>
+              <td class="text-left" rowspan="1" colspan="1">uint_t</td>
               <td class="text-left" rowspan="1" colspan="1">
- The length in octets of the string.
- </td>
-              <td class="text-left" rowspan="1" colspan="1">
- cbor_Length()
- </td>
-            </tr>
-            <tr>
-              <td class="text-left" rowspan="1" colspan="1">StringRef</td>
-              <td class="text-left" rowspan="1" colspan="1">
- A String reference object.
- </td>
-              <td class="text-left" rowspan="1" colspan="1">
- cbor_StringRef()
+ The length in octets of the referenced object in the data.
  </td>
             </tr>
           </tbody>
         </table>
-<p id="section-3.4-3">
- A StringRef over the wire is 8 octets in size.<a href="#section-3.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.7-3">
+ The only difference between a StringRef and a DataRef is
+ that a String ref points to readable string values that
+ may be 1, 2, 3, or 4 octets in length each.
+ And a DataRef points to objects that are always 8-bits
+ in size.<a href="#section-3.7-3" class="pilcrow">¶</a></p>
+<p id="section-3.7-4">
+ Here is an example of a StringRef over the wire that is
+ 8 octets in size.<a href="#section-3.7-4" class="pilcrow">¶</a></p>
 <span id="name-stringref-format"></span><div id="StringRefFigure">
-<figure id="figure-5">
-          <div id="section-3.4-4.1">
-            <div class="alignCenter art-svg artwork" id="section-3.4-4.1.2">
+<figure id="figure-7">
+          <div id="section-3.7-5.1">
+            <div class="alignCenter art-svg artwork" id="section-3.7-5.1.2">
 <svg xmlns="http://www.w3.org/2000/svg" version="1.1" height="96" width="296" viewBox="0 0 296 96" class="diagram" text-anchor="middle" font-family="monospace" font-size="13px" stroke-linecap="round">
                 <path d="M 8,16 L 8,80" fill="none" stroke="black"></path>
                 <path d="M 288,16 L 288,80" fill="none" stroke="black"></path>
@@ -2264,15 +2606,662 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
                   <text x="140" y="36">Offset into object (Offset:32)</text>
                   <text x="132" y="68">Length of string (Length:32)</text>
                 </g>
-              </svg><a href="#section-3.4-4.1.2" class="pilcrow">¶</a>
+              </svg><a href="#section-3.7-5.1.2" class="pilcrow">¶</a>
 </div>
 </div>
-<figcaption><a href="#figure-5" class="selfRef">Figure 5</a>:
+<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
 <a href="#name-stringref-format" class="selfRef">StringRef Format</a>
           </figcaption></figure>
 </div>
-<p id="section-3.4-5">
- ABNF:<a href="#section-3.4-5" class="pilcrow">¶</a></p>
+<p id="section-3.7-6">
+ ABNF:<a href="#section-3.7-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="PredefinedDataTypes">
+<section id="section-3.8">
+        <h3 id="name-cbor-language-predefined-da">
+<a href="#section-3.8" class="section-number selfRef">3.8. </a><a href="#name-cbor-language-predefined-da" class="section-name selfRef">CBOR Language Predefined Data Types</a>
+        </h3>
+<p id="section-3.8-1">
+ Here is a summary of all of the predefined data types:<a href="#section-3.8-1" class="pilcrow">¶</a></p>
+<p id="section-3.8-2">
+ This protocol language closely resembles the CBOR data model.
+ The following data types are defined in the language.
+ Each of these basic data types have a correlating
+ CBOR data type.
+ When possible the data types used in this language
+ are the same as their <span>[<a href="#POSIX" class="cite xref">POSIX</a>]</span> counterpart.<a href="#section-3.8-2" class="pilcrow">¶</a></p>
+<p id="section-3.8-3">
+ Some computer languages specify the size of integers.
+ With this language, an implementation still specifies
+ the size and the implementation reduces the lesser over
+ the wire size when possible.
+ And this implementation will expand them as needed.<a href="#section-3.8-3" class="pilcrow">¶</a></p>
+<p id="section-3.8-4">
+ For example, the application may require a 64-unsigned
+ integer (uint64_t) named CustomerCount.
+ And assume only four (4) customers exists.
+ So the implementation sends a one (1) octet CBOR
+ value over the wire, in hex it would be 0x04.<a href="#section-3.8-4" class="pilcrow">¶</a></p>
+<p id="section-3.8-5">
+ That exemplifies the unique data models of the
+ the application data size and the CBOR over the wire data size.
+ It is the jobs of a protocol compiler to translate
+ the received 0x01 into an uint64_t as described
+ in this example. And to notice that a 64-bit value,
+ depending on the size of its value, could be
+ sent in as few as one octet to as many as ten.<a href="#section-3.8-5" class="pilcrow">¶</a></p>
+<div id="Integers">
+<section id="section-3.8.1">
+          <h4 id="name-integers">
+<a href="#section-3.8.1" class="section-number selfRef">3.8.1. </a><a href="#name-integers" class="section-name selfRef">Integers</a>
+          </h4>
+<p id="section-3.8.1-1">
+ Integers can be signed or unsigned.
+ And they can be any size that is a multiple
+ of 8 bits wide.<a href="#section-3.8.1-1" class="pilcrow">¶</a></p>
+<div id="UnsignedIntegers">
+<section id="section-3.8.1.1">
+            <h5 id="name-unsigned-integer">
+<a href="#section-3.8.1.1" class="section-number selfRef">3.8.1.1. </a><a href="#name-unsigned-integer" class="section-name selfRef">Unsigned Integer</a>
+            </h5>
+<p id="section-3.8.1.1-1">
+ This language specifies unsigned integers that
+ are 8 bits, 16 bits, 32 bits , 64 bits, and bignum.<a href="#section-3.8.1.1-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-3.8.1.1-2">
+              <dt id="section-3.8.1.1-2.1">uint[W]_t</dt>
+              <dd style="margin-left: 1.5em" id="section-3.8.1.1-2.2">
+                <p id="section-3.8.1.1-2.2.1">
+ An unsigned integer, 'W' bits wide.
+ Where 'W' must be a multiple of 8.<a href="#section-3.8.1.1-2.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.8.1.1-2.2.2">
+ Examples of sizes not predefined: int40_t, int128_t<a href="#section-3.8.1.1-2.2.2" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+<p id="section-3.8.1.1-3">
+ The ANTLR specification for unsigned integer:<a href="#section-3.8.1.1-3" class="pilcrow">¶</a></p>
+<span id="name-unsignedinteger-antlr-gramm"></span><div id="uint-antlr">
+<figure id="figure-8">
+              <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.1.1-4.1">
+<pre>
+unsignedInteger
+  : 'uint_t'
+  | 'uint8_t'
+  | 'uint16_t'
+  | 'uint32_t'
+  | 'uint64_t'
+  | 'uint' DECIMAL '_t'
+  ;
+
+</pre>
+</div>
+<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<a href="#name-unsignedinteger-antlr-gramm" class="selfRef">unsignedInteger ANTLR grammar</a>
+              </figcaption></figure>
+</div>
+<p id="section-3.8.1.1-5">
+ See <a href="#UnsignedIntegers" class="auto internal xref">Section 3.8.1.1</a> for details.<a href="#section-3.8.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-3.8.1.1-6">Examples:<a href="#section-3.8.1.1-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.8.1.1-7">
+<pre>
+uint8_t EightBitsWide;
+
+uint16_t SixteenBitsWide;
+</pre><a href="#section-3.8.1.1-7" class="pilcrow">¶</a>
+</div>
+<p id="section-3.8.1.1-8">
+ A CBOR implementation transmits the unsigned integer
+ value, not the data type.
+ A uint128_t unsigned integer with a value of one (1)
+ would be transmitted as 0x01, a one octet value.<a href="#section-3.8.1.1-8" class="pilcrow">¶</a></p>
+<p id="section-3.8.1.1-9">
+ The 72, 128, and 'W' bit length unsigned integer data
+ types are just examples used to illustrate that this protocol
+ definition language can specify what the application needs
+ and an implementation translates that to and from the
+ smallest CBOR data value when used.
+ And note that the 72 and 128 ones are valid in this language
+ along with other nonstandard sizes.<a href="#section-3.8.1.1-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="SignedIntegers">
+<section id="section-3.8.1.2">
+            <h5 id="name-signed-integer">
+<a href="#section-3.8.1.2" class="section-number selfRef">3.8.1.2. </a><a href="#name-signed-integer" class="section-name selfRef">Signed Integer</a>
+            </h5>
+<p id="section-3.8.1.2-1">
+ This language specifies signed integers that
+ are 8 bits, 16 bits, 32 bits , 64 bits, and bignum.<a href="#section-3.8.1.2-1" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlNewline" id="section-3.8.1.2-2">
+              <dt id="section-3.8.1.2-2.1">intW_t</dt>
+              <dd style="margin-left: 1.5em" id="section-3.8.1.2-2.2">
+                <p id="section-3.8.1.2-2.2.1">
+ An signed integer, 'W' bits wide.
+ Where 'W' must be a multiple of 8.<a href="#section-3.8.1.2-2.2.1" class="pilcrow">¶</a></p>
+</dd>
+            <dd class="break"></dd>
+</dl>
+<p id="section-3.8.1.2-3">
+ ANTLR:<a href="#section-3.8.1.2-3" class="pilcrow">¶</a></p>
+<span id="name-signedinteger-grammar"></span><div id="int-antlr">
+<figure id="figure-9">
+              <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.1.2-4.1">
+<pre>
+signedInteger
+  : 'int_t'
+  | 'int8_t'
+  | 'int16_t'
+  | 'int32_t'
+  | 'int64_t'
+  | 'int' DECIMAL '_t'
+  ;
+
+</pre>
+</div>
+<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<a href="#name-signedinteger-grammar" class="selfRef">signedInteger grammar</a>
+              </figcaption></figure>
+</div>
+<p id="section-3.8.1.2-5">
+ See <a href="#UnsignedIntegers" class="auto internal xref">Section 3.8.1.1</a> for details.<a href="#section-3.8.1.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.8.1.2-6">Examples:<a href="#section-3.8.1.2-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.8.1.2-7">
+<pre>
+int8_t EightBitsWide;
+
+int16_t SixteenBitsWide;
+</pre><a href="#section-3.8.1.2-7" class="pilcrow">¶</a>
+</div>
+<p id="section-3.8.1.2-8">
+ A CBOR implementation transmits the signed integer
+ value, not the data type.
+ A int128_t signed integer with a value of negative one (-1)
+ would be transmitted as a CBOR major type 1 0b00100000 (0x20),
+ a one octet value.<a href="#section-3.8.1.2-8" class="pilcrow">¶</a></p>
+<p id="section-3.8.1.2-9">
+ The 72, 128, and 'W' bit length signed integer data
+ types are just examples used to illustrate that this protocol
+ definition language can specify what the application needs
+ and an implementation translates that to and from the
+ smallest CBOR data value when used.
+ And note that the 72 and 128 ones are valid in this language.<a href="#section-3.8.1.2-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+<section id="section-3.8.1.3">
+            <h5 id="name-big-integers">
+<a href="#section-3.8.1.3" class="section-number selfRef">3.8.1.3. </a><a href="#name-big-integers" class="section-name selfRef">Big Integers</a>
+            </h5>
+<p id="section-3.8.1.3-1">
+ CBOR supports larger signed and unsigned integers
+ as 'bignum'.
+ An implementation conforming to this specification will
+ transmit the value in a small of a CBOR size as possible.<a href="#section-3.8.1.3-1" class="pilcrow">¶</a></p>
+<p id="section-3.8.1.3-2">
+ A value of one (1) could be transmitted as a bignum, and
+ it would not conform to this specification as the single
+ octet version is smaller.
+ The non-bignum version is to be used when possible.
+ When they fit, unsigned integers are to be transmitted
+ as CBOR major type 0, and signed integers as CBOR
+ major type 1.<a href="#section-3.8.1.3-2" class="pilcrow">¶</a></p>
+</section>
+</section>
+</div>
+<div id="FloatDef">
+<section id="section-3.8.2">
+          <h4 id="name-float">
+<a href="#section-3.8.2" class="section-number selfRef">3.8.2. </a><a href="#name-float" class="section-name selfRef">Float</a>
+          </h4>
+<p id="section-3.8.2-1">
+ ANTLR:<a href="#section-3.8.2-1" class="pilcrow">¶</a></p>
+<span id="name-float-grammar"></span><div id="float.g4">
+<figure id="figure-10">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.2-2.1">
+<pre>
+float
+  : 'float16_t'
+  | 'float32_t'
+  | 'float64_t'
+  | bigNumFloat
+  ;
+
+</pre>
+</div>
+<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<a href="#name-float-grammar" class="selfRef">float grammar</a>
+            </figcaption></figure>
+</div>
+<p id="section-3.8.2-3">
+ Examples:<a href="#section-3.8.2-3" class="pilcrow">¶</a></p>
+<span id="name-float-examples"></span><div id="float-ex1">
+<figure id="figure-11">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.2-4.1">
+<pre>
+float16_t Size;
+
+float32_t BiggerSize;
+</pre>
+</div>
+<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
+<a href="#name-float-examples" class="selfRef">Float Examples</a>
+            </figcaption></figure>
+</div>
+<p id="section-3.8.2-5">
+ Floating point numbers are similar to unsigned integers
+ except they are prefixed with 'float' and not 'uint'.<a href="#section-3.8.2-5" class="pilcrow">¶</a></p>
+<span class="break"></span><dl class="dlParallel" id="section-3.8.2-6">
+            <dt id="section-3.8.2-6.1">float16_t</dt>
+            <dd style="margin-left: 1.5em" id="section-3.8.2-6.2">
+ A 16-bit floating point number.
+ And the corresponding CBOR data type is float.<a href="#section-3.8.2-6.2" class="pilcrow">¶</a>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-3.8.2-6.3">float32_t</dt>
+            <dd style="margin-left: 1.5em" id="section-3.8.2-6.4">
+ A 32-bit floating point number.
+ And the corresponding CBOR data type is float.<a href="#section-3.8.2-6.4" class="pilcrow">¶</a>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-3.8.2-6.5">float64_t</dt>
+            <dd style="margin-left: 1.5em" id="section-3.8.2-6.6">
+ A 64-bit floating point number.
+ And the corresponding CBOR data type is float.<a href="#section-3.8.2-6.6" class="pilcrow">¶</a>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-3.8.2-6.7">float96_t</dt>
+            <dd style="margin-left: 1.5em" id="section-3.8.2-6.8">
+ A 96-bit floating point number.
+ On some systems this is a long double.
+ And the corresponding CBOR data type is bigfloat.<a href="#section-3.8.2-6.8" class="pilcrow">¶</a>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-3.8.2-6.9">float128_t</dt>
+            <dd style="margin-left: 1.5em" id="section-3.8.2-6.10">
+ A 128-bit floating point number.
+ On some systems this is a long double.
+ And the corresponding CBOR data type is bigfloat.<a href="#section-3.8.2-6.10" class="pilcrow">¶</a>
+</dd>
+            <dd class="break"></dd>
+<dt id="section-3.8.2-6.11">... floatLL_t ...</dt>
+            <dd style="margin-left: 1.5em" id="section-3.8.2-6.12">
+ Assuming LL is more than 64 and a multiple of 8.
+ An LL-bits floating point number.
+ And the corresponding CBOR data type is bigfloat.<a href="#section-3.8.2-6.12" class="pilcrow">¶</a>
+</dd>
+          <dd class="break"></dd>
+</dl>
+</section>
+</div>
+<div id="StringDef">
+<section id="section-3.8.3">
+          <h4 id="name-string">
+<a href="#section-3.8.3" class="section-number selfRef">3.8.3. </a><a href="#name-string" class="section-name selfRef">String</a>
+          </h4>
+<span class="break"></span><dl class="dlParallel" id="section-3.8.3-1">
+            <dt id="section-3.8.3-1.1">string</dt>
+            <dd style="margin-left: 1.5em" id="section-3.8.3-1.2">
+              <p id="section-3.8.3-1.2.1">
+ A string. A
+ A variable array of characters.<a href="#section-3.8.3-1.2.1" class="pilcrow">¶</a></p>
+<p id="section-3.8.3-1.2.2">Examples:<a href="#section-3.8.3-1.2.2" class="pilcrow">¶</a></p>
+<span id="name-string-examples"></span><div id="string-array-ex1">
+<figure id="figure-12">
+                <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.3-1.2.3.1">
+<pre>
+// A string that has no less than 1
+// and no more than 30 characters.
+//
+string AStringVariableName&lt;1,30&gt;;
+
+// A string that has no less than 4
+// and no limit on the total size.
+//
+string OtherString&lt;4,*&gt;;
+
+// A string that has exactly 40 characters.
+//
+string OtherString[40];
+</pre>
+</div>
+<figcaption><a href="#figure-12" class="selfRef">Figure 12</a>:
+<a href="#name-string-examples" class="selfRef">String Examples</a>
+                </figcaption></figure>
+</div>
+</dd>
+          <dd class="break"></dd>
+</dl>
+<p id="section-3.8.3-2">
+ ANTLR:<a href="#section-3.8.3-2" class="pilcrow">¶</a></p>
+<span id="name-string-grammar"></span><div id="string.g4">
+<figure id="figure-13">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.3-3.1">
+<pre>
+string : 'string' ;
+</pre>
+</div>
+<figcaption><a href="#figure-13" class="selfRef">Figure 13</a>:
+<a href="#name-string-grammar" class="selfRef">string grammar</a>
+            </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="MapAndMultimap">
+<section id="section-3.8.4">
+          <h4 id="name-maps-and-multimaps">
+<a href="#section-3.8.4" class="section-number selfRef">3.8.4. </a><a href="#name-maps-and-multimaps" class="section-name selfRef">Maps and MultiMaps</a>
+          </h4>
+<p id="section-3.8.4-1">
+ A map is a key and value pair, all keys in a map are unique.
+ A multimap is a map where duplicate keys may exist.<a href="#section-3.8.4-1" class="pilcrow">¶</a></p>
+<p id="section-3.8.4-2">
+ A map is a CBOR major type 5 as defined
+ in <span><a href="#RFC8949" class="internal xref">CBOR</a> [<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>.<a href="#section-3.8.4-2" class="pilcrow">¶</a></p>
+<p id="section-3.8.4-3">
+ CBOR mandates that the keys be in bytewise lexicographic order
+ <span><a href="https://rfc-editor.org/rfc/rfc8949#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>.
+ Some application keys can be objects, and not simple integer
+ or string values, making objects sorting order not easily
+ determinable.
+ Two things needed to be added to an object to make
+ it a sortable key.<a href="#section-3.8.4-3" class="pilcrow">¶</a></p>
+<p id="section-3.8.4-4">
+ (1) The object defined using this language
+ must be marked with the '[sortable]' attribute.<a href="#section-3.8.4-4" class="pilcrow">¶</a></p>
+<p id="section-3.8.4-5">
+ (2) A method must be defined in the object named 'Compare'
+ that will be implemented by the implementer to
+ determine the sorting order.<a href="#section-3.8.4-5" class="pilcrow">¶</a></p>
+<p id="section-3.8.4-6">
+ This Compare method returns -1 when the object
+ is considered less than the Other object.
+ This Compare method returns 0 when the object
+ is considered equal to the Other object.
+ This Compare method returns 1 when the object
+ is considered greater than the Other object.<a href="#section-3.8.4-6" class="pilcrow">¶</a></p>
+<p id="section-3.8.4-7">
+ Here is an example of two objects that form
+ one key (Outer):<a href="#section-3.8.4-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.8.4-8">
+<pre>
+[sortable]
+struct InnerObject
+{
+  string   Name;
+
+  uint8_t  Age;
+
+  // A [sortable] object must have a Compare() method.
+  //
+  // The implementations and applications that use
+  // this object must agree on how this comparison
+  // is done.
+  //
+  int Compare(InnterObject Other);
+};
+
+[sortable]
+struct OuterObject
+{
+  uint64_t    UniqueID;
+
+  InnerObject NameAge;
+
+  // In this example, this Compare method also
+  // calls the NameAge.Compare() to determine
+  // the sorting order. However in another case
+  // it is possible it can be compared with just the
+  // UniqueID.
+  //
+  // The implementations and applications that use
+  // this object must agree on how this comparison
+  // is done.
+  //
+  int Compare(OuterObject Other);
+};
+
+// And here the complex OuterObject is being used
+// as a map key.
+//
+map&lt;OuterObject,uint8_t&gt; UsesComplexKey;
+</pre><a href="#section-3.8.4-8" class="pilcrow">¶</a>
+</div>
+<p id="section-3.8.4-9">
+ Each unique Compare() method defined, must be implemented by
+ the implementer.
+ One for each object or variable marked as '[sortable]'.<a href="#section-3.8.4-9" class="pilcrow">¶</a></p>
+<p id="section-3.8.4-10">
+ When an object it marked as sortable, and it contains
+ one or more objects that are marked as sortable, then
+ the outer most object's Compare() method result
+ is the one that will be used to determine the
+ sorting order.
+ Which may or might not call the other Compare() methods
+ for any included objects.
+ How they are compared is part the the using application
+ design.<a href="#section-3.8.4-10" class="pilcrow">¶</a></p>
+<div id="Maps">
+<section id="section-3.8.4.1">
+            <h5 id="name-map">
+<a href="#section-3.8.4.1" class="section-number selfRef">3.8.4.1. </a><a href="#name-map" class="section-name selfRef">Map</a>
+            </h5>
+<p id="section-3.8.4.1-1">
+ The CBOR language map data type has two
+ arguments, the key type, and the value type.
+ And is defined in ANTLR as:<a href="#section-3.8.4.1-1" class="pilcrow">¶</a></p>
+<span id="name-map-grammar"></span><div id="map-g4">
+<figure id="figure-14">
+              <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.4.1-2.1">
+<pre>
+map
+  : 'map' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
+  ;
+
+</pre>
+</div>
+<figcaption><a href="#figure-14" class="selfRef">Figure 14</a>:
+<a href="#name-map-grammar" class="selfRef">map grammar</a>
+              </figcaption></figure>
+</div>
+<p id="section-3.8.4.1-3">
+ Here are examples a map in the CBOR language:<a href="#section-3.8.4.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.8.4.1-4">
+<pre>
+// The key is an 8-bit integer.
+// The value is a 32-bit integer.
+//
+map&lt;uint8_t,int32_t&gt;     VariableName1;
+
+// The key is an 8-bit integer.
+// The value is a string with at least one character.
+//
+map&lt;uint8_t,string&lt;1,*&gt;&gt; VariableName2;
+
+// Two example objects.
+//
+struct Object1
+{
+  int32_t   Collected[45];
+  float16_t Values[45];
+};
+
+struct Object2
+{
+  Object1   CurrentItems&lt;&gt;;
+  Object1   History&lt;&gt;;
+};
+
+// A more complex map.
+//
+map&lt;Object1,Object2&gt;   SomeVariableName3;
+</pre><a href="#section-3.8.4.1-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="Multimaps">
+<section id="section-3.8.4.2">
+            <h5 id="name-multimap">
+<a href="#section-3.8.4.2" class="section-number selfRef">3.8.4.2. </a><a href="#name-multimap" class="section-name selfRef">Multimap</a>
+            </h5>
+<p id="section-3.8.4.2-1">
+ A multimap allows for duplicate keys.<a href="#section-3.8.4.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.8.4.2-2">
+ When an application has a multimap that needs to be
+ transmitted via CBOR, it sends a map, except
+ the value becomes an array of objects, all that
+ have the same key.
+ One key sent, all of the objects with that key
+ sent as an array, as the value to that key.<a href="#section-3.8.4.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.8.4.2-3">
+ Here is the ANTLR definition of a multimap in the CBOR language:<a href="#section-3.8.4.2-3" class="pilcrow">¶</a></p>
+<span id="name-multimap-grammar"></span><div id="multimap-g4">
+<figure id="figure-15">
+              <div class="alignLeft art-asciiart art-text artwork" id="section-3.8.4.2-4.1">
+<pre>
+multimap
+  : 'multimap' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
+  ;
+</pre>
+</div>
+<figcaption><a href="#figure-15" class="selfRef">Figure 15</a>:
+<a href="#name-multimap-grammar" class="selfRef">multimap grammar</a>
+              </figcaption></figure>
+</div>
+<p id="section-3.8.4.2-5">
+ A multimap is a map that allows multiple of the same keys.
+ Here is an example of a multimap of a graphic object
+ being duplicated at multiple positions in a 3 dimensional
+ space.<a href="#section-3.8.4.2-5" class="pilcrow">¶</a></p>
+<p id="section-3.8.4.2-6">
+ The multimap uses the same sorting as described in
+ <span><a href="#Maps" class="internal xref">Maps</a> (<a href="#Maps" class="auto internal xref">Section 3.8.4.1</a>)</span><a href="#section-3.8.4.2-6" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.8.4.2-7">
+<pre>
+struct Vector3
+{
+  float32_t X;
+  float32_t Y;
+  float32_t Z;
+};
+
+// An example of a multimap where the key is the identifier of
+// a specific graphic object type, with an ID that is an
+// unsigned 32-bit integer.
+//
+// And the value is its position.
+//
+// Any object may have multiple instances of the same graphic
+// object, all with the same ID, and each with its position
+// at a different location.
+//
+multimap&lt;uint32_t,Vector3&gt; Instances;
+</pre><a href="#section-3.8.4.2-7" class="pilcrow">¶</a>
+</div>
+<p id="section-3.8.4.2-8">
+ This example would be transmitted as one CBOR map.
+ There would be one map key for each unique uint32_t
+ key.
+ And Each key would have an array of one or more
+ Vector3 objects.<a href="#section-3.8.4.2-8" class="pilcrow">¶</a></p>
+<p id="section-3.8.4.2-9">
+ The protocol compiler would implement; for each
+ unique multimap, a method to convert and encode a computer
+ language multimap into a CBOR map.
+ And a method to decode and convert the map back
+ into a multimap.<a href="#section-3.8.4.2-9" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="Arrays">
+<section id="section-3.9">
+        <h3 id="name-arrays">
+<a href="#section-3.9" class="section-number selfRef">3.9. </a><a href="#name-arrays" class="section-name selfRef">Arrays</a>
+        </h3>
+<p id="section-3.9-1">
+ Arrays can be fixed length, or variable length.
+ Fixed length arrays have all of their elements
+ transmitted each time, thus each element must contain
+ a valid value.<a href="#section-3.9-1" class="pilcrow">¶</a></p>
+<div id="FixedArrays">
+<section id="section-3.9.1">
+          <h4 id="name-fixed-length-arrays">
+<a href="#section-3.9.1" class="section-number selfRef">3.9.1. </a><a href="#name-fixed-length-arrays" class="section-name selfRef">Fixed Length Arrays</a>
+          </h4>
+<p id="section-3.9.1-1">
+ Fixed length arrays have their size bounded by square brackets.
+ Here are some examples:<a href="#section-3.9.1-1" class="pilcrow">¶</a></p>
+<p id="section-3.9.1-2">
+ Variable Length Array Examples.<a href="#section-3.9.1-2" class="pilcrow">¶</a></p>
+<span id="name-arrays-examples"></span><div id="arrays-ex1">
+<figure id="figure-16">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-3.9.1-3.1">
+<pre>
+// An array that consists of three 32 bit floating
+// point numbers.
+//
+float32_t Transform3D[3];
+
+// An array that contains 1024 8-bit signed integer values.
+//
+int8_t Samples[1024];
+</pre>
+</div>
+<figcaption><a href="#figure-16" class="selfRef">Figure 16</a>:
+<a href="#name-arrays-examples" class="selfRef">Arrays Examples</a>
+            </figcaption></figure>
+</div>
+</section>
+</div>
+<div id="VariableArraysDef">
+<section id="section-3.9.2">
+          <h4 id="name-variable-length-arrays">
+<a href="#section-3.9.2" class="section-number selfRef">3.9.2. </a><a href="#name-variable-length-arrays" class="section-name selfRef">Variable Length Arrays</a>
+          </h4>
+<p id="section-3.9.2-1">
+ Variable length arrays can have a variable number
+ of elements.
+ You can specify the minimum number of elements, the
+ default is zero (0).
+ You can specify the maximum number of elements, the
+ default is an unlimited amount of entries.
+ An unlimited maximum value is indicated with the '*' symbol.<a href="#section-3.9.2-1" class="pilcrow">¶</a></p>
+<p id="section-3.9.2-2">
+ Fixed length arrays have their size bounded by angle brackets.
+ Here are some examples:<a href="#section-3.9.2-2" class="pilcrow">¶</a></p>
+<p id="section-3.9.2-3">
+ Variable Length Array Examples:<a href="#section-3.9.2-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-3.9.2-4">
+<pre>
+// A variable length array that can hold zero,
+// or up to an unlimited number of 32 bit
+// floating point entries.
+// The minimum value is empty and the maximum value is empty.
+//
+float32_t Samples&lt;&gt;;&lt;
+
+// A variable length array that can hold zero,
+// or up to 100 32-bit unsigned entries.
+//
+uint32_t DistanceMarks&lt;0,100&gt;;
+
+// A variable length array that must contain at least 2
+// 32-bit floating point numbers and no more than
+// 128 entries.
+//
+float32_t Trajectory&lt;2,128&gt;;
+
+// A variable length array that must contain at least 2
+// 32-bit floating point numbers and an unlimited
+// number of entries.
+//
+float32_t Variation&lt;2,*&gt;;
+</pre><a href="#section-3.9.2-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
 </section>
 </div>
 </section>
@@ -2299,25 +3288,49 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  All variables have a data type (integer, float, ...)
  and are named in this language specification.
  And there are user defined data types that
- build onto the built in data types.<a href="#section-4-4" class="pilcrow">¶</a></p>
+ build from the built in data types and other
+ user defined data types.<a href="#section-4-4" class="pilcrow">¶</a></p>
 <div id="IdentifierNaming">
 <section id="section-4.1">
-        <h3 id="name-how-to-name-a-variable-or-i">
-<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-how-to-name-a-variable-or-i" class="section-name selfRef">How to name a variable or identifier</a>
+        <h3 id="name-identifiers-and-scope">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-identifiers-and-scope" class="section-name selfRef">Identifiers and Scope</a>
         </h3>
 <p id="section-4.1-1">
+ Not all protocols will need to scope
+ variables.
+ The primary reason for scoping is to reduce
+ name collisions in larger and more complex
+ protocols.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1-2">
  An identifier can be public for any code
  to use.
- This is in the 'public' scope.<a href="#section-4.1-1" class="pilcrow">¶</a></p>
-<p id="section-4.1-2">
+ This is in the 'public' scope.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
+<p id="section-4.1-3">
  Or they can be internal to the
  objects being described.
- This is in the 'internal' scope.<a href="#section-4.1-2" class="pilcrow">¶</a></p>
-<p id="section-4.1-3">
+ This is in the 'internal' scope.
+ For example, a protocol might also define
+ a method to validate the data being provided.
+ This validation method might be scoped as internal
+ so that access from other objects and public access is not
+ possible.
+ In such cases the protocol is defining that the implementer
+ must implement the defined validation method.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<p id="section-4.1-4">
  Or they can only be accessible within
  a 'namespace'.
  This is in the 'namespace' scope.
- See <span><a href="#Namespaces" class="internal xref">Namespaces</a> (<a href="#Namespaces" class="auto internal xref">Section 9</a>)</span>.<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+ A namespace is a way of identifying a collection
+ of protocol names and definitions that may have names
+ that are the same as the names used in a different
+ namespace.
+ For example a "Get()" method may exist in
+ a MIME namespace "MIME:Get()", and in a file
+ namespace "FILE:Get()".
+ The namespace of protocol definitions, methods, and variables
+ default to any namespace they are defined into, and
+ my be defined and used by their full namespace path.
+ See <span><a href="#Namespaces" class="internal xref">Namespaces</a> (<a href="#Namespaces" class="auto internal xref">Section 7</a>)</span>.<a href="#section-4.1-4" class="pilcrow">¶</a></p>
 <div id="PublicScope">
 <section id="section-4.1.1">
           <h4 id="name-publicly-scoped-identifiers">
@@ -2329,46 +3342,53 @@ Header = (Offset &lt;&lt; 24) | (Flags &lt;&lt; 22) | Length;
  And followed by zero or more from the set: a-z, A-Z,
  0-9, and underscore '_'.
  Shown here as a POSIX regular expression for
- an identifier in the public scope:<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
+ an identifier in the public scope: [a-z][A-Z]*<a href="#section-4.1.1-1" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-2">
+ And the ANTLR definition. Where 'identifier'
+ is any valid identifier, and 'IDENTIFIER' is
+ a public identifier.<a href="#section-4.1.1-2" class="pilcrow">¶</a></p>
 <span id="name-identifier-grammar"></span><div id="identifier.g4">
-<figure id="figure-6">
-            <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.1-2.1">
+<figure id="figure-17">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.1-3.1">
 <pre>
 identifier
     : IDENTIFIER
+    | internal_identifier
     ;
+
+IDENTIFIER
+  : [a-zA-Z] ([a-zA-Z0-9_])*
+  ;
 
 </pre>
 </div>
-<figcaption><a href="#figure-6" class="selfRef">Figure 6</a>:
+<figcaption><a href="#figure-17" class="selfRef">Figure 17</a>:
 <a href="#name-identifier-grammar" class="selfRef">identifier grammar</a>
             </figcaption></figure>
 </div>
-<p id="section-4.1.1-3">
- In the example <a href="#ex1" class="auto internal xref">Figure 7</a>, Speed, TimeNow,
+<p id="section-4.1.1-4">
+ In the example <a href="#ex1" class="auto internal xref">Figure 18</a>, Speed, TimeNow,
  Time9,  Travel_Time, Collection, FirstItem
  and AValue are public identifiers.
- As is the method name AMethodThatDoesSomething.<a href="#section-4.1.1-3" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-4">
- int32_t, uint64_t, and float32_t
- are built in data types.<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
+ As is the method name AMethodThatDoesSomething.<a href="#section-4.1.1-4" class="pilcrow">¶</a></p>
 <p id="section-4.1.1-5">
+ int32_t, uint64_t, and float32_t
+ are built in data types.<a href="#section-4.1.1-5" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-6">
  Collection is a public identifier
  that is defining the name of a new user
- defined data type.<a href="#section-4.1.1-5" class="pilcrow">¶</a></p>
-<p id="section-4.1.1-6">
- Examples:<a href="#section-4.1.1-6" class="pilcrow">¶</a></p>
-<span id="name-sample-with-internal-scope"></span><div id="ex1">
-<figure id="figure-7">
-            <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.1-7.1">
+ defined data type.<a href="#section-4.1.1-6" class="pilcrow">¶</a></p>
+<p id="section-4.1.1-7">
+ Examples:<a href="#section-4.1.1-7" class="pilcrow">¶</a></p>
+<span id="name-sample-with-public-scope"></span><div id="ex1">
+<figure id="figure-18">
+            <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.1-8.1">
 <pre>
 int32_t Speed;         // Okay public, follows the rules.
 
-uint64_t TimeNow;      // Okay public, follows the rules.
+UTC_t TimeNow;         // Okay public, follows the rules.
 
 float32_t Time9;       // Okay public, follows the rules.
-
-uint64_t _Travel_Time   // Okay, follows the rules.
 
 struct Collection      // 'Collection' is valid, and public.
 {
@@ -2376,14 +3396,17 @@ struct Collection      // 'Collection' is valid, and public.
 
   float32_t AValue;    // Okay, value is public.
 
-  // A public method that has access to all variables.
-  //
+  /**
+   * A public method that has access to all variables.
+   *
+   * @note 'void' means returns nothing.
+   */
   void AMethodThatDoesSomething();
 };
 </pre>
 </div>
-<figcaption><a href="#figure-7" class="selfRef">Figure 7</a>:
-<a href="#name-sample-with-internal-scope" class="selfRef">Sample with Internal Scope</a>
+<figcaption><a href="#figure-18" class="selfRef">Figure 18</a>:
+<a href="#name-sample-with-public-scope" class="selfRef">Sample with Public Scope</a>
             </figcaption></figure>
 </div>
 </section>
@@ -2412,26 +3435,33 @@ struct Collection      // 'Collection' is valid, and public.
  Internally scoped identifiers inside of
  a struct, are only accessible within the struct.<a href="#section-4.1.2-5" class="pilcrow">¶</a></p>
 <p id="section-4.1.2-6">
- The ANTLR for an internal identifier:<a href="#section-4.1.2-6" class="pilcrow">¶</a></p>
+ The ANTLR for an internal identifier, with 'identifier'
+ shown again, and 'internal_identifier' also included.<a href="#section-4.1.2-6" class="pilcrow">¶</a></p>
 <span id="name-internal_identifier-grammar"></span><div id="internal_identifier.g4">
-<figure id="figure-8">
+<figure id="figure-19">
             <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.2-7.1">
 <pre>
-internal_identifier : '_' identifier ;
+identifier
+    : IDENTIFIER
+    | internal_identifier
+    ;
+
+internal_identifier : '_' IDENTIFIER ;
 </pre>
 </div>
-<figcaption><a href="#figure-8" class="selfRef">Figure 8</a>:
+<figcaption><a href="#figure-19" class="selfRef">Figure 19</a>:
 <a href="#name-internal_identifier-grammar" class="selfRef">internal_identifier grammar</a>
             </figcaption></figure>
 </div>
 <p id="section-4.1.2-8">
  Examples:<a href="#section-4.1.2-8" class="pilcrow">¶</a></p>
 <span id="name-internal-scope-example"></span><div id="internal-ex1">
-<figure id="figure-9">
+<figure id="figure-20">
             <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.2-9.1">
 <pre>
-// Okay Internal, starts with an underscore.
-// _NextSequenceNumber can only be accessed in
+// Example:
+//
+// _NextSequenceNumber is internal can only be accessed in
 // the generated code.
 //
 uint64_t _NextSequenceNumber;
@@ -2444,30 +3474,52 @@ struct Collection
 
   float32_t AValue;  // Okay, value is public.
 
-  int32_t   _AName;  // Okay, value is only
+  string    _AName&lt;&gt;;// Okay, value is only
                      // available inside this object.
 
-  // A public method that has access to all variables
-  // including internal ones (_AName).
-  // And only available inside the protocol implementation.
-        //
-  void AMethod();
+  /**
+   * A public method that has access to all variables
+   * including internal ones (_AName).
+   * That calls _ValidateName().
+   *
+   * @param AName A string that could be null or any length.
+   *
+   * @note 'void' means returns nothing.
+   */
+  void SetName(string AName&lt;&gt;);
 
-  // An internal method that has access to all variables
-  // including internal ones (_AName).
-  // This method is only available to be called from within
-  // in the Collection object.
-  //
-  void _AnotherMethod();
+  /**
+   * A public method that has access to all variables
+   * including internal ones (_AName).
+   *
+   * @note Calls _ValidateName().
+   *
+   * @return A string that may be null, or any length.
+   */
+  string&lt;&gt; GetName();
+
+  /**
+   *
+   * An internal method that has access to all variables
+   * including internal ones (_AName) in 'Collection'
+   * This method is only available to be called from within
+   * this 'Collection' object.
+   *
+   * @param AName A string that may be null, or any length.
+   *
+   * @return true if AName is valid, or false if AName is
+   * not valid.
+   */
+  bool _ValidateName(string AName&lt;&gt;);
 };
 </pre>
 </div>
-<figcaption><a href="#figure-9" class="selfRef">Figure 9</a>:
+<figcaption><a href="#figure-20" class="selfRef">Figure 20</a>:
 <a href="#name-internal-scope-example" class="selfRef">Internal Scope Example</a>
             </figcaption></figure>
 </div>
 <p id="section-4.1.2-10">
- See <a href="#Structures" class="auto internal xref">Section 12</a> for struct details.<a href="#section-4.1.2-10" class="pilcrow">¶</a></p>
+ See <a href="#Structures" class="auto internal xref">Section 10</a> for struct details.<a href="#section-4.1.2-10" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="NamespaceScope">
@@ -2480,8 +3532,8 @@ struct Collection
  starts with an underscore '_'.
  And exists inside of a 'namespace' and
  not within a struct.
- See <a href="#Namespaces" class="auto internal xref">Section 9</a> to understand
- namespaces and <span><a href="#Structures" class="internal xref">Structs</a> (<a href="#Structures" class="auto internal xref">Section 12</a>)</span>
+ See <a href="#Namespaces" class="auto internal xref">Section 7</a> to understand
+ namespaces and <span><a href="#Structures" class="internal xref">Structs</a> (<a href="#Structures" class="auto internal xref">Section 10</a>)</span>
  to understand 'struct'.<a href="#section-4.1.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.1.3-2">
  Namespace scoped identifiers can only be accessed
@@ -2502,42 +3554,44 @@ struct Collection
 </li>
           </ul>
 <span id="name-namespace-grammar"></span><div id="namespace_identifier.g4">
-<figure id="figure-10">
+<figure id="figure-21">
             <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.3-4.1">
 <pre>
 namespace_identifier : '_' identifier ;
 </pre>
 </div>
-<figcaption><a href="#figure-10" class="selfRef">Figure 10</a>:
+<figcaption><a href="#figure-21" class="selfRef">Figure 21</a>:
 <a href="#name-namespace-grammar" class="selfRef">namespace grammar</a>
             </figcaption></figure>
 </div>
 <p id="section-4.1.3-5">
  Examples:<a href="#section-4.1.3-5" class="pilcrow">¶</a></p>
 <span id="name-namespace-scope-example"></span><div id="namespace-ex1">
-<figure id="figure-11">
+<figure id="figure-22">
             <div class="alignLeft art-asciiart art-text artwork" id="section-4.1.3-6.1">
 <pre>
 // A public Namespace called DailyData
 //
 namespace DailyData
 {
-
-  // This is a namespace scoped identifier.
-  // It is in a namespace scoped, and not in a struct.
-  //
+  /**
+   * This is a namespace scoped identifier.
+   * It is in a namespace scoped, and not in a struct.
+   */
   uint64_t _TotalBytesSent;
 
-  // Okay another namespace scoped identifier.
-  //
+  /**
+   * Okay another namespace scoped identifier.
+   */
   uint64_t _Travel_Time;
 
-  // This struct is inside of a namespace.
-  // And its identifier starts with an underscore '_'.
-  // So _Summary is a namespace identifiers.
-  // Only code in this same namespace has access
-  // to this object type.
-  //
+  /**
+   * This struct is inside of a namespace.
+   * And its identifier starts with an underscore '_'.
+   * So _Summary is a namespace identifiers.
+   * Only code in this same namespace has access
+   * to this object type.
+   */
   struct _Summary
   {
     int8_t    FirstItem; // Okay, value is public.
@@ -2547,28 +3601,34 @@ namespace DailyData
     int32_t   _AName;    // Okay, value is only
                          // available inside this struct.
 
-    // A public method that has access to all variables
-    // including internal ones (_AName).
-    // And only available inside this struct
-    // and namespace.
-    //
+    /**
+     * A public method that has access to all variables
+     * including internal ones (_AName).
+     * And only available inside this struct
+     * and namespace.
+     *
+     * @note 'void' means returns nothing.
+     */
     void AMethod();
 
-    // An internal method that has access to all variables
-    // including internal ones (_AName).
-    // This method is only available to be called from within
-    // in the _Summary object.
-    //
+    /**
+     * An internal method that has access to all variables
+     * including internal ones (_AName).
+     * This method is only available to be called from within
+     * in the _Summary object.
+     *
+     * @note 'void' means returns nothing.
+     */
     void _AnotherMethod();
 };
 </pre>
 </div>
-<figcaption><a href="#figure-11" class="selfRef">Figure 11</a>:
+<figcaption><a href="#figure-22" class="selfRef">Figure 22</a>:
 <a href="#name-namespace-scope-example" class="selfRef">Namespace Scope Example</a>
             </figcaption></figure>
 </div>
 <p id="section-4.1.3-7">
- See <a href="#Structures" class="auto internal xref">Section 12</a> for struct details.<a href="#section-4.1.3-7" class="pilcrow">¶</a></p>
+ See <a href="#Structures" class="auto internal xref">Section 10</a> for struct details.<a href="#section-4.1.3-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
@@ -2592,11 +3652,11 @@ namespace DailyData
  or variable sized array. Examples:<a href="#section-5.1-1" class="pilcrow">¶</a></p>
 <p id="section-5.1-2">
  NOTE:
- A 'string' is always an array and not a non-array variable.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
+ A 'string' is always an array.<a href="#section-5.1-2" class="pilcrow">¶</a></p>
 <p id="section-5.1-3">
  Examples:<a href="#section-5.1-3" class="pilcrow">¶</a></p>
 <span id="name-variable-no-arrays-example"></span><div id="internal-ex2">
-<figure id="figure-12">
+<figure id="figure-23">
           <div class="alignLeft art-asciiart art-text artwork" id="section-5.1-4.1">
 <pre>
 uint8_t  SimpleUnsignedInteger;
@@ -2608,7 +3668,7 @@ map&lt;uint8_t,AnObjectType&gt;; SimpleMap;
 multimap&lt;uint8_t,AnObjectType&gt; SimpleMultiMap;
 </pre>
 </div>
-<figcaption><a href="#figure-12" class="selfRef">Figure 12</a>:
+<figcaption><a href="#figure-23" class="selfRef">Figure 23</a>:
 <a href="#name-variable-no-arrays-example" class="selfRef">Variable No Arrays Example</a>
           </figcaption></figure>
 </div>
@@ -2625,7 +3685,7 @@ multimap&lt;uint8_t,AnObjectType&gt; SimpleMultiMap;
 <p id="section-5.2-2">
  Examples:<a href="#section-5.2-2" class="pilcrow">¶</a></p>
 <span id="name-variable-fixed-size-array-e"></span><div id="fixed-array-ex1">
-<figure id="figure-13">
+<figure id="figure-24">
           <div class="alignLeft art-asciiart art-text artwork" id="section-5.2-3.1">
 <pre>
 uint8_t  FixedUnsignedInteger[30];
@@ -2639,7 +3699,7 @@ multimap&lt;uint8_t,AnObjectType&gt; FixedMultiMap[16];
 string LargeString[2048];
 </pre>
 </div>
-<figcaption><a href="#figure-13" class="selfRef">Figure 13</a>:
+<figcaption><a href="#figure-24" class="selfRef">Figure 24</a>:
 <a href="#name-variable-fixed-size-array-e" class="selfRef">Variable Fixed Size Array Examples</a>
           </figcaption></figure>
 </div>
@@ -2647,8 +3707,8 @@ string LargeString[2048];
 </div>
 <div id="VariableArrays">
 <section id="section-5.3">
-        <h3 id="name-variable-size-array-max">
-<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-variable-size-array-max" class="section-name selfRef">Variable Size Array '&lt;Max&gt;'</a>
+        <h3 id="name-variable-size-array-minmax">
+<a href="#section-5.3" class="section-number selfRef">5.3. </a><a href="#name-variable-size-array-minmax" class="section-name selfRef">Variable Size Array '&lt;Min,Max&gt;'</a>
         </h3>
 <p id="section-5.3-1">
  A variable array size array has a minimum size.
@@ -2657,7 +3717,10 @@ string LargeString[2048];
  A variable array has a maximum size.
  The default maximum size is unlimited.<a href="#section-5.3-2" class="pilcrow">¶</a></p>
 <p id="section-5.3-3">
- An variable array size is specified in one of 3 ways:<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+ The minimum and maximum values are separated
+ by the comma (,) character.<a href="#section-5.3-3" class="pilcrow">¶</a></p>
+<p id="section-5.3-4">
+ An variable array size is specified in one of 3 ways:<a href="#section-5.3-4" class="pilcrow">¶</a></p>
 <section id="section-5.3.1">
           <h4 id="name-variable-size-array-with-mi">
 <a href="#section-5.3.1" class="section-number selfRef">5.3.1. </a><a href="#name-variable-size-array-with-mi" class="section-name selfRef">Variable Size Array With Minimum and Maximum Size</a>
@@ -2685,27 +3748,29 @@ string LargeString[2048];
 <p id="section-5.3.1-1.2.3">
  Examples:<a href="#section-5.3.1-1.2.3" class="pilcrow">¶</a></p>
 <span id="name-variable-variable-size-arra"></span><div id="variable-array-ex1">
-<figure id="figure-14">
+<figure id="figure-25">
                 <div class="alignLeft art-asciiart art-text artwork" id="section-5.3.1-1.2.4.1">
 <pre>
 // An array of 5 to 14 int8_t data elements.
 //
 int8_t VariableName&lt;5,14&gt;;
 
-// An array of 3 to 16 int8_t data elements.
+// An array of 3 to 16 float32_t data elements.
 //
 float32_t FloatArray&lt;3,16&gt;;
 
 // An string of 5 to 42 characters.
+// The size would range from 5 to 168 octets in size.
 //
 string StringVariable&lt;5,42&gt;;
 
 // An string of 8 to unlimited characters.
+// The size would be from 8 to unlimited size.
 //
 string AString&lt;8,*&gt;;
 </pre>
 </div>
-<figcaption><a href="#figure-14" class="selfRef">Figure 14</a>:
+<figcaption><a href="#figure-25" class="selfRef">Figure 25</a>:
 <a href="#name-variable-variable-size-arra" class="selfRef">Variable Variable Size Array Examples</a>
                 </figcaption></figure>
 </div>
@@ -2726,15 +3791,16 @@ string AString&lt;8,*&gt;;
 <p id="section-5.3.2-1.2.2">
  Example:<a href="#section-5.3.2-1.2.2" class="pilcrow">¶</a></p>
 <span id="name-variable-size-array-max-siz"></span><div id="fixed-array-ex2">
-<figure id="figure-15">
+<figure id="figure-26">
                 <div class="alignLeft art-asciiart art-text artwork" id="section-5.3.2-1.2.3.1">
 <pre>
-// An array of size zero to 17 in length.
+// An array of length zero to 17 characters in length.
+// And a size up to 68 octets.
 //
 string VariableName&lt;17&gt;;
 </pre>
 </div>
-<figcaption><a href="#figure-15" class="selfRef">Figure 15</a>:
+<figcaption><a href="#figure-26" class="selfRef">Figure 26</a>:
 <a href="#name-variable-size-array-max-siz" class="selfRef">Variable Size Array Max Size Examples</a>
                 </figcaption></figure>
 </div>
@@ -2754,13 +3820,13 @@ string VariableName&lt;17&gt;;
 <p id="section-5.3.3-1.2.2">
  Example:<a href="#section-5.3.3-1.2.2" class="pilcrow">¶</a></p>
 <span id="name-variable-array-defaults-exa"></span><div id="fixed-array-ex4">
-<figure id="figure-16">
+<figure id="figure-27">
                 <div class="alignLeft art-asciiart art-text artwork" id="section-5.3.3-1.2.3.1">
 <pre>
 uint64_t VariableName&lt;&gt;;
 </pre>
 </div>
-<figcaption><a href="#figure-16" class="selfRef">Figure 16</a>:
+<figcaption><a href="#figure-27" class="selfRef">Figure 27</a>:
 <a href="#name-variable-array-defaults-exa" class="selfRef">Variable Array Defaults Examples</a>
                 </figcaption></figure>
 </div>
@@ -2775,7 +3841,7 @@ uint64_t VariableName&lt;&gt;;
 <p id="section-5.3.4-1">
  Examples:<a href="#section-5.3.4-1" class="pilcrow">¶</a></p>
 <span id="name-variable-array-examples-2"></span><div id="fixed-array-ex5">
-<figure id="figure-17">
+<figure id="figure-28">
             <div class="alignLeft art-asciiart art-text artwork" id="section-5.3.4-2.1">
 <pre>
 // A variable array that holds no more than
@@ -2818,7 +3884,7 @@ map&lt;uint8_t,AnObjectType&gt; VariableMap&lt;34&gt;;
 multimap&lt;uint8_t,OtherObjectType&gt; VariableMultiMap&lt;16&gt;;
 </pre>
 </div>
-<figcaption><a href="#figure-17" class="selfRef">Figure 17</a>:
+<figcaption><a href="#figure-28" class="selfRef">Figure 28</a>:
 <a href="#name-variable-array-examples-2" class="selfRef">Variable Array Examples</a>
             </figcaption></figure>
 </div>
@@ -2827,743 +3893,17 @@ multimap&lt;uint8_t,OtherObjectType&gt; VariableMultiMap&lt;16&gt;;
 </div>
 </section>
 </div>
-<div id="PredefinedDataTypes">
 <section id="section-6">
-      <h2 id="name-cbor-language-predefined-da">
-<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-cbor-language-predefined-da" class="section-name selfRef">CBOR Language Predefined Data Types</a>
+      <h2 id="name-declaring-variables">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-declaring-variables" class="section-name selfRef">Declaring Variables</a>
       </h2>
 <p id="section-6-1">
- Here is a summary of all of the predefined data types:<a href="#section-6-1" class="pilcrow">¶</a></p>
-<p id="section-6-2">
- This protocol language closely resembles the CBOR data model.
- The following data types are defined in the language.
- Each of these basic data types have a correlating
- CBOR data type.
- When possible the data types used in this language
- are the same as their <span>[<a href="#POSIX" class="cite xref">POSIX</a>]</span> counterpart.<a href="#section-6-2" class="pilcrow">¶</a></p>
-<p id="section-6-3">
- Some computer languages specify the size of integers.
- With this language, an implementation still specifies
- the size and the implementation reduces the lesser over
- the wire size when possible.
- And this implementation will expand them as needed.<a href="#section-6-3" class="pilcrow">¶</a></p>
-<p id="section-6-4">
- For example, the application may require a 64-unsigned
- integer (uint64_t) named CustomerCount.
- And assume only four (4) customers exists.
- So the implementation sends a one (1) octet CBOR
- value over the wire, in hex it would be 0x04.<a href="#section-6-4" class="pilcrow">¶</a></p>
-<p id="section-6-5">
- That exemplifies the unique data models of the
- the application data size and the CBOR over the wire data size.
- It is the jobs of a protocol compiler to translate
- the received 0x01 into an uint64_t as described
- in this example. And to notice that a 64-bit value,
- depending on the size of its value, could be
- sent in as few as one octet to as many as ten.<a href="#section-6-5" class="pilcrow">¶</a></p>
-<div id="Integers">
-<section id="section-6.1">
-        <h3 id="name-integers">
-<a href="#section-6.1" class="section-number selfRef">6.1. </a><a href="#name-integers" class="section-name selfRef">Integers</a>
-        </h3>
-<p id="section-6.1-1">
- Integers can be signed or unsigned.
- And they can be any size that is a multiple
- of 8 bits wide.<a href="#section-6.1-1" class="pilcrow">¶</a></p>
-<div id="UnsignedIntegers">
-<section id="section-6.1.1">
-          <h4 id="name-unsigned-integer">
-<a href="#section-6.1.1" class="section-number selfRef">6.1.1. </a><a href="#name-unsigned-integer" class="section-name selfRef">Unsigned Integer</a>
-          </h4>
-<p id="section-6.1.1-1">
- This language specifies unsigned integers that
- are 8 bits, 16 bits, 32 bits , 64 bits, and bignum.<a href="#section-6.1.1-1" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlNewline" id="section-6.1.1-2">
-            <dt id="section-6.1.1-2.1">uintW_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-2.2">
-              <p id="section-6.1.1-2.2.1">
- An unsigned integer, 'W' bits wide.
- Where 'W' must be a multiple of 8.<a href="#section-6.1.1-2.2.1" class="pilcrow">¶</a></p>
-</dd>
-          <dd class="break"></dd>
-</dl>
-<p id="section-6.1.1-3">
- ANTLR:<a href="#section-6.1.1-3" class="pilcrow">¶</a></p>
-<span id="name-unsignedinteger-grammar"></span><div id="uint-antlr">
-<figure id="figure-18">
-            <div class="alignLeft art-asciiart art-text artwork" id="section-6.1.1-4.1">
-<pre>
-unsignedInteger
-  : 'uint8_t'
-  | 'uint16_t'
-  | 'uint32_t'
-  | 'uint64_t'
-  | bigNumUInt
-  ;
-
-</pre>
-</div>
-<figcaption><a href="#figure-18" class="selfRef">Figure 18</a>:
-<a href="#name-unsignedinteger-grammar" class="selfRef">unsignedInteger grammar</a>
-            </figcaption></figure>
-</div>
-<p id="section-6.1.1-5">
- See <a href="#UnsignedIntegers" class="auto internal xref">Section 6.1.1</a> for details.<a href="#section-6.1.1-5" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-6">Examples:<a href="#section-6.1.1-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-6.1.1-7">
-<pre>
-uint8_t EightBitsWide;
-
-uint16_t SixteenBitsWide;
-</pre><a href="#section-6.1.1-7" class="pilcrow">¶</a>
-</div>
-<span class="break"></span><dl class="dlParallel" id="section-6.1.1-8">
-            <dt id="section-6.1.1-8.1">uint8_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-8.2">
-              <p id="section-6.1.1-8.2.1">
- An unsigned 8 bit integer.
- And the corresponding CBOR data type is unsigned int.<a href="#section-6.1.1-8.2.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.1-8.3">uint16_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-8.4">
- An unsigned 16 bit integer.
- And the corresponding CBOR data type is unsigned int.<a href="#section-6.1.1-8.4" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.1-8.5">uint32_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-8.6">
- An unsigned 32 bit integer.
- And the corresponding CBOR data type is unsigned int.<a href="#section-6.1.1-8.6" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.1-8.7">uint64_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-8.8">
- An unsigned 64 bit integer.
- And the corresponding CBOR data type is unsigned int.<a href="#section-6.1.1-8.8" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.1-8.9">uint72_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-8.10">
- An unsigned 72 bit integer.
- And the corresponding CBOR data type is bignum.<a href="#section-6.1.1-8.10" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.1-8.11">uint128_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-8.12">
- An unsigned 128 bit integer.
- And the corresponding CBOR data type is bignum.<a href="#section-6.1.1-8.12" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.1-8.13">... uintW_t ...</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.1-8.14">
- Assuming 'W' is more than 64 and a multiple of 8.
- An unsigned 'W'-bits integer.
- And the corresponding CBOR data type is bignum.<a href="#section-6.1.1-8.14" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-</dl>
-<p id="section-6.1.1-9">
- And the implementation transmits the unsigned integer
- value, not the data type.
- A uint128_t unsigned integer with a value of one (1)
- would be transmitted as 0x01, a one octet value.<a href="#section-6.1.1-9" class="pilcrow">¶</a></p>
-<p id="section-6.1.1-10">
- The 72, 128, and 'W' bit length unsigned integer data
- types are just examples used to illustrate that this protocol
- definition language can specify what the application needs
- and an implementation translates that to and from the
- smallest CBOR data value when used.
- And note that the 72 and 128 ones are valid in this language
- along with other nonstandard sizes.<a href="#section-6.1.1-10" class="pilcrow">¶</a></p>
-</section>
-</div>
-<div id="SignedIntegers">
-<section id="section-6.1.2">
-          <h4 id="name-signed-integer">
-<a href="#section-6.1.2" class="section-number selfRef">6.1.2. </a><a href="#name-signed-integer" class="section-name selfRef">Signed Integer</a>
-          </h4>
-<p id="section-6.1.2-1">
- This language specifies signed integers that
- are 8 bits, 16 bits, 32 bits , 64 bits, and bignum.<a href="#section-6.1.2-1" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlNewline" id="section-6.1.2-2">
-            <dt id="section-6.1.2-2.1">intW_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-2.2">
-              <p id="section-6.1.2-2.2.1">
- An signed integer, 'W' bits wide.
- Where 'W' must be a multiple of 8.<a href="#section-6.1.2-2.2.1" class="pilcrow">¶</a></p>
-</dd>
-          <dd class="break"></dd>
-</dl>
-<p id="section-6.1.2-3">
- ANTLR:<a href="#section-6.1.2-3" class="pilcrow">¶</a></p>
-<span id="name-signedinteger-grammar"></span><div id="int-antlr">
-<figure id="figure-19">
-            <div class="alignLeft art-asciiart art-text artwork" id="section-6.1.2-4.1">
-<pre>
-signedInteger
-  : 'int8_t'
-  | 'int16_t'
-  | 'int32_t'
-  | 'int64_t'
-  | bigNumInt
-  ;
-
-</pre>
-</div>
-<figcaption><a href="#figure-19" class="selfRef">Figure 19</a>:
-<a href="#name-signedinteger-grammar" class="selfRef">signedInteger grammar</a>
-            </figcaption></figure>
-</div>
-<p id="section-6.1.2-5">
- See <a href="#UnsignedIntegers" class="auto internal xref">Section 6.1.1</a> for details.<a href="#section-6.1.2-5" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-6">Examples:<a href="#section-6.1.2-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-6.1.2-7">
-<pre>
-int8_t EightBitsWide;
-
-int16_t SixteenBitsWide;
-</pre><a href="#section-6.1.2-7" class="pilcrow">¶</a>
-</div>
-<span class="break"></span><dl class="dlParallel" id="section-6.1.2-8">
-            <dt id="section-6.1.2-8.1">int8_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-8.2">
-              <p id="section-6.1.2-8.2.1">
- An signed 8 bit integer.
- And the corresponding CBOR data type is signed int.<a href="#section-6.1.2-8.2.1" class="pilcrow">¶</a></p>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.2-8.3">int16_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-8.4">
- An signed 16 bit integer.
- And the corresponding CBOR data type is signed int.<a href="#section-6.1.2-8.4" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.2-8.5">int32_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-8.6">
- An signed 32 bit integer.
- And the corresponding CBOR data type is signed int.<a href="#section-6.1.2-8.6" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.2-8.7">int64_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-8.8">
- An signed 64 bit integer.
- And the corresponding CBOR data type is signed int.<a href="#section-6.1.2-8.8" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.2-8.9">int72_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-8.10">
- An signed 72 bit integer.
- And the corresponding CBOR data type is bignum.<a href="#section-6.1.2-8.10" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.2-8.11">int128_t</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-8.12">
- An signed 128 bit integer.
- And the corresponding CBOR data type is bignum.<a href="#section-6.1.2-8.12" class="pilcrow">¶</a>
-</dd>
-            <dd class="break"></dd>
-<dt id="section-6.1.2-8.13">... intLL_t ...</dt>
-            <dd style="margin-left: 1.5em" id="section-6.1.2-8.14">
- Assuming LL is more than 64 and a multiple of 8.
- An unsigned LL-bits integer.
- And the corresponding CBOR data type is bignum.<a href="#section-6.1.2-8.14" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-</dl>
-<p id="section-6.1.2-9">
- And the implementation transmits the signed integer
- value, not the data type.
- A int128_t unsigned integer with a value of one (1)
- would be transmitted as 0x01, a one octet value.<a href="#section-6.1.2-9" class="pilcrow">¶</a></p>
-<p id="section-6.1.2-10">
- The 72, 128, and 'LL' bit length unsigned integer data
- types are just examples used to illustrate that this protocol
- definition language can specify what the application needs
- and an implementation translates that to and from the
- smallest CBOR data value when used.
- And note that the 72 and 128 ones are valid in this language.<a href="#section-6.1.2-10" class="pilcrow">¶</a></p>
-</section>
-</div>
-<section id="section-6.1.3">
-          <h4 id="name-big-integers">
-<a href="#section-6.1.3" class="section-number selfRef">6.1.3. </a><a href="#name-big-integers" class="section-name selfRef">Big Integers</a>
-          </h4>
-<p id="section-6.1.3-1">
- CBOR supports signed and unsigned integers
- as 'bignum'.
- An implementation will transport non-standard size signed
- and unsigned integers as CBOR bignum.<a href="#section-6.1.3-1" class="pilcrow">¶</a></p>
-</section>
-</section>
-</div>
-<div id="FloatDef">
-<section id="section-6.2">
-        <h3 id="name-float">
-<a href="#section-6.2" class="section-number selfRef">6.2. </a><a href="#name-float" class="section-name selfRef">Float</a>
-        </h3>
-<p id="section-6.2-1">
- ANTLR:<a href="#section-6.2-1" class="pilcrow">¶</a></p>
-<span id="name-float-grammar"></span><div id="float.g4">
-<figure id="figure-20">
-          <div class="alignLeft art-asciiart art-text artwork" id="section-6.2-2.1">
-<pre>
-float
-  : 'float16_t'
-  | 'float32_t'
-  | 'float64_t'
-  | bigNumFloat
-  ;
-
-</pre>
-</div>
-<figcaption><a href="#figure-20" class="selfRef">Figure 20</a>:
-<a href="#name-float-grammar" class="selfRef">float grammar</a>
-          </figcaption></figure>
-</div>
-<p id="section-6.2-3">
- Examples:<a href="#section-6.2-3" class="pilcrow">¶</a></p>
-<span id="name-float-examples"></span><div id="float-ex1">
-<figure id="figure-21">
-          <div class="alignLeft art-asciiart art-text artwork" id="section-6.2-4.1">
-<pre>
-float16_t Size;
-
-float32_t BiggerSize;
-</pre>
-</div>
-<figcaption><a href="#figure-21" class="selfRef">Figure 21</a>:
-<a href="#name-float-examples" class="selfRef">Float Examples</a>
-          </figcaption></figure>
-</div>
-<p id="section-6.2-5">
- Floating point numbers are similar to unsigned integers
- except they are prefixed with 'float' and not 'uint'.<a href="#section-6.2-5" class="pilcrow">¶</a></p>
-<span class="break"></span><dl class="dlParallel" id="section-6.2-6">
-          <dt id="section-6.2-6.1">float16_t</dt>
-          <dd style="margin-left: 1.5em" id="section-6.2-6.2">
- A 16-bit floating point number.
- And the corresponding CBOR data type is float.<a href="#section-6.2-6.2" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-6.2-6.3">float32_t</dt>
-          <dd style="margin-left: 1.5em" id="section-6.2-6.4">
- A 32-bit floating point number.
- And the corresponding CBOR data type is float.<a href="#section-6.2-6.4" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-6.2-6.5">float64_t</dt>
-          <dd style="margin-left: 1.5em" id="section-6.2-6.6">
- A 64-bit floating point number.
- And the corresponding CBOR data type is float.<a href="#section-6.2-6.6" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-6.2-6.7">float96_t</dt>
-          <dd style="margin-left: 1.5em" id="section-6.2-6.8">
- A 96-bit floating point number.
- On some systems this is a long double.
- And the corresponding CBOR data type is bigfloat.<a href="#section-6.2-6.8" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-6.2-6.9">float128_t</dt>
-          <dd style="margin-left: 1.5em" id="section-6.2-6.10">
- A 128-bit floating point number.
- On some systems this is a long double.
- And the corresponding CBOR data type is bigfloat.<a href="#section-6.2-6.10" class="pilcrow">¶</a>
-</dd>
-          <dd class="break"></dd>
-<dt id="section-6.2-6.11">... floatLL_t ...</dt>
-          <dd style="margin-left: 1.5em" id="section-6.2-6.12">
- Assuming LL is more than 64 and a multiple of 8.
- An LL-bits floating point number.
- And the corresponding CBOR data type is bigfloat.<a href="#section-6.2-6.12" class="pilcrow">¶</a>
-</dd>
-        <dd class="break"></dd>
-</dl>
-</section>
-</div>
-<div id="StringDef">
-<section id="section-6.3">
-        <h3 id="name-string">
-<a href="#section-6.3" class="section-number selfRef">6.3. </a><a href="#name-string" class="section-name selfRef">String</a>
-        </h3>
-<span class="break"></span><dl class="dlParallel" id="section-6.3-1">
-          <dt id="section-6.3-1.1">string</dt>
-          <dd style="margin-left: 1.5em" id="section-6.3-1.2">
-            <p id="section-6.3-1.2.1">
- A string. A
- A variable array of characters.<a href="#section-6.3-1.2.1" class="pilcrow">¶</a></p>
-<p id="section-6.3-1.2.2">Examples:<a href="#section-6.3-1.2.2" class="pilcrow">¶</a></p>
-<span id="name-string-examples"></span><div id="string-array-ex1">
-<figure id="figure-22">
-              <div class="alignLeft art-asciiart art-text artwork" id="section-6.3-1.2.3.1">
-<pre>
-// A string that has no less than 1
-// and no more than 30 characters.
-//
-string AStringVariableName&lt;1,30&gt;;
-
-// A string that has no less than 4
-// and no limit on the total size.
-//
-string OtherString&lt;4,*&gt;;
-
-// A string that has exactly 40 characters.
-//
-string OtherString[40];
-</pre>
-</div>
-<figcaption><a href="#figure-22" class="selfRef">Figure 22</a>:
-<a href="#name-string-examples" class="selfRef">String Examples</a>
-              </figcaption></figure>
-</div>
-</dd>
-        <dd class="break"></dd>
-</dl>
-<p id="section-6.3-2">
- ANTLR:<a href="#section-6.3-2" class="pilcrow">¶</a></p>
-<span id="name-string-grammar"></span><div id="string.g4">
-<figure id="figure-23">
-          <div class="alignLeft art-asciiart art-text artwork" id="section-6.3-3.1">
-<pre>
-string : 'string' ;
-</pre>
-</div>
-<figcaption><a href="#figure-23" class="selfRef">Figure 23</a>:
-<a href="#name-string-grammar" class="selfRef">string grammar</a>
-          </figcaption></figure>
-</div>
-</section>
-</div>
-<div id="MapAndMultimap">
-<section id="section-6.4">
-        <h3 id="name-maps-and-multimaps">
-<a href="#section-6.4" class="section-number selfRef">6.4. </a><a href="#name-maps-and-multimaps" class="section-name selfRef">Maps and MultiMaps</a>
-        </h3>
-<p id="section-6.4-1">
- A map is a key and value pair, all keys in a map are unique.
- A multimap is a map where duplicate keys may exist.<a href="#section-6.4-1" class="pilcrow">¶</a></p>
-<p id="section-6.4-2">
- A map is a CBOR major type 5 as defined
- in <span><a href="#RFC8949" class="internal xref">CBOR</a> [<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>.<a href="#section-6.4-2" class="pilcrow">¶</a></p>
-<p id="section-6.4-3">
- CBOR mandates that the keys be in bytewise lexicographic order
- <span><a href="https://rfc-editor.org/rfc/rfc8949#section-4.2.1" class="relref">Section 4.2.1</a> of [<a href="#RFC8949" class="cite xref">RFC8949</a>]</span>.
- Some application keys can be objects, and not simple integer
- or string values, making objects sorting order not easily
- determinable.
- Two things needed to be added to an object to make
- it a sortable key.<a href="#section-6.4-3" class="pilcrow">¶</a></p>
-<p id="section-6.4-4">
- (1) The object defined using this language
- must be marked with the '[sortable]' attribute.<a href="#section-6.4-4" class="pilcrow">¶</a></p>
-<p id="section-6.4-5">
- (2) A method must be defined in the object named 'Compare'
- that will be implemented by the implementer to
- determine the sorting order.<a href="#section-6.4-5" class="pilcrow">¶</a></p>
-<p id="section-6.4-6">
- This Compare method returns -1 when the object
- is considered less than the Other object.
- This Compare method returns 0 when the object
- is considered equal to the Other object.
- This Compare method returns 1 when the object
- is considered greater than the Other object.<a href="#section-6.4-6" class="pilcrow">¶</a></p>
-<p id="section-6.4-7">
- Here is an example of two objects that form
- one key (Outer):<a href="#section-6.4-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-6.4-8">
-<pre>
-[sortable]
-struct InnerObject
-{
-  string   Name;
-
-  uint8_t  Age;
-
-  // A [sortable] object must have a Compare() method.
-  //
-  // The implementations and applications that use
-  // this object must agree on how this comparison
-  // is done.
-  //
-  int Compare(InnterObject Other);
-};
-
-[sortable]
-struct OuterObject
-{
-  uint64_t    UniqueID;
-
-  InnerObject NameAge;
-
-  // In this example, this Compare method also
-  // calls the NameAge.Compare() to determine
-  // the sorting order. However in another case
-  // it is possible it can be compared with just the
-  // UniqueID.
-  //
-  // The implementations and applications that use
-  // this object must agree on how this comparison
-  // is done.
-  //
-  int Compare(OuterObject Other);
-};
-
-// And here the complex OuterObject is being used
-// as a map key.
-//
-map&lt;OuterObject,uint8_t&gt; UsesComplexKey;
-</pre><a href="#section-6.4-8" class="pilcrow">¶</a>
-</div>
-<p id="section-6.4-9">
- Each unique Compare() method defined, must be implemented by
- the implementer.
- One for each object or variable marked as '[sortable]'.<a href="#section-6.4-9" class="pilcrow">¶</a></p>
-<p id="section-6.4-10">
- When an object it marked as sortable, and it contains
- one or more objects that are marked as sortable, then
- the outer most object's Compare() method result
- is the one that will be used to determine the
- sorting order.
- Which may or might not call the other Compare() methods
- for any included objects.
- How they are compared is part the the using application
- design.<a href="#section-6.4-10" class="pilcrow">¶</a></p>
-<div id="Maps">
-<section id="section-6.4.1">
-          <h4 id="name-map">
-<a href="#section-6.4.1" class="section-number selfRef">6.4.1. </a><a href="#name-map" class="section-name selfRef">Map</a>
-          </h4>
-<p id="section-6.4.1-1">
- The CBOR language map data type has two
- arguments, the key type, and the value type.
- And is defined in ANTLR as:<a href="#section-6.4.1-1" class="pilcrow">¶</a></p>
-<span id="name-map-grammar"></span><div id="map-g4">
-<figure id="figure-24">
-            <div class="alignLeft art-asciiart art-text artwork" id="section-6.4.1-2.1">
-<pre>
-map
-  : 'map' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
-  ;
-
-</pre>
-</div>
-<figcaption><a href="#figure-24" class="selfRef">Figure 24</a>:
-<a href="#name-map-grammar" class="selfRef">map grammar</a>
-            </figcaption></figure>
-</div>
-<p id="section-6.4.1-3">
- Here are examples a map in the CBOR language:<a href="#section-6.4.1-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-6.4.1-4">
-<pre>
-// The key is an 8-bit integer.
-// The value is a 32-bit integer.
-//
-map&lt;uint8_t,int32_t&gt;     VariableName1;
-
-// The key is an 8-bit integer.
-// The value is a string with at least one character.
-//
-map&lt;uint8_t,string&lt;1,*&gt;&gt; VariableName2;
-
-// Two example objects.
-//
-struct Object1
-{
-  int32_t   Collected[45];
-  float16_t Values[45];
-};
-
-struct Object2
-{
-  Object1   CurrentItems&lt;&gt;;
-  Object1   History&lt;&gt;;
-};
-
-// A more complex map.
-//
-map&lt;Object1,Object2&gt;   SomeVariableName3;
-</pre><a href="#section-6.4.1-4" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
-<div id="Multimaps">
-<section id="section-6.4.2">
-          <h4 id="name-multimap">
-<a href="#section-6.4.2" class="section-number selfRef">6.4.2. </a><a href="#name-multimap" class="section-name selfRef">Multimap</a>
-          </h4>
-<p id="section-6.4.2-1">
- A multimap allows for duplicate keys.<a href="#section-6.4.2-1" class="pilcrow">¶</a></p>
-<p id="section-6.4.2-2">
- When an application has a multimap that needs to be
- transmitted via CBOR, it sends a map, except
- the value becomes an array of objects, all that
- have the same key.
- One key sent, all of the objects with that key
- sent as an array, as the value to that key.<a href="#section-6.4.2-2" class="pilcrow">¶</a></p>
-<p id="section-6.4.2-3">
- Here is the ANTLR definition of a multimap in the CBOR language:<a href="#section-6.4.2-3" class="pilcrow">¶</a></p>
-<span id="name-multimap-grammar"></span><div id="multimap-g4">
-<figure id="figure-25">
-            <div class="alignLeft art-asciiart art-text artwork" id="section-6.4.2-4.1">
-<pre>
-multimap
-  : 'multimap' '&lt;' typeSpecifier ',' typeSpecifier '&gt;'
-  ;
-</pre>
-</div>
-<figcaption><a href="#figure-25" class="selfRef">Figure 25</a>:
-<a href="#name-multimap-grammar" class="selfRef">multimap grammar</a>
-            </figcaption></figure>
-</div>
-<p id="section-6.4.2-5">
- A multimap is a map that allows multiple of the same keys.
- Here is an example of a multimap of a graphic object
- being duplicated at multiple positions in a 3 dimensional
- space.<a href="#section-6.4.2-5" class="pilcrow">¶</a></p>
-<p id="section-6.4.2-6">
- The multimap uses the same sorting as described in
- <span><a href="#Maps" class="internal xref">Maps</a> (<a href="#Maps" class="auto internal xref">Section 6.4.1</a>)</span><a href="#section-6.4.2-6" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-6.4.2-7">
-<pre>
-struct Vector3
-{
-  float32_t X;
-  float32_t Y;
-  float32_t Z;
-};
-
-// An example of a multimap where the key is the identifier of
-// a specific graphic object type, with an ID that is an
-// unsigned 32-bit integer.
-//
-// And the value is its position.
-//
-// Any object may have multiple instances of the same graphic
-// object, all with the same ID, and each with its position
-// at a different location.
-//
-multimap&lt;uint32_t,Vector3&gt; Instances;
-</pre><a href="#section-6.4.2-7" class="pilcrow">¶</a>
-</div>
-<p id="section-6.4.2-8">
- This example would be transmitted as one CBOR map.
- There would be one map key for each unique uint32_t
- key.
- And Each key would have an array of one or more
- Vector3 objects.<a href="#section-6.4.2-8" class="pilcrow">¶</a></p>
-<p id="section-6.4.2-9">
- The protocol compiler would implement; for each
- unique multimap, a method to convert and encode a computer
- language multimap into a CBOR map.
- And a method to decode and convert the map back
- into a multimap.<a href="#section-6.4.2-9" class="pilcrow">¶</a></p>
-</section>
-</div>
-</section>
-</div>
-</section>
-</div>
-<div id="Arrays">
-<section id="section-7">
-      <h2 id="name-arrays">
-<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-arrays" class="section-name selfRef">Arrays</a>
-      </h2>
-<p id="section-7-1">
- Arrays can be fixed length, or variable length.
- Fixed length arrays have all of their elements
- transmitted each time, thus each element must contain
- a valid value.<a href="#section-7-1" class="pilcrow">¶</a></p>
-<div id="FixedArrays">
-<section id="section-7.1">
-        <h3 id="name-fixed-length-arrays">
-<a href="#section-7.1" class="section-number selfRef">7.1. </a><a href="#name-fixed-length-arrays" class="section-name selfRef">Fixed Length Arrays</a>
-        </h3>
-<p id="section-7.1-1">
- Fixed length arrays have their size bounded by square brackets.
- Here are some examples:<a href="#section-7.1-1" class="pilcrow">¶</a></p>
-<p id="section-7.1-2">
- Variable Length Array Examples.<a href="#section-7.1-2" class="pilcrow">¶</a></p>
-<span id="name-arrays-examples"></span><div id="arrays-ex1">
-<figure id="figure-26">
-          <div class="alignLeft art-asciiart art-text artwork" id="section-7.1-3.1">
-<pre>
-// An array that consists of three 32 bit floating
-// point numbers.
-//
-float32_t Transform3D[3];
-
-// An array that contains 1024 8-bit signed integer values.
-//
-int8_t Samples[1024];
-</pre>
-</div>
-<figcaption><a href="#figure-26" class="selfRef">Figure 26</a>:
-<a href="#name-arrays-examples" class="selfRef">Arrays Examples</a>
-          </figcaption></figure>
-</div>
-</section>
-</div>
-<div id="VariableArraysDef">
-<section id="section-7.2">
-        <h3 id="name-variable-length-arrays">
-<a href="#section-7.2" class="section-number selfRef">7.2. </a><a href="#name-variable-length-arrays" class="section-name selfRef">Variable Length Arrays</a>
-        </h3>
-<p id="section-7.2-1">
- Variable length arrays can have a variable number
- of elements.
- You can specify the minimum number of elements, the
- default is zero (0).
- You can specify the maximum number of elements, the
- default is an unlimited amount of entries.
- An unlimited maximum value is indicated with the '*' symbol.<a href="#section-7.2-1" class="pilcrow">¶</a></p>
-<p id="section-7.2-2">
- Fixed length arrays have their size bounded by angle brackets.
- Here are some examples:<a href="#section-7.2-2" class="pilcrow">¶</a></p>
-<p id="section-7.2-3">
- Variable Length Array Examples:<a href="#section-7.2-3" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-7.2-4">
-<pre>
-// A variable length array that can hold zero,
-// or up to an unlimited number of 32 bit
-// floating point entries.
-// The minimum value is empty and the maximum value is empty.
-//
-float32_t Samples&lt;&gt;;&lt;
-
-// A variable length array that can hold zero,
-// or up to 100 32-bit unsigned entries.
-//
-uint32_t DistanceMarks&lt;0,100&gt;;
-
-// A variable length array that must contain at least 2
-// 32-bit floating point numbers and no more than
-// 128 entries.
-//
-float32_t Trajectory&lt;2,128&gt;;
-
-// A variable length array that must contain at least 2
-// 32-bit floating point numbers and an unlimited
-// number of entries.
-//
-float32_t Variation&lt;2,*&gt;;
-</pre><a href="#section-7.2-4" class="pilcrow">¶</a>
-</div>
-</section>
-</div>
-</section>
-</div>
-<section id="section-8">
-      <h2 id="name-declaring-variables">
-<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-declaring-variables" class="section-name selfRef">Declaring Variables</a>
-      </h2>
-<p id="section-8-1">
  A variable has a type and a name.
  And the name can have some attributes.
- The ANTLR for a variable declaration is:<a href="#section-8-1" class="pilcrow">¶</a></p>
+ The ANTLR for a variable declaration is:<a href="#section-6-1" class="pilcrow">¶</a></p>
 <span id="name-declaration-grammar"></span><div id="declaration-g4">
-<figure id="figure-27">
-        <div class="alignLeft art-asciiart art-text artwork" id="section-8-2.1">
+<figure id="figure-29">
+        <div class="alignLeft art-asciiart art-text artwork" id="section-6-2.1">
 <pre>
 declaration : typeSpecifier identifier
   | typeSpecifier identifier '[' value ']'
@@ -3576,42 +3916,42 @@ declaration : typeSpecifier identifier
 
 </pre>
 </div>
-<figcaption><a href="#figure-27" class="selfRef">Figure 27</a>:
+<figcaption><a href="#figure-29" class="selfRef">Figure 29</a>:
 <a href="#name-declaration-grammar" class="selfRef">declaration grammar</a>
         </figcaption></figure>
 </div>
 </section>
 <div id="Namespaces">
-<section id="section-9">
+<section id="section-7">
       <h2 id="name-namespaces">
-<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-namespaces" class="section-name selfRef">Namespaces</a>
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-namespaces" class="section-name selfRef">Namespaces</a>
       </h2>
-<p id="section-9-1">
+<p id="section-7-1">
  With large protocols it can be difficult to
  make sure that names of items are unique.
  Namespace allows groups of names to be encapsulated
  and identified without regard to the names of
- items in other namespaces or globally.<a href="#section-9-1" class="pilcrow">¶</a></p>
-<p id="section-9-2">
+ items in other namespaces or globally.<a href="#section-7-1" class="pilcrow">¶</a></p>
+<p id="section-7-2">
  For example, a protocol might have a unique
  identifier for the sequence of an item and
- declare a type called UID.<a href="#section-9-2" class="pilcrow">¶</a></p>
-<p id="section-9-3">
+ declare a type called UID.<a href="#section-7-2" class="pilcrow">¶</a></p>
+<p id="section-7-3">
  Another set of exchanges might be to tranfer
  sets of data, each with a unique identifier
- and declare a type called UID.<a href="#section-9-3" class="pilcrow">¶</a></p>
-<p id="section-9-4">
+ and declare a type called UID.<a href="#section-7-3" class="pilcrow">¶</a></p>
+<p id="section-7-4">
  In this simple example, it is concevable that
  you just make sure that you do not use both
  in the same set.
  However with large projects cross identifier
  errors can happen and can be difficult to
- track down.<a href="#section-9-4" class="pilcrow">¶</a></p>
-<p id="section-9-5">
+ track down.<a href="#section-7-4" class="pilcrow">¶</a></p>
+<p id="section-7-5">
  Namespace solve this problem by wrapping objects,
  or sets of object in a 'namespace' type.
- Here is a simple example:<a href="#section-9-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-9-6">
+ Here is a simple example:<a href="#section-7-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-7-6">
 <pre>
 // Declare a type called UID that is
 // a 64-bit unsigned integer.
@@ -3624,11 +3964,11 @@ struct Packet
   UID Sequence;
   Blob ABlobOdData; // Blob not defined in this example.
 };
-</pre><a href="#section-9-6" class="pilcrow">¶</a>
+</pre><a href="#section-7-6" class="pilcrow">¶</a>
 </div>
-<p id="section-9-7">
- And in another definition file you might have defined this:<a href="#section-9-7" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-9-8">
+<p id="section-7-7">
+ And in another definition file you might have defined this:<a href="#section-7-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-7-8">
 <pre>
 // Declare a type called UID that is
 // a 64-bit unsigned integer.
@@ -3641,15 +3981,15 @@ struct EnumeratedItems
   UID ItemIdentifier;
         Blob2 TheItemData;// Blob2 not defined in this example.
 };
-</pre><a href="#section-9-8" class="pilcrow">¶</a>
+</pre><a href="#section-7-8" class="pilcrow">¶</a>
 </div>
-<p id="section-9-9">
+<p id="section-7-9">
  And when you compile your protocol you get an
- error that you defined UID twice (or more).<a href="#section-9-9" class="pilcrow">¶</a></p>
-<p id="section-9-10">
+ error that you defined UID twice (or more).<a href="#section-7-9" class="pilcrow">¶</a></p>
+<p id="section-7-10">
  The solution could be to rename one of them.
- Or to use namespaces:<a href="#section-9-10" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-9-11">
+ Or to use namespaces:<a href="#section-7-10" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-7-11">
 <pre>
 namespace Packets
 {
@@ -3680,53 +4020,53 @@ namespace ItemList
     Blob2 TheItemData;// Blob2 not defined in this example.
   };
 }
-</pre><a href="#section-9-11" class="pilcrow">¶</a>
+</pre><a href="#section-7-11" class="pilcrow">¶</a>
 </div>
-<p id="section-9-12">
+<p id="section-7-12">
  When in the implementation where you need
  to access the public identifiers from other namespaces
  they could be identified by using their full scope.
- In C++ this could look like:<a href="#section-9-12" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-9-13">
+ In C++ this could look like:<a href="#section-7-12" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-7-13">
 <pre>
 ItemList::EnumeratedItems Items;
 Packets::Packet           APacket
 
 ItemList::UID             ItemUID;
 Packets::UID              PacketUID;
-</pre><a href="#section-9-13" class="pilcrow">¶</a>
+</pre><a href="#section-7-13" class="pilcrow">¶</a>
 </div>
-<p id="section-9-14">
- And in C# it would look like:<a href="#section-9-14" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-9-15">
+<p id="section-7-14">
+ And in C# it would look like:<a href="#section-7-14" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-7-15">
 <pre>
 ItemList.EnumeratedItems Items;
 Packets.Packet           APacket;
 
 ItemList.UID             ItemUID;
 Packets.UID              PacketUID;
-</pre><a href="#section-9-15" class="pilcrow">¶</a>
+</pre><a href="#section-7-15" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="TypedefDef">
-<section id="section-10">
+<section id="section-8">
       <h2 id="name-user-type-definitions">
-<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-user-type-definitions" class="section-name selfRef">User Type Definitions</a>
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-user-type-definitions" class="section-name selfRef">User Type Definitions</a>
       </h2>
-<p id="section-10-1">
+<p id="section-8-1">
  A typedef is both a shorthand way of specifying a data type.
  And it allows for the identification of the intended
  usage of otherwise ambiguous data type usage.
- This can also help find coding errors.<a href="#section-10-1" class="pilcrow">¶</a></p>
-<p id="section-10-2">
+ This can also help find coding errors.<a href="#section-8-1" class="pilcrow">¶</a></p>
+<p id="section-8-2">
  The typedef and its concept are the same as they
- are in C/C++.<a href="#section-10-2" class="pilcrow">¶</a></p>
-<p id="section-10-3">
- The ANTLR for typedef:<a href="#section-10-3" class="pilcrow">¶</a></p>
+ are in C/C++.<a href="#section-8-2" class="pilcrow">¶</a></p>
+<p id="section-8-3">
+ The ANTLR for typedef:<a href="#section-8-3" class="pilcrow">¶</a></p>
 <div id="typedef-g4">
-<figure id="figure-28">
-        <div class="alignLeft art-asciiart art-text artwork" id="section-10-4.1">
+<figure id="figure-30">
+        <div class="alignLeft art-asciiart art-text artwork" id="section-8-4.1">
 <pre>
 typeDef
     : 'typedef' declaration ';'
@@ -3736,15 +4076,15 @@ typeDef
     ;
 </pre>
 </div>
-<figcaption><a href="#figure-28" class="selfRef">Figure 28</a></figcaption></figure>
+<figcaption><a href="#figure-30" class="selfRef">Figure 30</a></figcaption></figure>
 </div>
-<p id="section-10-5">
- In <a href="#td-1" class="auto internal xref">Figure 29</a> and <a href="#td-2" class="auto internal xref">Figure 30</a> there is an
+<p id="section-8-5">
+ In <a href="#td-1" class="auto internal xref">Figure 31</a> and <a href="#td-2" class="auto internal xref">Figure 32</a> there is an
  error as both the Sequence and Command are different sizes.
- If one definition file has:<a href="#section-10-5" class="pilcrow">¶</a></p>
+ If one definition file has:<a href="#section-8-5" class="pilcrow">¶</a></p>
 <div id="td-1">
-<figure id="figure-29">
-        <div class="alignLeft art-text artwork" id="section-10-6.1">
+<figure id="figure-31">
+        <div class="alignLeft art-text artwork" id="section-8-6.1">
 <pre>
 struct Packet
 {
@@ -3755,14 +4095,14 @@ struct Packet
 };
 </pre>
 </div>
-<figcaption><a href="#figure-29" class="selfRef">Figure 29</a></figcaption></figure>
+<figcaption><a href="#figure-31" class="selfRef">Figure 31</a></figcaption></figure>
 </div>
-<p id="section-10-7">
+<p id="section-8-7">
  And a second file has a definition for a method to
- use the packet data:<a href="#section-10-7" class="pilcrow">¶</a></p>
+ use the packet data:<a href="#section-8-7" class="pilcrow">¶</a></p>
 <div id="td-2">
-<figure id="figure-30">
-        <div class="alignLeft art-text artwork" id="section-10-8.1">
+<figure id="figure-32">
+        <div class="alignLeft art-text artwork" id="section-8-8.1">
 <pre>
 // On many systems this would compile
 // because the 'add' line would not know
@@ -3784,14 +4124,14 @@ void ProcessPacket(uint16_t Sequence, uint16_t Command)
 }
 </pre>
 </div>
-<figcaption><a href="#figure-30" class="selfRef">Figure 30</a></figcaption></figure>
+<figcaption><a href="#figure-32" class="selfRef">Figure 32</a></figcaption></figure>
 </div>
-<p id="section-10-9">
+<p id="section-8-9">
  If typedefs had been used it would catch
- that error and also make it easier to read:<a href="#section-10-9" class="pilcrow">¶</a></p>
+ that error and also make it easier to read:<a href="#section-8-9" class="pilcrow">¶</a></p>
 <div id="td-3">
-<figure id="figure-31">
-        <div class="alignLeft art-text artwork" id="section-10-10.1">
+<figure id="figure-33">
+        <div class="alignLeft art-text artwork" id="section-8-10.1">
 <pre>
 // Create a data type called 'PacketSequence'
 //
@@ -3814,13 +4154,13 @@ struct Packet
 };
 </pre>
 </div>
-<figcaption><a href="#figure-31" class="selfRef">Figure 31</a></figcaption></figure>
+<figcaption><a href="#figure-33" class="selfRef">Figure 33</a></figcaption></figure>
 </div>
-<p id="section-10-11">
- And if the second usage had been defined as:<a href="#section-10-11" class="pilcrow">¶</a></p>
+<p id="section-8-11">
+ And if the second usage had been defined as:<a href="#section-8-11" class="pilcrow">¶</a></p>
 <div id="td-4">
-<figure id="figure-32">
-        <div class="alignLeft art-text artwork" id="section-10-12.1">
+<figure id="figure-34">
+        <div class="alignLeft art-text artwork" id="section-8-12.1">
 <pre>
 void ProcessPacket(PacketSequence Seq, PacketCommand Cmd)
 {
@@ -3836,22 +4176,22 @@ void ProcessPacket(PacketSequence Seq, PacketCommand Cmd)
 }
 </pre>
 </div>
-<figcaption><a href="#figure-32" class="selfRef">Figure 32</a></figcaption></figure>
+<figcaption><a href="#figure-34" class="selfRef">Figure 34</a></figcaption></figure>
 </div>
 </section>
 </div>
 <div id="Enum">
-<section id="section-11">
+<section id="section-9">
       <h2 id="name-enum">
-<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-enum" class="section-name selfRef">Enum</a>
+<a href="#section-9" class="section-number selfRef">9. </a><a href="#name-enum" class="section-name selfRef">Enum</a>
       </h2>
-<p id="section-11-1">
+<p id="section-9-1">
  Much like an enum in C/C++/C# the purpose of the enum
  is to create identifiers and assign numeric values to
- them in order to simply reading and understanding the code.<a href="#section-11-1" class="pilcrow">¶</a></p>
-<p id="section-11-2">
- The enum ANTLR:<a href="#section-11-2" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-11-3">
+ them in order to simply reading and understanding the code.<a href="#section-9-1" class="pilcrow">¶</a></p>
+<p id="section-9-2">
+ The enum ANTLR:<a href="#section-9-2" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-9-3">
 <pre>
 enum       = 'enum' enum-name '{'
               enum-item *(',' enum-item)
@@ -3862,27 +4202,27 @@ enum-item  = UserDefinedIdentifier '=' Value
 enum-name  = UserDefinedIdentifier
 
 Value      = 0x00-0xffffffff
-</pre><a href="#section-11-3" class="pilcrow">¶</a>
+</pre><a href="#section-9-3" class="pilcrow">¶</a>
 </div>
 <ul class="normal">
-<li class="normal" id="section-11-4.1">
- No two enum-item identifiers may be the same in the same enum.<a href="#section-11-4.1" class="pilcrow">¶</a>
+<li class="normal" id="section-9-4.1">
+ No two enum-item identifiers may be the same in the same enum.<a href="#section-9-4.1" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-11-4.2">
+        <li class="normal" id="section-9-4.2">
  No two enum-item identifiers may have the same value in the
- same enum.<a href="#section-11-4.2" class="pilcrow">¶</a>
+ same enum.<a href="#section-9-4.2" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-11-4.3">
- All enum-items are at the same scope as the enum-name<a href="#section-11-4.3" class="pilcrow">¶</a>
+        <li class="normal" id="section-9-4.3">
+ All enum-items are at the same scope as the enum-name<a href="#section-9-4.3" class="pilcrow">¶</a>
 </li>
-        <li class="normal" id="section-11-4.4">
+        <li class="normal" id="section-9-4.4">
  An enum-name and therefore the enum may be in the public,
- internal, or namespace scope.<a href="#section-11-4.4" class="pilcrow">¶</a>
+ internal, or namespace scope.<a href="#section-9-4.4" class="pilcrow">¶</a>
 </li>
       </ul>
-<p id="section-11-5">
- Examples:<a href="#section-11-5" class="pilcrow">¶</a></p>
-<div class="alignLeft art-text artwork" id="section-11-6">
+<p id="section-9-5">
+ Examples:<a href="#section-9-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-9-6">
 <pre>
 enum RoomsInAHome {
   Kitchen = 1,
@@ -3900,52 +4240,78 @@ enum DaysOfTheWeek {
   Sunday = 7
 };
 
-</pre><a href="#section-11-6" class="pilcrow">¶</a>
+</pre><a href="#section-9-6" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="Structures">
-<section id="section-12">
+<section id="section-10">
       <h2 id="name-structues">
-<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-structues" class="section-name selfRef">Structues</a>
+<a href="#section-10" class="section-number selfRef">10. </a><a href="#name-structues" class="section-name selfRef">Structues</a>
       </h2>
-<p id="section-12-1">
+<p id="section-10-1">
  A struct is a way to encapsulate a related
- set of variables.<a href="#section-12-1" class="pilcrow">¶</a></p>
-<p id="section-12-2">
- Struct ANTLR:<a href="#section-12-2" class="pilcrow">¶</a></p>
+ set of variables.<a href="#section-10-1" class="pilcrow">¶</a></p>
+<p id="section-10-2">
+ Struct ANTLR:<a href="#section-10-2" class="pilcrow">¶</a></p>
 <div id="struct-g4">
-<figure id="figure-33">
-        <div class="alignLeft art-asciiart art-text artwork" id="section-12-3.1">
+<figure id="figure-35">
+        <div class="alignLeft art-asciiart art-text artwork" id="section-10-3.1">
 <pre>
 structTypeSpec
     : ('struct'|'class') identifier structBody
     ;
 </pre>
 </div>
-<figcaption><a href="#figure-33" class="selfRef">Figure 33</a></figcaption></figure>
+<figcaption><a href="#figure-35" class="selfRef">Figure 35</a></figcaption></figure>
 </div>
 </section>
 </div>
 <div id="Unions">
-<section id="section-13">
+<section id="section-11">
       <h2 id="name-union">
-<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-union" class="section-name selfRef">Union</a>
+<a href="#section-11" class="section-number selfRef">11. </a><a href="#name-union" class="section-name selfRef">Union</a>
       </h2>
-<p id="section-13-1">
- todo<a href="#section-13-1" class="pilcrow">¶</a></p>
-<div class="alignLeft art-asciiart art-text artwork" id="section-13-2">
+<p id="section-11-1">
+ todo<a href="#section-11-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-asciiart art-text artwork" id="section-11-2">
 <pre>
 this is a test
-</pre><a href="#section-13-2" class="pilcrow">¶</a>
+</pre><a href="#section-11-2" class="pilcrow">¶</a>
 </div>
 </section>
 </div>
 <div id="BITS">
-<section id="section-14">
+<section id="section-12">
       <h2 id="name-bit-bits-and-bitmasks">
-<a href="#section-14" class="section-number selfRef">14. </a><a href="#name-bit-bits-and-bitmasks" class="section-name selfRef">Bit, bits, and bitmasks</a>
+<a href="#section-12" class="section-number selfRef">12. </a><a href="#name-bit-bits-and-bitmasks" class="section-name selfRef">Bit, bits, and bitmasks</a>
     </h2>
+</section>
+</div>
+<div id="AsyncSync">
+<section id="section-13">
+      <h2 id="name-async-and-sync-data">
+<a href="#section-13" class="section-number selfRef">13. </a><a href="#name-async-and-sync-data" class="section-name selfRef">Async and Sync Data</a>
+      </h2>
+<p id="section-13-1">
+ Some or all of a protocol can be transmitted asynchronously
+ or synchronously.<a href="#section-13-1" class="pilcrow">¶</a></p>
+<p id="section-13-2">
+ TODO<a href="#section-13-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="Stream">
+<section id="section-14">
+      <h2 id="name-stream-data">
+<a href="#section-14" class="section-number selfRef">14. </a><a href="#name-stream-data" class="section-name selfRef">Stream Data</a>
+      </h2>
+<p id="section-14-1">
+ Data that has has a variable amount of data, like
+ mp3 audio and mp4 video are transmitted as stream data.<a href="#section-14-1" class="pilcrow">¶</a></p>
+<p id="section-14-2">
+ Stream data may be transmitted asynchronously or synchronously.<a href="#section-14-2" class="pilcrow">¶</a></p>
+<p id="section-14-3">
+ TODO<a href="#section-14-3" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="Program">
@@ -4023,6 +4389,10 @@ this is a test
 <a href="#section-18.2" class="section-number selfRef">18.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
         </h3>
 <dl class="references">
+<dt id="BISON">[BISON]</dt>
+        <dd>
+<span class="refTitle">"Bison - A Parser Generator"</span>. </dd>
+<dd class="break"></dd>
 <dt id="CBORImplementation">[CBORImplementation]</dt>
         <dd>
 <span class="refAuthor">Royer, D.</span>, <span class="refTitle">"CBORGEN Sample Implementation"</span>, <time datetime="2025" class="refDate">2025</time>, <span>&lt;<a href="https://github.com/RiverExplorer/CBOR">https://github.com/RiverExplorer/CBOR</a>&gt;</span>. </dd>
@@ -4032,8 +4402,24 @@ this is a test
 <span class="refAuthor">Royer, DM.</span>, <span class="refTitle">"cborgen Protocol Compiler"</span>, <time datetime="2025-04" class="refDate">April 2025</time>, <span>&lt;<a href="https://github.com/RiverExplorer/CBOR">https://github.com/RiverExplorer/CBOR</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="CLSOpenSource">[CLSOpenSource]</dt>
-      <dd>
+        <dd>
 <span class="refAuthor">Royer, DM.</span>, <span class="refTitle">"cborgen Open Source Tool"</span>, <time datetime="1983-04" class="refDate">April 1983</time>, <span>&lt;<a href="https://github.com/RiverExplorer/CBOR">https://github.com/RiverExplorer/CBOR</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="DOXYGEN">[DOXYGEN]</dt>
+        <dd>
+<span class="refTitle">"DOXYGEN - Code Documentation Automated"</span>, <span>&lt;<a href="https://www.doxygen.nl/manual/commands.html">https://www.doxygen.nl/manual/commands.html</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="FLEX">[FLEX]</dt>
+        <dd>
+<span class="refTitle">"Flex - A fast Lexical Analyzer"</span>. </dd>
+<dd class="break"></dd>
+<dt id="LEX">[LEX]</dt>
+        <dd>
+<span class="refTitle">"Lex - A Lexical Analyzer"</span>. </dd>
+<dd class="break"></dd>
+<dt id="YACC">[YACC]</dt>
+      <dd>
+<span class="refAuthor">Johnson, SCJ.</span>, <span class="refTitle">"Yacc (Yet Another Compiler-Compiler"</span>. </dd>
 <dd class="break"></dd>
 </dl>
 </section>
@@ -4044,7 +4430,7 @@ this is a test
 <a href="#appendix-A" class="section-number selfRef">Appendix A. </a><a href="#name-complete-anglr-grammar" class="section-name selfRef">Complete ANGLR grammar</a>
       </h2>
 <div id="all-g4">
-<figure id="figure-34">
+<figure id="figure-36">
         <div class="alignLeft art-asciiart art-text artwork" id="appendix-A-1.1">
 <pre>
 # The CBOR Phoenix cborgen grammar
@@ -4212,8 +4598,8 @@ HEXADECIMAL
 #
 identifier
     : IDENTIFIER
+    | internal_identifier
     ;
-
 
 # ANTLR/IDENTIFIER.g4
 #
@@ -4228,7 +4614,7 @@ ignoreTag : '[ignore]'
 
 # ANTLR/internal_identifier.g4
 #
-internal_identifier : '_' identifier ;
+internal_identifier : '_' IDENTIFIER ;
 
 # ANTLR/internalTag.g4
 #
@@ -4349,12 +4735,14 @@ specs
 # ANTLR/signedInteger.g4
 #
 signedInteger
-  : 'int8_t'
+  : 'int_t'
+  | 'int8_t'
   | 'int16_t'
   | 'int32_t'
   | 'int64_t'
-  | bigNumInt
+  | 'int' DECIMAL '_t'
   ;
+
 
 # ANTLR/sortableTag.g4
 #
@@ -4438,12 +4826,14 @@ unionTypeSpec
 # ANTLR/unsignedInteger.g4
 #
 unsignedInteger
-  : 'uint8_t'
+  : 'uint_t'
+  | 'uint8_t'
   | 'uint16_t'
   | 'uint32_t'
   | 'uint64_t'
-  | bigNumUInt
+  | 'uint' DECIMAL '_t'
   ;
+
 
 # ANTLR/value.g4
 #
@@ -4480,7 +4870,7 @@ WS
 
 </pre>
 </div>
-<figcaption><a href="#figure-34" class="selfRef">Figure 34</a></figcaption></figure>
+<figcaption><a href="#figure-36" class="selfRef">Figure 36</a></figcaption></figure>
 </div>
 </section>
 </div>
